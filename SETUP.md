@@ -24,7 +24,9 @@ family-checklist/
 ### 3. Создан project-config.yaml ✅
 Конфигурационный файл со всеми credentials:
 - Firebase Project ID: `family-chart-b6c1d`
-- Amplitude API Key: `x_aRUdKIw3Xqiny7Uvgi8PLsZnf53PVO`
+- Analytics:
+  - Amplitude API Key: `x_aRUdKIw3Xqiny7Uvgi8PLsZnf53PVO`
+  - AppMetrica API Key: `23a65399-3e67-4300-965a-6e0d60ee336f`
 - Bundle ID: `com.oneclue.familychart`
 
 ### 4. Зарегистрированы приложения в Firebase ✅

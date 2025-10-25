@@ -1,0 +1,154 @@
+{
+  "app": {
+    "name": "Family Chart",
+    "tagline": "Habits & Chores for Families"
+  },
+  "common": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "done": "Done",
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "add": "Add",
+    "share": "Share",
+    "settings": "Settings"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Family Chart",
+      "subtitle": "Build consistent routines for your family",
+      "step1": "Add family members",
+      "step2": "Choose tasks",
+      "step3": "Start tracking"
+    },
+    "family_members": {
+      "title": "Add Family Members",
+      "subtitle": "Who's part of your household?",
+      "suggested": "Suggested from your contacts:",
+      "added": "Added to checklist:",
+      "add_member": "Add Family Member",
+      "name_placeholder": "Name"
+    },
+    "tasks": {
+      "title": "Choose Tasks",
+      "subtitle": "Select daily tasks and chores",
+      "search": "Search tasks...",
+      "categories": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "custom": "Custom"
+      },
+      "create_custom": "Create Custom Task"
+    },
+    "frequency": {
+      "title": "Set Frequency",
+      "subtitle": "When should these tasks be done?",
+      "daily": "Every Day",
+      "weekdays": "Weekdays (Mon-Fri)",
+      "weekends": "Weekends (Sat-Sun)",
+      "custom": "Custom Days"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "active_checklists": "Active Checklists",
+    "create_checklist": "Create Checklist",
+    "this_week": "This Week",
+    "today": "Today",
+    "month_performance": "Month Performance",
+    "best_tasks": "Best Tasks",
+    "needs_attention": "Needs Attention"
+  },
+  "weekly_board": {
+    "title": "Weekly Board",
+    "days": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    },
+    "days_full": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "progress": "Progress",
+    "print": "Print",
+    "scan": "Scan Photo",
+    "edit_checklist": "Edit Checklist"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "household": "Household",
+    "sync": {
+      "title": "iCloud Sync",
+      "description": "Sync your checklists across all devices",
+      "last_sync": "Last sync: {time}",
+      "devices": "Devices with access:",
+      "enable": "Enable Sync",
+      "disable": "Disable Sync"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "morning_reminder": "Morning Reminder",
+      "evening_review": "Evening Review",
+      "weekly_summary": "Weekly Summary"
+    },
+    "language": "Language",
+    "week_start": "Week Starts On",
+    "premium": "Premium",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "support": "Support"
+  },
+  "premium": {
+    "title": "Family Pro",
+    "features": {
+      "ocr": "Scan printed checklists",
+      "voice": "Voice input for tasks",
+      "members": "Up to 6 family members",
+      "history": "Edit history & rollback",
+      "reports": "Advanced reports"
+    },
+    "plans": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "lifetime": "Lifetime"
+    },
+    "trial": "Start {days}-Day Free Trial",
+    "restore": "Restore Purchases"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "network": "No internet connection",
+    "icloud_required": "iCloud is required for sharing",
+    "permission_denied": "Permission denied"
+  },
+  "tasks": {
+    "clean_room": "Clean Room",
+    "make_bed": "Make Bed",
+    "brush_teeth": "Brush Teeth",
+    "homework": "Do Homework",
+    "walk_dog": "Walk Dog",
+    "dishes": "Wash Dishes",
+    "laundry": "Do Laundry",
+    "vacuum": "Vacuum",
+    "trash": "Take Out Trash",
+    "water_plants": "Water Plants"
+  }
+}
