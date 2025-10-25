@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Checklist Demo - Navigation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #8e8e93;
+            margin-bottom: 30px;
+        }
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-btn {
+            display: block;
+            padding: 18px 20px;
+            background: #fff;
+            border: 2px solid #e5e5ea;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #000;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            background: #f9f9f9;
+            border-color: #0A7FCC;
+            transform: translateY(-2px);
+        }
+        .nav-btn.primary {
+            background: #0A7FCC;
+            color: white;
+            border-color: #0A7FCC;
+        }
+        .nav-btn.primary:hover {
+            background: #0870B3;
+        }
+        .flow-diagram {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Family Checklist Demo</h1>
+        <p>HTML Prototypes Navigation Test</p>
+
+        <div class="flow-diagram">
+            <strong>Navigation Flow:</strong><br>
+            1️⃣ Onboarding → Paywall → Weekly Board<br>
+            2️⃣ Weekly Board → Back → Dashboard<br>
+            3️⃣ Dashboard → Open Chart → Weekly Board
+        </div>
+
+        <div class="nav-links">
+            <a href="demo-onboarding.html" class="nav-btn primary">🎯 Start: Onboarding</a>
+            <a href="demo-dashboard.html" class="nav-btn">📊 Dashboard</a>
+            <a href="demo-weekly-board.html" class="nav-btn">📅 Weekly Board</a>
+        </div>
+
+        <p style="margin-top: 30px; font-size: 13px;">
+            <strong>Test Instructions:</strong><br>
+            1. Start with Onboarding<br>
+            2. Complete steps and click paywall Continue<br>
+            3. Should navigate to Weekly Board<br>
+            4. Click back button → Dashboard<br>
+            5. Click "Open Chart" → Weekly Board
+        </p>
+    </div>
+</body>
+</html>

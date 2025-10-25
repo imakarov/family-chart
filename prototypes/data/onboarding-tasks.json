@@ -1,0 +1,796 @@
+{
+  "cohorts": {
+    "preschool": {
+      "name": "Preschool 3-5",
+      "ageRange": [3, 5],
+      "topTasks": [
+        {
+          "id": "brush-teeth",
+          "title": "Brush Teeth",
+          "emoji": "🪥",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 14,
+          "needsApproval": false
+        },
+        {
+          "id": "tidy-toys",
+          "title": "Tidy Toys",
+          "emoji": "🧸",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "wash-hands",
+          "title": "Wash Hands",
+          "emoji": "🧼",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 14,
+          "needsApproval": false
+        },
+        {
+          "id": "help-set-table",
+          "title": "Help Set Table",
+          "emoji": "🍽️",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "story-time",
+          "title": "Story Time (15m)",
+          "emoji": "📚",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        }
+      ],
+      "extraTasks": [
+        {
+          "id": "make-bed",
+          "title": "Make Bed",
+          "emoji": "🛏️",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "water-plants",
+          "title": "Water Plants",
+          "emoji": "🌱",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "feed-pet",
+          "title": "Feed Pet",
+          "emoji": "🐕",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": true
+        },
+        {
+          "id": "get-dressed",
+          "title": "Get Dressed",
+          "emoji": "👕",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "put-shoes-away",
+          "title": "Put Shoes Away",
+          "emoji": "👟",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "eat-vegetables",
+          "title": "Eat Vegetables",
+          "emoji": "🥦",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "drink-water",
+          "title": "Drink Water (5 cups)",
+          "emoji": "💧",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "practice-letters",
+          "title": "Practice Letters",
+          "emoji": "✏️",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "play-outside",
+          "title": "Play Outside (30m)",
+          "emoji": "⚽",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "help-cook",
+          "title": "Help Cook",
+          "emoji": "👨‍🍳",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": true
+        },
+        {
+          "id": "clean-room",
+          "title": "Clean Room",
+          "emoji": "🧹",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "draw-art",
+          "title": "Draw/Art Time",
+          "emoji": "🎨",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        }
+      ]
+    },
+    "earlySchool": {
+      "name": "Early School 6-8",
+      "ageRange": [6, 8],
+      "topTasks": [
+        {
+          "id": "brush-teeth-es",
+          "title": "Brush Teeth",
+          "emoji": "🪥",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 14,
+          "needsApproval": false
+        },
+        {
+          "id": "homework-es",
+          "title": "Homework",
+          "emoji": "📝",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": true
+        },
+        {
+          "id": "tidy-room-es",
+          "title": "Tidy Room",
+          "emoji": "🧹",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "reading-es",
+          "title": "Reading (20m)",
+          "emoji": "📖",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "make-bed-es",
+          "title": "Make Bed",
+          "emoji": "🛏️",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        }
+      ],
+      "extraTasks": [
+        {
+          "id": "shower-es",
+          "title": "Shower/Bath",
+          "emoji": "🚿",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "pack-backpack",
+          "title": "Pack Backpack",
+          "emoji": "🎒",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "feed-pet-es",
+          "title": "Feed Pet",
+          "emoji": "🐕",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "help-dishes",
+          "title": "Help with Dishes",
+          "emoji": "🍽️",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "sport-activity",
+          "title": "Sport/Activity",
+          "emoji": "⚽",
+          "category": "Health",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "practice-instrument",
+          "title": "Practice Instrument",
+          "emoji": "🎵",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "water-plants-es",
+          "title": "Water Plants",
+          "emoji": "🌱",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "fold-clothes",
+          "title": "Fold Clothes",
+          "emoji": "👔",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "limit-screen",
+          "title": "Limit Screen Time (1h)",
+          "emoji": "📱",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "help-sibling",
+          "title": "Help Sibling",
+          "emoji": "👥",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "take-out-trash",
+          "title": "Take Out Trash",
+          "emoji": "🗑️",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "learn-new-skill",
+          "title": "Learn New Skill",
+          "emoji": "💡",
+          "category": "Future",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "eat-healthy",
+          "title": "Eat Healthy Meals",
+          "emoji": "🥗",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "organize-desk",
+          "title": "Organize Desk",
+          "emoji": "🗂️",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "help-cook-es",
+          "title": "Help Cook Meal",
+          "emoji": "👨‍🍳",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": true
+        },
+        {
+          "id": "write-journal",
+          "title": "Write Journal",
+          "emoji": "📔",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        }
+      ]
+    },
+    "middleSchool": {
+      "name": "Middle School 9-11",
+      "ageRange": [9, 11],
+      "topTasks": [
+        {
+          "id": "homework-ms",
+          "title": "Complete Homework",
+          "emoji": "📝",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": true
+        },
+        {
+          "id": "tidy-room-ms",
+          "title": "Tidy Room",
+          "emoji": "🧹",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "shower-ms",
+          "title": "Shower",
+          "emoji": "🚿",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "reading-ms",
+          "title": "Reading (30m)",
+          "emoji": "📖",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "exercise-ms",
+          "title": "Exercise/Sport",
+          "emoji": "🏃",
+          "category": "Health",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        }
+      ],
+      "extraTasks": [
+        {
+          "id": "make-bed-ms",
+          "title": "Make Bed",
+          "emoji": "🛏️",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "help-dishes-ms",
+          "title": "Do Dishes",
+          "emoji": "🍽️",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "laundry-ms",
+          "title": "Do Own Laundry",
+          "emoji": "🧺",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "cook-meal",
+          "title": "Cook a Meal",
+          "emoji": "👨‍🍳",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": true
+        },
+        {
+          "id": "practice-skill-ms",
+          "title": "Practice Skill/Hobby",
+          "emoji": "🎸",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "help-parent",
+          "title": "Help Parent with Task",
+          "emoji": "🤝",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": true
+        },
+        {
+          "id": "organize-space",
+          "title": "Organize Personal Space",
+          "emoji": "📦",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "study-ahead",
+          "title": "Study Ahead",
+          "emoji": "📚",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "screen-limit-ms",
+          "title": "Limit Screen Time (1.5h)",
+          "emoji": "📱",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "walk-pet",
+          "title": "Walk Pet",
+          "emoji": "🐕",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "vacuum-clean",
+          "title": "Vacuum Room",
+          "emoji": "🧹",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "meal-prep",
+          "title": "Help Meal Prep",
+          "emoji": "🥘",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "learn-online",
+          "title": "Online Learning",
+          "emoji": "💻",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "help-sibling-ms",
+          "title": "Help Younger Sibling",
+          "emoji": "👥",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "grocery-help",
+          "title": "Help with Groceries",
+          "emoji": "🛒",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "healthy-eating",
+          "title": "Eat Balanced Meals",
+          "emoji": "🥗",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "sleep-schedule",
+          "title": "Keep Sleep Schedule",
+          "emoji": "😴",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "creative-project",
+          "title": "Work on Project",
+          "emoji": "🎨",
+          "category": "Future",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        }
+      ]
+    },
+    "preTeen": {
+      "name": "Pre-Teen 12-14",
+      "ageRange": [12, 14],
+      "topTasks": [
+        {
+          "id": "homework-pt",
+          "title": "Complete Homework",
+          "emoji": "📝",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": true
+        },
+        {
+          "id": "clean-room-pt",
+          "title": "Clean Room",
+          "emoji": "🧹",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": false
+        },
+        {
+          "id": "exercise-pt",
+          "title": "Exercise (30m)",
+          "emoji": "🏃",
+          "category": "Health",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "study-pt",
+          "title": "Study/Review (45m)",
+          "emoji": "📚",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "chores-pt",
+          "title": "Complete Chores",
+          "emoji": "🏠",
+          "category": "Home",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        }
+      ],
+      "extraTasks": [
+        {
+          "id": "laundry-pt",
+          "title": "Do Own Laundry",
+          "emoji": "🧺",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "cook-meals",
+          "title": "Cook Family Meal",
+          "emoji": "👨‍🍳",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 2,
+          "needsApproval": true
+        },
+        {
+          "id": "manage-schedule",
+          "title": "Manage Own Schedule",
+          "emoji": "📅",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "skill-development",
+          "title": "Develop Skill/Hobby",
+          "emoji": "🎯",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "dishes-pt",
+          "title": "Do Dishes",
+          "emoji": "🍽️",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "mentor-sibling",
+          "title": "Mentor Sibling",
+          "emoji": "👥",
+          "category": "Home",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "screen-limit-pt",
+          "title": "Limit Screen Time (2h)",
+          "emoji": "📱",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "budget-track",
+          "title": "Track Budget/Allowance",
+          "emoji": "💰",
+          "category": "Future",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "volunteer-help",
+          "title": "Volunteer/Community",
+          "emoji": "🤝",
+          "category": "Future",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": true
+        },
+        {
+          "id": "grocery-shopping",
+          "title": "Grocery Shopping",
+          "emoji": "🛒",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": true
+        },
+        {
+          "id": "maintain-hygiene",
+          "title": "Personal Hygiene",
+          "emoji": "🚿",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "car-wash",
+          "title": "Wash Car",
+          "emoji": "🚗",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "read-learn",
+          "title": "Read/Learn (30m)",
+          "emoji": "📖",
+          "category": "Future",
+          "frequency": "daily",
+          "weeklyGoal": 5,
+          "needsApproval": false
+        },
+        {
+          "id": "organize-files",
+          "title": "Organize Digital Files",
+          "emoji": "💻",
+          "category": "Future",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "meal-planning",
+          "title": "Help Plan Meals",
+          "emoji": "📋",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        },
+        {
+          "id": "sleep-pt",
+          "title": "Sleep 8+ Hours",
+          "emoji": "😴",
+          "category": "Health",
+          "frequency": "daily",
+          "weeklyGoal": 7,
+          "needsApproval": false
+        },
+        {
+          "id": "project-work",
+          "title": "Personal Project",
+          "emoji": "🎨",
+          "category": "Future",
+          "frequency": "3x-week",
+          "weeklyGoal": 3,
+          "needsApproval": false
+        },
+        {
+          "id": "yard-work",
+          "title": "Yard Work",
+          "emoji": "🌳",
+          "category": "Home",
+          "frequency": "weekly",
+          "weeklyGoal": 1,
+          "needsApproval": false
+        }
+      ]
+    }
+  },
+  "avatars": [
+    "👦", "👧", "👨", "👩", "🧒", "👶", "🧑", "👱‍♀️", "👱‍♂️", "🧔", "👴", "👵"
+  ]
+}
+

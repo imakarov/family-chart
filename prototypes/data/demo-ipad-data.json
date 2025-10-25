@@ -1,0 +1,343 @@
+{
+  "checklist": {
+    "id": "checklist_001",
+    "name": "Family Routine",
+    "weekStart": "2025-10-06",
+    "weekDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "currentDay": "Thu"
+  },
+  "members": [
+    {
+      "id": "member_004",
+      "name": "Alex",
+      "subtitle": "",
+      "avatar": "A",
+      "color": "#42A5F5",
+      "role": "child"
+    },
+    {
+      "id": "member_003",
+      "name": "Emma",
+      "subtitle": "",
+      "avatar": "E",
+      "color": "#E57373",
+      "role": "child"
+    },
+    {
+        "id": "member_001",
+        "name": "Mom",
+        "avatar": "M",
+        "color": "#9B59D0",
+        "role": "parent"
+      },
+    {
+      "id": "member_002",
+      "name": "Dad",
+      "avatar": "D",
+      "color": "#7CB342",
+      "role": "parent"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_001",
+      "name": "Brush Teeth",
+      "icon": "🪥",
+      "category": "hygiene",
+      "assignedTo": ["member_004"],
+      "schedule": {
+        "type": "daily",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      }
+    },
+    {
+      "id": "task_002",
+      "name": "Reading",
+      "icon": "📖",
+      "category": "education",
+      "assignedTo": ["member_004"],
+      "schedule": {
+        "type": "weekdays",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"]
+      }
+    },
+    {
+      "id": "task_003",
+      "name": "Soccer",
+      "icon": "⚽",
+      "category": "physical",
+      "assignedTo": ["member_004"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Tue", "Thu", "Sun"]
+      }
+    },
+    {
+      "id": "task_004",
+      "name": "Help Mom",
+      "icon": "🤝",
+      "category": "household",
+      "assignedTo": ["member_004"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Wed", "Sat"]
+      }
+    },
+    {
+      "id": "task_005",
+      "name": "Feed Cat",
+      "icon": "🐱",
+      "category": "household",
+      "assignedTo": ["member_003"],
+      "schedule": {
+        "type": "daily",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      }
+    },
+    {
+      "id": "task_006",
+      "name": "Homework",
+      "icon": "📚",
+      "category": "education",
+      "assignedTo": ["member_003"],
+      "schedule": {
+        "type": "weekdays",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"]
+      }
+    },
+    {
+      "id": "task_007",
+      "name": "Exercise",
+      "icon": "🏃‍♀️",
+      "category": "physical",
+      "assignedTo": ["member_003"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Tue", "Thu", "Sat"]
+      }
+    },
+    {
+      "id": "task_008",
+      "name": "Jogging",
+      "icon": "🏃",
+      "category": "physical",
+      "assignedTo": ["member_002"],
+      "schedule": {
+        "type": "daily",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      }
+    },
+    {
+      "id": "task_009",
+      "name": "Reading",
+      "icon": "📚",
+      "category": "education",
+      "assignedTo": ["member_002"],
+      "schedule": {
+        "type": "daily",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      }
+    },
+    {
+      "id": "task_010",
+      "name": "Cook Lunch",
+      "icon": "🍳",
+      "category": "household",
+      "assignedTo": ["member_002"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Tue", "Thu"]
+      }
+    },
+    {
+      "id": "task_011",
+      "name": "Sleep Until 12",
+      "icon": "😴",
+      "category": "lifestyle",
+      "assignedTo": ["member_002"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"]
+      }
+    },
+    {
+      "id": "task_012",
+      "name": "Cook Lunch",
+      "icon": "🍳",
+      "category": "household",
+      "assignedTo": ["member_001"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Mon", "Wed"]
+      }
+    },
+    {
+      "id": "task_013",
+      "name": "Bedtime w/ Alex",
+      "icon": "📖",
+      "category": "family",
+      "assignedTo": ["member_001"],
+      "schedule": {
+        "type": "specific_days",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"]
+      }
+    },
+    {
+      "id": "task_014",
+      "name": "Yoga",
+      "icon": "🧘",
+      "category": "physical",
+      "assignedTo": ["member_001"],
+      "schedule": {
+        "type": "weekly",
+        "frequency": 2,
+        "days": ["Wed", "Sat"]
+      }
+    }
+  ],
+  "completions": {
+    "2025-10-06": {
+      "member_001": {
+        "task_012": true,
+        "task_013": true
+      },
+      "member_004": {
+        "task_001": true,
+        "task_002": true
+      },
+      "member_003": {
+        "task_005": true,
+        "task_006": true
+      },
+      "member_002": {
+        "task_008": true,
+        "task_009": true,
+        "task_011": true
+      }
+    },
+    "2025-10-07": {
+      "member_001": {
+        "task_013": true
+      },
+      "member_004": {
+        "task_001": true,
+        "task_002": true,
+        "task_003": true
+      },
+      "member_003": {
+        "task_005": true,
+        "task_006": true,
+        "task_007": true
+      },
+      "member_002": {
+        "task_008": true,
+        "task_009": true,
+        "task_010": true,
+        "task_011": true
+      }
+    },
+    "2025-10-08": {
+      "member_001": {
+        "task_012": true,
+        "task_013": true,
+        "task_014": true
+      },
+      "member_004": {
+        "task_001": true,
+        "task_002": true,
+        "task_004": true
+      },
+      "member_003": {
+        "task_005": true,
+        "task_006": true
+      },
+      "member_002": {
+        "task_008": true,
+        "task_009": true,
+        "task_011": true
+      }
+    },
+    "2025-10-09": {
+      "member_001": {
+        "task_013": true
+      },
+      "member_004": {
+        "task_001": true,
+        "task_002": true,
+        "task_003": true
+      },
+      "member_003": {
+        "task_005": true,
+        "task_006": true,
+        "task_007": true
+      },
+      "member_002": {
+        "task_008": true,
+        "task_009": true,
+        "task_010": true,
+        "task_011": true
+      }
+    },
+    "2025-10-10": {
+      "member_001": {
+        "task_013": true
+      },
+      "member_004": {
+        "task_001": true,
+        "task_002": true
+      },
+      "member_003": {
+        "task_005": true,
+        "task_006": true
+      },
+      "member_002": {
+        "task_008": true,
+        "task_009": true,
+        "task_011": true
+      }
+    }
+  },
+  "progress": {
+    "weekly": {
+      "member_001": {
+        "completed": 8,
+        "total": 11
+      },
+      "member_004": {
+        "completed": 10,
+        "total": 17
+      },
+      "member_003": {
+        "completed": 9,
+        "total": 15
+      },
+      "member_002": {
+        "completed": 16,
+        "total": 21
+      }
+    },
+    "today": {
+      "member_001": {
+        "completed": 1,
+        "total": 1
+      },
+      "member_004": {
+        "completed": 3,
+        "total": 3
+      },
+      "member_003": {
+        "completed": 2,
+        "total": 2
+      },
+      "member_002": {
+        "completed": 4,
+        "total": 4
+      }
+    }
+  },
+  "stars": {
+    "weekly": 3,
+    "description": "Weekly stars"
+  }
+}
+

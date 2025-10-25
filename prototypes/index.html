@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Checklist - Прототипы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .screens-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .screen-wrapper {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .screen-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .screen-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 900px;
+            border: none;
+            border-radius: 20px;
+            background: white;
+        }
+
+        @media (max-width: 1200px) {
+            .screens-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Family Checklist</h1>
+            <p>HTML-прототипы · Фаза 1</p>
+        </div>
+
+        <div class="screens-container">
+            <div class="screen-wrapper">
+                <h2 class="screen-title">Dashboard (Главный экран)</h2>
+                <p class="screen-subtitle">Карточки чеклистов, прогресс, быстрые действия</p>
+                <iframe src="dashboard.html"></iframe>
+            </div>
+
+            <div class="screen-wrapper">
+                <h2 class="screen-title">Weekly Board (Недельная таблица)</h2>
+                <p class="screen-subtitle">Люди × Задачи × Дни недели</p>
+                <iframe src="weekly-board.html"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

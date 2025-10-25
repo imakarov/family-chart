@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Checklist - Weekly Board (iPad Demo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 40px 20px;
+            font-size: 16px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* iPad Frame - Landscape */
+        .ipad-frame {
+            width: 1024px;
+            height: 768px;
+            margin: 0 auto;
+            background: #1f1f1f;
+            border-radius: 55px;
+            box-shadow:
+                0 0 0 2px #0a0a0a,
+                0 0 0 6px #2a2a2a,
+                0 0 0 8px #1a1a1a,
+                inset 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* iPad Side Buttons */
+        .ipad-frame::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 320px;
+            width: 4px;
+            height: 80px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%);
+            border-radius: 0 2px 2px 0;
+            box-shadow: inset -1px 0 2px rgba(0,0,0,0.8);
+        }
+        
+        .ipad-frame::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 340px;
+            width: 4px;
+            height: 100px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%);
+            border-radius: 2px 0 0 2px;
+            box-shadow: inset 1px 0 2px rgba(0,0,0,0.8);
+        }
+
+        .ipad-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 45px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* iPad Camera (centered at top) */
+        .ipad-camera {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, rgba(15,25,45,0.95) 0%, rgba(5,10,20,1) 100%);
+            border-radius: 50%;
+            z-index: 1002;
+            box-shadow:
+                inset 0 0.5px 1px rgba(0,0,0,0.9),
+                0 0 1px rgba(80,100,180,0.2);
+        }
+
+        .ipad-camera::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(40,60,100,1) 0%, rgba(10,20,40,1) 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 0 2px rgba(100,150,255,0.5);
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 54px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            flex-shrink: 0;
+            padding-top: 14px;
+            z-index: 1001;
+            background-color: #ffffff;
+        }
+
+        .time {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.28px;
+            color: #000;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .status-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 13px;
+        }
+        
+        .cellular-icon {
+            display: flex;
+            gap: 1.5px;
+            align-items: flex-end;
+            height: 11px;
+        }
+        
+        .cellular-bar {
+            width: 2.5px;
+            background: #000;
+            border-radius: 0.5px;
+        }
+        
+        .cellular-bar:nth-child(1) { height: 3px; }
+        .cellular-bar:nth-child(2) { height: 5px; }
+        .cellular-bar:nth-child(3) { height: 7px; }
+        .cellular-bar:nth-child(4) { height: 9px; }
+        
+        .wifi-icon {
+            width: 15px;
+            height: 11px;
+            position: relative;
+        }
+        
+        .battery-icon {
+            width: 24.5px;
+            height: 11.5px;
+            border: 1.2px solid #000;
+            border-radius: 2.5px;
+            position: relative;
+            padding: 1.5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.5px;
+            height: 4px;
+            background: #000;
+            border-radius: 0 1px 1px 0;
+            opacity: 0.4;
+        }
+        
+        .battery-fill {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        .container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 12px 90px 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .container > .weekly-board {
+            margin-left: -12px;
+            margin-right: -12px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px 10px 16px;
+            border-bottom: 2px solid #d1d1d6;
+            gap: 12px;
+            background: white;
+            position: sticky;
+            top: 54px;
+            z-index: 100;
+            margin-left: -12px;
+            margin-right: -12px;
+            margin-top: 54px;
+            padding-left: 16px;
+            padding-right: 16px;
+            box-shadow: 0 2px 8px rgba(209, 209 214, 0.4);
+        }
+
+        .back-button {
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: #0c7fcc;
+            flex-shrink: 0;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .back-button:active {
+            transform: scale(0.92);
+            background: rgba(0, 122, 255, 0.15);
+        }
+
+        .title {
+            font-size: 17px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .settings-button {
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: #0c7fcc;
+            flex-shrink: 0;
+        }
+
+        .settings-button:hover {
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .settings-button:active {
+            transform: scale(0.92);
+            background: rgba(0, 122, 255, 0.15);
+        }
+
+        .weekly-board {
+            margin-top: 12px;
+            overflow-x: auto;
+            background: transparent;
+        }
+
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        
+        .board-header tr {
+            background: transparent;
+        }
+
+        .board-header {
+            position: sticky;
+            top: 0;
+            background: #0A7FCC;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+        }
+
+        .board-header th {
+            padding: 8px 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            background: white;
+            color: white;
+        }
+
+        .board-header th:first-child {
+            text-align: left;
+            width: 110px;
+            position: sticky;
+            left: 0;
+            background: white;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 11;
+            color: #000;
+        }
+
+        .board-header th.current-day {
+            background: #1CB0F6;
+            color: white;
+            border-radius: 12px 12px 0 0;
+            font-size: 13px;
+            font-weight: 700;
+            position: relative;
+            width: 56px;
+            min-width: 56px;
+            max-width: 56px;
+            z-index: 7;
+            padding: 8px 4px;
+            box-shadow: 
+                3px 0 12px rgba(0, 0, 0, 0.08), 
+                -3px 0 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .board-header th.current-day .day-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .board-header th.current-day .date-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .board-header th.current-day::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .board-header th.side-day {
+            font-size: 11px;
+            font-weight: 500;
+            color: rgb(26 26 26);
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+        }
+        
+        .day-cell.side-day {
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+        }
+
+        .member-day-star {
+            font-size: 14px;
+            filter: 
+                drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))
+                drop-shadow(0 2px 6px rgba(255, 200, 0, 0.6))
+                drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+            display: inline-block;
+            line-height: 1;
+        }
+        
+        .day-cell.current-day .member-day-star {
+            font-size: 20px;
+            filter: 
+                drop-shadow(0 0 3px rgba(255, 255, 255, 0.9))
+                drop-shadow(0 3px 8px rgba(255, 200, 0, 0.7))
+                drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+        }
+
+        .member-section {
+            position: relative;
+            margin-bottom: 0;
+            border-top: 0px solid rgba(0, 0, 0, 0.04);
+        }
+        
+        .member-section:first-child {
+            border-top: none;
+        }
+
+        .member-header-row {
+            background: transparent;
+        }
+        
+        .member-header-row .day-cell {
+            background: #0A7FCC;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .member-header-row .day-cell.current-day {
+            background: #1CB0F6 !important;
+            position: relative;
+            z-index: 8;
+            box-shadow: 
+                3px 0 12px rgba(0, 0, 0, 0.08), 
+                -3px 0 12px rgba(0, 0, 0, 0.08);
+            mix-blend-mode: normal;
+        }
+
+        .member-section.current-user {
+            margin-bottom: 0;
+        }
+
+        .member-cell {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            position: sticky;
+            left: 0;
+            background: #0A7FCC;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            z-index: 5;
+            border-radius: 0;
+            margin: 0;
+            box-shadow: none;
+            border: none;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+            transition: none;
+        }
+
+        .member-cell:hover {
+            box-shadow: none;
+            transform: none;
+        }
+
+        .member-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 12px;
+        }
+        
+        .member-avatar-img {
+            width: 110%;
+            height: 110%;
+            object-fit: cover;
+            object-position: center;
+            transform: scale(1.05);
+        }
+        
+        .member-avatar-text {
+            font-size: 19px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 1px;
+            color: white;
+            letter-spacing: -0.4px;
+        }
+
+        .member-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .member-section.current-user .member-cell:hover {
+            box-shadow: none;
+        }
+
+        .member-section.current-user .member-name {
+            color: white;
+        }
+
+        .task-row {
+            background: transparent;
+        }
+        
+        .task-row:last-child .task-cell,
+        .task-row:last-child .day-cell {
+            border-bottom: none;
+        }
+
+        .task-cell {
+            padding: 8px 16px;
+            background: #F5F5F7;
+            position: sticky;
+            left: 0;
+            z-index: 4;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .task-progress-bar {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.5px;
+            height: 60%;
+            background: rgba(0,0,0,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .task-progress-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #58CC02 0%, #4CAD02 100%);
+            border-radius: 2px;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .task-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            padding-left: 18px;
+            color: #1a1a1a;
+            font-weight: 400;
+        }
+
+        .task-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            display: none; /* Hide task icons */
+        }
+
+        .day-cell {
+            padding: 8px 4px;
+            text-align: center;
+            vertical-align: middle;
+            background: #F5F5F7;
+            position: relative;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .day-cell.current-day {
+            background: white;
+            width: 56px;
+            min-width: 56px;
+            max-width: 56px;
+            position: relative;
+            z-index: 8;
+            box-shadow: 
+                3px 0 12px rgba(0, 0, 0, 0.08), 
+                -3px 0 12px rgba(0, 0, 0, 0.08);
+            mix-blend-mode: normal;
+        }
+
+        .day-cell.side-day {
+            opacity: 1;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            margin: 0 auto;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(145deg, 
+                rgba(0, 0, 0, 0.05) 0%, 
+                rgba(0, 0, 0, 0.02) 100%);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                inset 2px 2px 4px rgba(0, 0, 0, 0.12),
+                inset -1px -1px 3px rgba(255, 255, 255, 0.6),
+                0 1px 2px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .task-item.side-day {
+            width: 26px;
+            height: 26px;
+            padding: 3px;
+        }
+
+        .task-item:active {
+            transform: scale(0.95);
+        }
+        
+        .task-item:not(.past-day):not(.future-day):not(.completed):active {
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.2),
+                inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .task-item .task-icon {
+            font-size: 28px;
+            filter: grayscale(100%) opacity(0.9);
+            transition: all 0.3s ease;
+            display: block; /* Show icons for current day */
+        }
+
+        .task-item.side-day .task-icon {
+            font-size: 14px;
+            display: none; /* Hide icons on side days */
+        }
+
+        /* Current day - show emoji with green or gray background */
+        .task-item:not(.past-day):not(.future-day).completed {
+            background: linear-gradient(135deg, #58CC02 0%, #4CAD02 100%);
+            box-shadow:
+                0 4px 12px rgba(88, 204, 2, 0.35),
+                0 2px 6px rgba(88, 204, 2, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+        }
+        
+        .task-item:not(.past-day):not(.future-day).completed:hover {
+            box-shadow:
+                0 5px 14px rgba(88, 204, 2, 0.4),
+                0 3px 8px rgba(88, 204, 2, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .task-item:not(.past-day):not(.future-day).completed .task-icon {
+            filter: grayscale(0%) opacity(1);
+        }
+        
+        .task-item:not(.past-day):not(.future-day):not(.completed) {
+            background: linear-gradient(145deg, 
+                rgba(0, 0, 0, 0.06) 0%, 
+                rgba(0, 0, 0, 0.03) 100%);
+            box-shadow: 
+                inset 2px 2px 4px rgba(0, 0, 0, 0.15),
+                inset -1px -1px 3px rgba(255, 255, 255, 0.7),
+                0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .task-item:not(.past-day):not(.future-day):not(.completed):hover {
+            box-shadow: 
+                inset 2px 2px 5px rgba(0, 0, 0, 0.18),
+                inset -1px -1px 3px rgba(255, 255, 255, 0.8),
+                0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        .task-item:not(.past-day):not(.future-day):not(.completed) .task-icon {
+            filter: grayscale(100%) opacity(0.9);
+        }
+
+        .task-item .checkmark {
+            display: none !important;
+        }
+
+        /* Past days - green or gray circle */
+        .task-item.past-day {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .task-item.past-day .task-icon {
+            display: none !important;
+        }
+
+        .task-item.past-day::after {
+            content: '●';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #D1D1D6;
+            display: block;
+        }
+
+        .task-item.past-day.completed::after {
+            color: #58CC02;
+        }
+
+        .task-item.past-day.side-day::after {
+            font-size: 12px;
+        }
+
+        /* Future days - gray circle */
+        .task-item.future-day {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .task-item.future-day .task-icon {
+            display: none !important;
+        }
+
+        .task-item.future-day::after {
+            content: '●';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #D1D1D6;
+            display: block;
+        }
+
+        .task-item.future-day.side-day::after {
+            font-size: 12px;
+        }
+
+        .progress-cell {
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+            padding: 2px 4px;
+            background: transparent;
+        }
+
+        .progress-fraction {
+            font-weight: 600;
+            color: #0c7fcc;
+        }
+
+        .footer {
+            padding: 0;
+            margin-top: 0;
+            background: #053656;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 12px rgba(28, 176, 246, 0.15);
+        }
+
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 8px 12px 8px;
+            max-width: 100%;
+            gap: 4px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 60px;
+            flex: 1;
+            max-width: 80px;
+            border-radius: 35px;
+            background: transparent;
+        }
+
+        .tab-item.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-item:active {
+            transform: scale(0.96);
+        }
+
+        .tab-icon-wrapper {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-item.active .tab-icon {
+            opacity: 1;
+        }
+
+        .tab-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .tab-item.active .tab-label {
+            color: #1CB0F6;
+            font-weight: 600;
+        }
+
+        /* Scrollbar styling for Liquid design */
+        .weekly-board::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .weekly-board::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.03);
+            border-radius: 10px;
+        }
+
+        .weekly-board::-webkit-scrollbar-thumb {
+            background: rgba(0, 122, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .weekly-board::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 122, 255, 0.5);
+        }
+        
+        /* Responsive for smaller screens */
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .ipad-frame {
+                transform: scale(0.85);
+                transform-origin: center;
+            }
+        }
+        
+        @media (max-height: 920px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .ipad-frame {
+                transform: scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ipad-frame">
+        <div class="ipad-screen">
+            <!-- iPad Camera -->
+            <div class="ipad-camera"></div>
+
+            <div class="status-bar">
+                <div class="time">9:41</div>
+                <div class="status-icons">
+                    <div class="cellular-icon">
+                        <div class="cellular-bar"></div>
+                        <div class="cellular-bar"></div>
+                        <div class="cellular-bar"></div>
+                        <div class="cellular-bar"></div>
+                    </div>
+                    <svg class="wifi-icon" viewBox="0 0 15 11" fill="none">
+                        <path d="M7.5 10C7.91421 10 8.25 9.66421 8.25 9.25C8.25 8.83579 7.91421 8.5 7.5 8.5C7.08579 8.5 6.75 8.83579 6.75 9.25C6.75 9.66421 7.08579 10 7.5 10Z" fill="black"/>
+                        <path d="M5.25 6.5C6.21649 5.53351 8.28351 5.53351 9.25 6.5" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.75 4C4.95507 1.79493 10.5449 1.79493 12.75 4" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="battery-icon">
+                        <div class="battery-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="header">
+                    <div class="back-button">‹</div>
+                    <div class="title">Family Chart</div>
+                    <div class="settings-button">⋯</div>
+                </div>
+
+                <div class="weekly-board">
+                    <table class="board-table" id="board-table">
+                        <!-- Table will be generated by JavaScript -->
+                    </table>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="tab-bar" id="tab-bar">
+                    <!-- Tabs will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let boardData = null;
+        let selectedFilter = 'all'; // 'all' or member id
+
+        // Load JSON data
+        async function loadData() {
+            try {
+                const response = await fetch('demo-ipad-data.json');
+                boardData = await response.json();
+                renderTabs();
+                renderBoard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Render tabs
+        function renderTabs() {
+            if (!boardData) return;
+
+            const tabBar = document.getElementById('tab-bar');
+            const { members } = boardData;
+
+            let tabsHTML = '';
+
+            // "All Family" tab
+            tabsHTML += `
+                <div class="tab-item ${selectedFilter === 'all' ? 'active' : ''}" data-filter="all">
+                    <div class="tab-icon-wrapper">
+                        <img src="images/family-icon.png" alt="Family" class="tab-icon">
+                    </div>
+                    <div class="tab-label">All</div>
+                </div>
+            `;
+
+            // Individual member tabs
+            members.forEach(member => {
+                const iconUrl = getAvatarUrl(member.name);
+                tabsHTML += `
+                    <div class="tab-item ${selectedFilter === member.id ? 'active' : ''}" data-filter="${member.id}">
+                        <div class="tab-icon-wrapper">
+                            <img src="${iconUrl}" alt="${member.name}" class="tab-icon">
+                        </div>
+                        <div class="tab-label">${member.name}</div>
+                    </div>
+                `;
+            });
+
+            tabBar.innerHTML = tabsHTML;
+
+            // Add click handlers
+            const tabItems = tabBar.querySelectorAll('.tab-item');
+            tabItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    selectedFilter = item.getAttribute('data-filter');
+                    renderTabs();
+                    renderBoard();
+                });
+            });
+        }
+
+        function renderBoard() {
+            if (!boardData) return;
+
+            const table = document.getElementById('board-table');
+            const { checklist, members, tasks, completions, progress } = boardData;
+
+            // Show all 7 days of the week
+            const currentDayIndex = checklist.weekDays.indexOf(checklist.currentDay);
+            const visibleDays = checklist.weekDays.map((day, index) => ({
+                day: day,
+                index: index,
+                isCurrent: index === currentDayIndex,
+                isPast: index < currentDayIndex,
+                isFuture: index > currentDayIndex
+            }));
+
+            // Render header
+            let headerHTML = '<thead class="board-header"><tr>';
+            headerHTML += '<th></th>'; // Empty cell for member names
+
+            visibleDays.forEach(dayInfo => {
+                const className = dayInfo.isCurrent ? 'current-day' : 'side-day';
+                // Shorten day names to 2 letters
+                const shortDay = dayInfo.day.substring(0, 2);
+                
+                if (dayInfo.isCurrent) {
+                    // For current day, show day name and date
+                    const dateKey = getDayDate(checklist.weekStart, dayInfo.index);
+                    const dateObj = new Date(dateKey);
+                    const dayNum = dateObj.getDate();
+                    const monthShort = dateObj.toLocaleDateString('en-US', { month: 'short' });
+                    headerHTML += `<th class="${className}">
+                        <span class="day-label">${shortDay}</span>
+                        <span class="date-label">${dayNum} ${monthShort}</span>
+                    </th>`;
+                } else {
+                    headerHTML += `<th class="${className}">${shortDay}</th>`;
+                }
+            });
+
+            headerHTML += '</tr></thead>';
+
+            // Render body
+            let bodyHTML = '<tbody>';
+
+            // Filter members based on selected tab
+            const filteredMembers = selectedFilter === 'all' 
+                ? members 
+                : members.filter(m => m.id === selectedFilter);
+
+            filteredMembers.forEach(member => {
+                const memberTasks = tasks.filter(task => task.assignedTo.includes(member.id));
+
+                // Check if this is the current user (Dad for demo)
+                const isCurrentUser = member.name === 'Dad';
+
+                // Member section wrapper
+                bodyHTML += `<tbody class="member-section ${isCurrentUser ? 'current-user' : ''}" style="position: relative;">`;
+
+                // Member header row
+                bodyHTML += '<tr class="member-header-row">';
+                
+                // Generate avatar based on member
+                const avatarUrl = getAvatarUrl(member.name);
+                const avatarHTML = avatarUrl 
+                    ? `<img src="${avatarUrl}" class="member-avatar-img" alt="${member.name}" />`
+                    : `<span class="member-avatar-text">${member.avatar}</span>`;
+                
+                bodyHTML += `
+                    <td class="member-cell" data-member-id="${member.id}">
+                        <div class="member-avatar" style="background: ${member.color}">
+                            ${avatarHTML}
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">${member.name}</div>
+                            ${member.subtitle ? `<div class="member-subtitle">${member.subtitle}</div>` : ''}
+                        </div>
+                    </td>
+                `;
+
+                // Star cells for each day
+                visibleDays.forEach(dayInfo => {
+                    const cellClass = dayInfo.isCurrent ? 'day-cell current-day' : 'day-cell side-day';
+                    const star = getMemberDayStar(member, dayInfo, tasks, checklist);
+                    bodyHTML += `<td class="${cellClass}">${star}</td>`;
+                });
+                bodyHTML += '</tr>';
+
+                // Task rows for this member
+                memberTasks.forEach(task => {
+                    bodyHTML += '<tr class="task-row">';
+                    bodyHTML += renderTaskCells(task, member, checklist, visibleDays);
+                    bodyHTML += '</tr>';
+                });
+
+                bodyHTML += '</tbody>';
+            });
+
+            table.innerHTML = headerHTML + bodyHTML;
+        }
+
+        function renderTaskCells(task, member, checklist, visibleDays) {
+            let html = '';
+
+            // Calculate progress for this task
+            const totalDays = task.schedule.days.length;
+            let completedDays = 0;
+
+            task.schedule.days.forEach((day, idx) => {
+                const dayIndex = checklist.weekDays.indexOf(day);
+                const dateKey = getDayDate(checklist.weekStart, dayIndex);
+                if (boardData.completions[dateKey]?.[member.id]?.[task.id] === true) {
+                    completedDays++;
+                }
+            });
+
+            const progressPercent = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+
+            // Task label cell (with indent and progress bar)
+            html += `
+                <td class="task-cell">
+                    <div class="task-progress-bar">
+                        <div class="task-progress-fill" style="height: ${progressPercent}%"></div>
+                    </div>
+                    <div class="task-label">
+                        <span class="task-icon">${task.icon}</span>
+                        <span>${task.name}</span>
+                    </div>
+                </td>
+            `;
+
+            // Day cells (only visible days)
+            visibleDays.forEach(dayInfo => {
+                const hasTask = task.schedule.days.includes(dayInfo.day);
+                const dateKey = getDayDate(checklist.weekStart, dayInfo.index);
+                const isCompleted = boardData.completions[dateKey]?.[member.id]?.[task.id] === true;
+
+                let cellClass = 'day-cell';
+                if (dayInfo.isCurrent) cellClass += ' current-day';
+                if (!dayInfo.isCurrent) cellClass += ' side-day';
+
+                html += `<td class="${cellClass}">`;
+
+                if (hasTask) {
+                    let itemClass = 'task-item';
+                    if (isCompleted) itemClass += ' completed';
+                    if (dayInfo.isPast) itemClass += ' past-day';
+                    if (dayInfo.isFuture) itemClass += ' future-day';
+                    if (!dayInfo.isCurrent) itemClass += ' side-day';
+
+                    html += `
+                        <div class="${itemClass}"
+                             data-task="${task.id}"
+                             data-member="${member.id}"
+                             data-day="${dayInfo.day}"
+                             data-date="${dateKey}">
+                            <span class="task-icon">${task.icon}</span>
+                        </div>
+                    `;
+                }
+
+                html += '</td>';
+            });
+
+            return html;
+        }
+
+        function getAvatarUrl(memberName) {
+            // Map member names to local icon files
+            const iconMap = {
+                'Мама': 'images/mum-icon.png',
+                'Папа': 'images/dad-icon.png',
+                'Дочь': 'images/girl-icon.png',
+                'Сын': 'images/boy-icon.png',
+                'Mom': 'images/mum-icon.png',
+                'Dad': 'images/dad-icon.png',
+                'Alex': 'images/boy-icon.png',
+                'Emma': 'images/girl-icon.png'
+            };
+            
+            // Return local icon if available
+            if (iconMap[memberName]) {
+                return iconMap[memberName];
+            }
+            
+            // Fallback to UI Avatars API
+            const colors = {
+                'Мама': { bg: '9B59D0', color: 'fff' },
+                'Папа': { bg: '7CB342', color: 'fff' },
+                'Дочь': { bg: 'E57373', color: 'fff' },
+                'Сын': { bg: '42A5F5', color: 'fff' }
+            };
+            
+            const colorData = colors[memberName] || { bg: '667eea', color: 'fff' };
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(memberName)}&background=${colorData.bg}&color=${colorData.color}&size=256&bold=true&format=svg`;
+        }
+        
+        function getMemberDayStar(member, dayInfo, tasks, checklist) {
+            // Only show stars for current and past days
+            if (dayInfo.isFuture) return '';
+
+            const dateKey = getDayDate(checklist.weekStart, dayInfo.index);
+            
+            // Get all tasks for this member on this day
+            const memberTasksForDay = tasks.filter(task => 
+                task.assignedTo.includes(member.id) && 
+                task.schedule.days.includes(dayInfo.day)
+            );
+
+            // If member has no tasks on this day
+            if (memberTasksForDay.length === 0) return '';
+
+            // Check if all tasks are completed
+            const allCompleted = memberTasksForDay.every(task => 
+                boardData.completions[dateKey]?.[member.id]?.[task.id] === true
+            );
+
+            // Return star if all completed
+            if (allCompleted) {
+                return '<span class="member-day-star">⭐</span>';
+            }
+
+            return '';
+        }
+        
+        function getDayDate(weekStart, dayIndex) {
+            const date = new Date(weekStart);
+            date.setDate(date.getDate() + dayIndex);
+            return date.toISOString().split('T')[0];
+        }
+
+        // Initialize
+        loadData();
+
+        // Handle task clicks
+        document.addEventListener('click', (e) => {
+            const taskItem = e.target.closest('.task-item');
+            if (taskItem) {
+                // Update data structure
+                const taskId = taskItem.dataset.task;
+                const memberId = taskItem.dataset.member;
+                const dateKey = taskItem.dataset.date;
+
+                if (!boardData.completions[dateKey]) {
+                    boardData.completions[dateKey] = {};
+                }
+                if (!boardData.completions[dateKey][memberId]) {
+                    boardData.completions[dateKey][memberId] = {};
+                }
+
+                // Toggle completion
+                const isCompleted = !boardData.completions[dateKey][memberId][taskId];
+                boardData.completions[dateKey][memberId][taskId] = isCompleted;
+
+                // Re-render the board to update stars
+                renderBoard();
+            }
+        });
+    </script>
+</body>
+</html>
+

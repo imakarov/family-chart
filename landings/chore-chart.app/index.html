@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Chore Chart App - Free Printable Children's Chore Charts</title>
+    <meta name="description" content="Transform household chores into engaging activities. Help your children build responsibility, earn rewards, and develop lifelong good habits with our intuitive chore chart app.">
+    <meta name="keywords" content="kids chore chart, printable children's chore chart, responsibility chart printable, childrens chore chart, family chore tracker, chore chart app, age appropriate chores, chore list for kids">
+    <link rel="canonical" href="https://chore-chart.app">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231a73e8'/%3E%3Cpath d='M30 52 L45 67 L72 38' stroke='white' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104643211', 'ym');
+
+        ym(104643211, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104643211" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+  
+<style>
+        :root {
+            --bg-dark: #0B1220;
+            --bg-surface: #0f172a;
+            --text-dark: #0b1220;
+            --text-light: #e5e7eb;
+            --text-muted: #6b7280;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #22c55e;
+            --secondary-hover: #16a34a;
+            --accent: #f59e0b;
+            --border: rgba(255,255,255,0.12);
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Gradient backgrounds */
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .gradient-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 60px;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero .lead {
+            font-size: clamp(16px, 2vw, 20px);
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .btn-group {
+                flex-direction: row;
+            }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .device-mockup {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .device-mockup img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .floating-badge {
+            position: absolute;
+            top: -16px;
+            left: -16px;
+            background: white;
+            color: var(--text-dark);
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+		display: flex;
+		align-items: center;
+            gap: 12px;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .check-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            border-color: #cbd5e1;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* How it works */
+        .steps-grid {
+            display: grid;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .steps-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-content h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+        }
+
+        .tablet-mockup {
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .tablet-mockup img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Benefits section */
+        .benefit-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.1);
+        }
+
+        .benefit-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Testimonials */
+        .testimonial {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .stars {
+            display: flex;
+		gap: 4px;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-author {
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .author-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .author-role {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before,
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            filter: blur(40px);
+        }
+
+        .cta-section::before {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .cta-section::after {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+        }
+
+        .email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 500px;
+            margin: 30px auto 20px;
+        }
+
+        @media (min-width: 640px) {
+            .email-form {
+                flex-direction: row;
+            }
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .email-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .features-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .feature-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 40px 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Background variations */
+        .bg-gray {
+            background: #f9fafb;
+        }
+
+        /* Utility */
+        .relative {
+            position: relative;
+	}
+</style>
+</head>
+  <body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <div class="hero-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span>Join 10,000+ families building better habits</span>
+                    </div>
+                    <h1>Kids Chore Chart App That Makes Responsibilities Fun</h1>
+                    <p class="lead">Transform household chores into engaging activities. Help your children build responsibility, earn rewards, and develop lifelong good habits with our intuitive chore chart app.</p>
+                    <div class="btn-group">
+                        <a href="#get-access" class="btn btn-primary">Get Early Access</a>
+                        <a href="#printables" class="btn btn-secondary">View Free Printables</a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="device-mockup">
+                        <img src="./images/hero.jpg" alt="Happy family completing chores together">
+                    </div>
+                    <div class="floating-badge">
+                        <div class="check-icon">✓</div>
+                        <div>
+                            <div style="font-weight:700; font-size:14px;">Task Complete!</div>
+                            <div style="font-size:12px; color:#6b7280;">+5 Stars</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Everything You Need in a Kids Chore Chart App</h2>
+                <p class="section-subtitle">Our comprehensive chore chart system helps families build better habits together. Designed by parents, loved by kids, proven to work.</p>
+            </div>
+            <div class="grid grid-2 grid-3">
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3>Simple Task Management</h3>
+                    <p>Create age-appropriate chores and responsibilities. Our kids chore chart makes it easy to assign tasks and track completion.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                    </div>
+                    <h3>Weekly Chore Schedules</h3>
+                    <p>Build consistent routines with customizable weekly schedules. Perfect for teaching responsibility and time management.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+                        </svg>
+                    </div>
+                    <h3>Rewards & Motivation</h3>
+                    <p>Keep kids engaged with star rewards, achievement badges, and customizable incentive systems that work for your family.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Family-Wide Tracking</h3>
+                    <p>Track multiple children with individual profiles. Perfect for families with kids of different ages and abilities.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </div>
+                    <h3>Smart Reminders</h3>
+                    <p>Never forget a chore again! Gentle notifications help children stay on track without constant parental oversight.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" x2="12" y1="15" y2="3"/>
+                        </svg>
+                    </div>
+                    <h3>Free Printable Charts</h3>
+                    <p>Access beautiful printable children's chore charts for offline use. Perfect for refrigerators and bulletin boards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="bg-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How Our Chore Chart System Works</h2>
+                <p class="section-subtitle">Getting started is simple. Build better family routines in just three easy steps.</p>
+            </div>
+            <div class="steps-grid">
+                <div style="display:flex; flex-direction:column; gap:32px;">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>Create Your Chore Chart</h3>
+                            <p>Set up age-appropriate tasks for each child. Choose from our library of common chores or create custom responsibilities that fit your family's needs.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>Kids Complete Tasks</h3>
+                            <p>Children check off completed chores in the app. Watch them build pride and confidence as they take ownership of their responsibilities.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>Celebrate Success Together</h3>
+                            <p>Track progress with stars and rewards. Celebrate achievements and watch your children develop lifelong habits of responsibility and independence.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="tablet-mockup">
+                        <img src="./images/ipad-board.png" alt="Chore chart app interface">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Families Love Our Printable Chore Chart System</h2>
+                <p class="section-subtitle">More than just a chore tracker - it's a tool for building lifelong habits and strengthening family bonds.</p>
+            </div>
+            <div class="grid grid-2">
+                <div class="benefit-card">
+                    <div class="benefit-icon" style="background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                    <h3>Teaches Responsibility</h3>
+                    <p>Help children develop a strong sense of accountability and independence through consistent chore routines.</p>
+                    <div class="stat">
+                        <span style="color:#22c55e;">87%</span>
+                        <span class="stat-label">Kids feel more capable</span>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.05));">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            <polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    </div>
+                    <h3>Builds Life Skills</h3>
+                    <p>From basic cleaning to time management, chores prepare children for future success and self-sufficiency.</p>
+                    <div class="stat">
+                        <span style="color:#6366f1;">92%</span>
+                        <span class="stat-label">Parents see improvement</span>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Saves Parent Time</h3>
+                    <p>Reduce daily reminders and nagging. Our system makes it easy for kids to stay on track independently.</p>
+                    <div class="stat">
+                        <span style="color:#f59e0b;">3+ hrs</span>
+                        <span class="stat-label">Saved per week</span>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" style="background: linear-gradient(135deg, rgba(107,114,128,0.15), rgba(107,114,128,0.05));">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                            <line x1="9" x2="9.01" y1="9" y2="9"/>
+                            <line x1="15" x2="15.01" y1="9" y2="9"/>
+</svg>
+                    </div>
+                    <h3>Reduces Family Stress</h3>
+                    <p>Clear expectations and positive reinforcement create harmony. Less arguing, more cooperation.</p>
+                    <div class="stat">
+                        <span style="color:#6b7280;">78%</span>
+                        <span class="stat-label">Less family conflict</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Free Printables -->
+    <section id="printables" class="gradient-success">
+        <div class="container">
+            <div class="steps-grid">
+                <div class="relative">
+                    <div class="device-mockup" style="max-width: 300px; margin: 0 auto;">
+                        <img src="./images/iphone-board.png" alt="Free printable chore charts">
+                    </div>
+                </div>
+                <div>
+                    <div style="display:inline-block; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); padding:8px 16px; border-radius:999px; font-size:14px; margin-bottom:16px;">
+                        Free Downloads Available
+                    </div>
+                    <h2 class="section-title" style="text-align:left; color:white;">Free Printable Chore Charts for Kids</h2>
+                    <p style="font-size:18px; margin-bottom:24px; opacity:0.95;">Can't wait for the app? Download our beautifully designed printable children's chore charts right now. Perfect for refrigerators, bulletin boards, or binders.</p>
+                    <ul style="list-style:none; margin-bottom:30px;">
+                        <li style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start;">
+                            <span style="flex-shrink:0; width:24px; height:24px; background:rgba(255,255,255,0.25); border-radius:50%; display:grid; place-items:center;">✓</span>
+                            <span>Age-appropriate responsibility charts (3-5, 6-9, 10-13 years)</span>
+                        </li>
+                        <li style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start;">
+                            <span style="flex-shrink:0; width:24px; height:24px; background:rgba(255,255,255,0.25); border-radius:50%; display:grid; place-items:center;">✓</span>
+                            <span>Weekly and daily chore tracking templates</span>
+                        </li>
+                        <li style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start;">
+                            <span style="flex-shrink:0; width:24px; height:24px; background:rgba(255,255,255,0.25); border-radius:50%; display:grid; place-items:center;">✓</span>
+                            <span>Reward sticker sheets and achievement badges</span>
+                        </li>
+                        <li style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start;">
+                            <span style="flex-shrink:0; width:24px; height:24px; background:rgba(255,255,255,0.25); border-radius:50%; display:grid; place-items:center;">✓</span>
+                            <span>Customizable blank templates for your family's needs</span>
+                        </li>
+                    </ul>
+                    <div class="btn-group">
+                        <a href="#get-access" class="btn btn-primary">Download Free Printables</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Parents Are Saying</h2>
+                <p class="section-subtitle">Join thousands of families who have transformed their household routines with our chore chart system.</p>
+            </div>
+            <div class="grid grid-2 grid-3">
+                <div class="testimonial">
+                    <div class="stars">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="testimonial-text">"This chore chart app has been a game-changer for our family! My kids actually look forward to completing their tasks and earning stars. No more constant reminding!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-name">Sarah M.</div>
+                        <div class="author-role">Mom of 3</div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="testimonial-text">"Finally, a kids chore chart that works! The printable version is great for our fridge, and the app keeps everyone accountable. Best parenting tool we've found."</p>
+                    <div class="testimonial-author">
+                        <div class="author-name">Michael T.</div>
+                        <div class="author-role">Dad of 2</div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="testimonial-text">"As an educator, I appreciate how this responsibility chart helps build independence and time management skills. My students' parents love it too!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-name">Jennifer L.</div>
+                        <div class="author-role">Teacher & Mom</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="get-access" class="gradient-primary cta-section">
+        <div class="container" style="position:relative; z-index:1;">
+            <div class="section-header">
+                <h2 class="section-title" style="color:white;">Ready to Transform Your Family's Chore Routine?</h2>
+                <p class="section-subtitle" style="color:rgba(255,255,255,0.9);">Join thousands of families building better habits. Get early access to our kids chore chart app and start your journey to a more organized, responsible household today.</p>
+            </div>
+            <form id="ctaForm" class="email-form">
+                <input type="hidden" name="from_name" value="Chore Chart Landing">
+                <input type="hidden" name="subject" value="Chore Chart Early Access">
+                <input type="email" class="email-input" name="email" placeholder="Enter your email" required>
+                <button type="submit" class="btn btn-primary">Get Early Access</button>
+            </form>
+            <div id="ctaFormStatus" style="margin-top:8px; color:rgba(255,255,255,0.9); font-size:14px; min-height:20px;"></div>
+            <p style="font-size:14px; opacity:0.8; margin-bottom:40px;">No credit card required. Free printable chore charts available instantly.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Chore Chart App. All rights reserved.</p>
+                <p style="margin-top:8px;">Empowering families, one chore at a time.</p>
+                <div style="margin-top:16px; font-weight:600;">Our products:</div>
+                <div style="margin-top:6px;">
+                    <a href="https://1clue.com" target="_blank" rel="noopener" style="color:#6366f1; text-decoration:none; margin-right:16px;">Word Puzzle</a>
+                    <a href="https://imakarov.us" target="_blank" rel="noopener" style="color:#6366f1; text-decoration:none;">Scan text with Swipe</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+<script>
+    (function() {
+        const YM_COUNTER = 104643211;
+
+        function getUTMParams() {
+            const params = new URLSearchParams(window.location.search);
+            const keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+            const data = {};
+            keys.forEach(k => { const v = params.get(k); if (v) data[k] = v; });
+            return data;
+        }
+
+        function appendHiddenFields(form, fields) {
+            Object.entries(fields).forEach(([k, v]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = k;
+                input.value = v;
+                form.appendChild(input);
+            });
+        }
+
+        const form = document.getElementById('ctaForm');
+        const statusEl = document.getElementById('ctaFormStatus');
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                statusEl.textContent = 'Sending...';
+
+                // Add UTM fields just-in-time
+                appendHiddenFields(form, getUTMParams());
+
+                const formData = new FormData(form);
+                formData.append('access_key', 'e1735eec-43d4-400d-8ce1-b2185e7a5dac');
+
+                try {
+                    if (window.ym) { ym(YM_COUNTER, 'reachGoal', 'subscribe_click', { location: 'cta_form' }); }
+                    const resp = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+                    const result = await resp.json();
+                    if (result && result.success) {
+                        statusEl.textContent = "Thanks! You're on the list.";
+                        if (window.ym) { ym(YM_COUNTER, 'reachGoal', 'subscribe_success'); }
+                        form.reset();
+                    } else {
+                        statusEl.textContent = 'Error. Please try again later.';
+                    }
+                } catch (err) {
+                    statusEl.textContent = 'Network error. Please try again later.';
+			}
+		});
+	}
+    })();
+</script>
+</body>
+</html>
+

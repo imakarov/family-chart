@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Family Checklist - Onboarding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* iPhone Frame */
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            background: #1f1f1f;
+            border-radius: 55px;
+            box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 6px #2a2a2a, 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #F5F5F7;
+            border-radius: 45px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Dynamic Island */
+        .dynamic-island {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 125px;
+            height: 36px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 1002;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 54px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            padding-top: 14px;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .time {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.28px;
+            color: #000;
+        }
+
+        .battery-icon {
+            width: 24.5px;
+            height: 11.5px;
+            border: 1.2px solid #000;
+            border-radius: 2.5px;
+            position: relative;
+            padding: 1.5px;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.5px;
+            height: 4px;
+            background: #000;
+            border-radius: 0 1px 1px 0;
+            opacity: 0.4;
+        }
+
+        .battery-fill {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        /* Progress Indicators (Dots) */
+        .progress-dots {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            z-index: 999;
+            padding: 12px 0;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c7c7cc;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #0A7FCC;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .dot-line {
+            width: 20px;
+            height: 2px;
+            background: #c7c7cc;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            position: absolute;
+            top: 65px;
+            right: 20px;
+            z-index: 999;
+            font-size: 13px;
+            font-weight: 600;
+            color: #8e8e93;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        /* Screens Container */
+        .onboarding-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 100px 20px 40px 20px;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        .screen.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        /* Screen Header */
+        .screen-header {
+            margin-bottom: 24px;
+        }
+
+        .screen-title {
+            font-size: 34px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .screen-subtitle {
+            font-size: 17px;
+            color: #8e8e93;
+            line-height: 1.4;
+        }
+
+        /* Welcome Screen */
+        .welcome-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 32px;
+            padding: 20px;
+        }
+
+        .welcome-icon {
+            font-size: 100px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-title {
+            font-size: 40px;
+            font-weight: 800;
+            color: #000;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .welcome-steps {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .welcome-steps-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0A7FCC;
+            margin-bottom: 16px;
+        }
+
+        .welcome-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .welcome-step:last-child {
+            border-bottom: none;
+        }
+
+        .welcome-step-number {
+            width: 36px;
+            height: 36px;
+            background: #0A7FCC;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .welcome-step-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .welcome-step-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .welcome-step-desc {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        /* Step 1: Family Members */
+        .members-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .member-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .member-card:active {
+            transform: scale(0.97);
+        }
+
+        .member-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .member-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .member-name {
+            width: 100%;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            outline: none;
+            padding: 4px;
+        }
+
+        .member-name::placeholder {
+            color: #c7c7cc;
+        }
+
+        .member-role {
+            font-size: 13px;
+            color: #8e8e93;
+            padding: 4px 12px;
+            background: #f2f2f7;
+            border-radius: 12px;
+        }
+
+        .remove-member {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            color: #ff3b30;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .member-card:hover .remove-member {
+            opacity: 1;
+        }
+
+        .remove-member:hover {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .add-member-card {
+            background: transparent;
+            border: 2px dashed #c7c7cc;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 140px;
+        }
+
+        .add-member-card:hover {
+            border-color: #0A7FCC;
+            background: rgba(10, 127, 204, 0.05);
+        }
+
+        .add-member-card .icon {
+            font-size: 32px;
+            color: #0A7FCC;
+        }
+
+        .add-member-card .text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0A7FCC;
+        }
+
+        /* Step 3: Regularity Selection */
+        .regularity-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 80px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .member-task-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .member-task-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f2f2f7;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .member-task-header:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .member-task-header:active {
+            transform: scale(0.99);
+        }
+
+        .member-task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .member-task-avatar {
+            font-size: 32px;
+        }
+
+        .member-task-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .member-task-chevron {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8e8e93;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .member-task-chevron.collapsed {
+            transform: rotate(90deg);
+        }
+
+        .member-tasks-content {
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .member-tasks-content.collapsed {
+            display: none;
+        }
+
+        .task-regularity-item {
+            margin-bottom: 20px;
+        }
+
+        .task-regularity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .task-regularity-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: space-between;
+        }
+
+        .task-regularity-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .task-regularity-icon {
+            font-size: 20px;
+        }
+
+        .task-regularity-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .task-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .quick-select-tag {
+            padding: 4px 10px;
+            background: #F2F2F7;
+            border: 1.5px solid #E5E5EA;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .quick-select-tag:hover {
+            background: #E5E5EA;
+        }
+
+        .quick-select-tag:active {
+            transform: scale(0.95);
+        }
+
+        .weekday-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .weekday-checkbox {
+            aspect-ratio: 1;
+            border: 2px solid #e5e5ea;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 2px;
+        }
+
+        .weekday-checkbox.checked {
+            background: #34C759;
+            border-color: #34C759;
+        }
+
+        .weekday-checkbox .day-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #8e8e93;
+            margin-bottom: 2px;
+        }
+
+        .weekday-checkbox.checked .day-label {
+            color: #fff;
+        }
+
+        .weekday-checkbox .checkmark {
+            font-size: 14px;
+            opacity: 0;
+            color: #fff;
+        }
+
+        .weekday-checkbox.checked .checkmark {
+            opacity: 1;
+        }
+
+        .weekday-checkbox:active {
+            transform: scale(0.95);
+        }
+
+        /* Paywall Modal */
+        .paywall-modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #FFFBE6;
+            z-index: 3000;
+            overflow-y: auto;
+        }
+
+        .paywall-modal.active {
+            display: block;
+        }
+
+        .paywall-content {
+            min-height: 100%;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .paywall-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .paywall-restore-btn {
+            background: transparent;
+            border: none;
+            color: #FF6B00;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 12px;
+        }
+
+        .paywall-close-btn {
+            background: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            color: #8e8e93;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .paywall-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .paywall-features {
+            margin-bottom: 32px;
+        }
+
+        .paywall-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .paywall-feature:last-child {
+            margin-bottom: 0;
+        }
+
+        .paywall-feature-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFEAA7;
+            border-radius: 50%;
+        }
+
+        .paywall-feature-text {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .paywall-feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .paywall-feature-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .paywall-plans {
+            margin-bottom: 24px;
+        }
+
+        .paywall-plan {
+            background: #fff;
+            border: 2px solid #E5E5EA;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .paywall-plan:active {
+            transform: scale(0.98);
+        }
+
+        .paywall-plan-recommended {
+            border: 3px solid #A4D96C;
+            background: #F8FFF4;
+        }
+
+        .paywall-plan input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            right: 16px;
+            background: #A4D96C;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .plan-info {
+            flex: 1;
+        }
+
+        .plan-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .plan-trial {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        .plan-price-container {
+            text-align: right;
+        }
+
+        .plan-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .plan-price-old {
+            font-size: 14px;
+            color: #8e8e93;
+            text-decoration: line-through;
+        }
+
+        .paywall-btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: #A4D96C;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(164, 217, 108, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .paywall-btn-primary:hover {
+            background: #93C85D;
+            transform: translateY(-1px);
+        }
+
+        .paywall-btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .paywall-cancel-note {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        /* Step 2: Active Tasks Panel - Brighter */
+        .selected-tasks-panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .selected-tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .selected-tasks-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8e8e93;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .selected-tasks-count {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0A7FCC;
+        }
+
+        .selected-tasks-content {
+            min-height: 50px;
+        }
+
+        .empty-tasks-message {
+            font-size: 14px;
+            color: #aeaeb2;
+            text-align: center;
+            padding: 12px 0;
+            font-style: italic;
+        }
+
+        .selected-tasks-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .selected-task-icon {
+            font-size: 28px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #E5E5EA;
+            border-radius: 10px;
+        }
+
+        /* Member icon in subtitle */
+        #memberIconInline {
+            font-size: 20px;
+            vertical-align: middle;
+        }
+
+        #memberNameInline {
+            font-weight: 600;
+        }
+
+        /* Search Bar */
+        .search-bar-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .search-bar {
+            flex: 1;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .custom-task-btn {
+            background: #0A7FCC;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            min-width: 52px;
+            overflow: hidden;
+        }
+
+        .custom-task-btn.expanded {
+            padding: 10px 20px;
+            font-size: 15px;
+            min-width: 150px;
+        }
+
+        .custom-task-btn:hover {
+            background: #0870B3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(10, 127, 204, 0.3);
+        }
+
+        .custom-task-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-icon {
+            color: #8e8e93;
+            font-size: 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 17px;
+            color: #000;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #8e8e93;
+        }
+
+        /* Category Tabs - Apple Style */
+        .category-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            padding: 3px;
+            background: #E5E5EA;
+            border-radius: 10px;
+        }
+
+        .category-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 400;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .category-tab.active {
+            background: #fff;
+            color: #000;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Tasks List */
+        .tasks-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 80px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .task-category-section {
+            margin-bottom: 24px;
+        }
+
+        .task-subcategory-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #8e8e93;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .task-item:active {
+            transform: scale(0.98);
+        }
+
+        .task-item.selected {
+            background: #0A7FCC;
+            border-color: #0A7FCC;
+        }
+
+        .task-item .task-icon {
+            font-size: 24px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .task-item .task-info {
+            flex: 1;
+        }
+
+        .task-item .task-name {
+            font-size: 17px;
+            font-weight: 500;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .task-item.selected .task-name {
+            color: #fff;
+        }
+
+        .task-item .task-goal {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        .task-item.selected .task-goal {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .task-item .add-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #0A7FCC;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .task-item.selected .add-icon {
+            background: #fff;
+            color: #0A7FCC;
+        }
+
+        /* Bottom Button */
+        .bottom-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 20px 32px 20px;
+            background: linear-gradient(to top, #F5F5F7 0%, #F5F5F7 70%, transparent 100%);
+            z-index: 100;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #0A7FCC;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(10, 127, 204, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #0870B3;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(10, 127, 204, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Avatar Picker Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 2000;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 350px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-option {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.15);
+            background: #e5e5ea;
+        }
+
+        .avatar-option:active {
+            transform: scale(1.05);
+        }
+
+        /* Role Picker Modal */
+        .role-picker-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .role-option {
+            background: #F5F5F7;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #0A7FCC;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .role-option:hover {
+            background: #0A7FCC;
+            color: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c7c7cc;
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 420px) {
+            .phone-frame {
+                width: 100%;
+                max-width: 390px;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .phone-screen {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- Dynamic Island -->
+            <div class="dynamic-island"></div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="time" id="currentTime">11:23</div>
+                <div class="battery-icon">
+                    <div class="battery-fill"></div>
+                </div>
+            </div>
+
+            <!-- Progress Dots -->
+            <div class="progress-dots" id="progressDots">
+                <div class="dot active" id="dot1"></div>
+                <div class="dot-line"></div>
+                <div class="dot" id="dot2"></div>
+                <div class="dot-line"></div>
+                <div class="dot" id="dot3"></div>
+            </div>
+
+            <!-- Step Indicator (only shown on steps 1-3) -->
+            <div class="step-indicator" id="stepIndicator" style="display: none;">Step 1/3</div>
+
+            <!-- Paywall Modal (inside phone screen) -->
+            <div class="paywall-modal" id="paywallModal">
+                <div class="paywall-content">
+                    <div class="paywall-header">
+                        <button class="paywall-restore-btn" onclick="restorePurchases()">Restore</button>
+                        <button class="paywall-close-btn" onclick="closePaywall()">✕</button>
+                    </div>
+
+                    <h2 class="paywall-title">Unlock Premium Features</h2>
+
+                    <div class="paywall-features">
+                        <div class="paywall-feature">
+                            <div class="paywall-feature-icon">📱</div>
+                            <div class="paywall-feature-text">
+                                <div class="paywall-feature-title">Multiple Devices</div>
+                                <div class="paywall-feature-desc">Access your checklists anywhere with cloud sync.</div>
+                            </div>
+                        </div>
+
+                        <div class="paywall-feature">
+                            <div class="paywall-feature-icon">👥</div>
+                            <div class="paywall-feature-text">
+                                <div class="paywall-feature-title">Add All Family Members</div>
+                                <div class="paywall-feature-desc">Track and manage kids' progress with both parents monitoring.</div>
+                            </div>
+                        </div>
+
+                        <div class="paywall-feature">
+                            <div class="paywall-feature-icon">📸</div>
+                            <div class="paywall-feature-text">
+                                <div class="paywall-feature-title">Photo Proof</div>
+                                <div class="paywall-feature-desc">Request a photo confirmation for completed tasks.</div>
+                            </div>
+                        </div>
+
+                        <div class="paywall-feature">
+                            <div class="paywall-feature-icon">🎙️</div>
+                            <div class="paywall-feature-text">
+                                <div class="paywall-feature-title">Voice Input with AI</div>
+                                <div class="paywall-feature-desc">Create tasks by speaking with AI assistance.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="paywall-plans">
+                        <div class="paywall-plan" onclick="selectPlan('monthly')">
+                            <input type="radio" name="plan" id="plan-monthly">
+                            <div class="plan-info">
+                                <div class="plan-name">Monthly</div>
+                                <div class="plan-trial">3-Days free trial, billed monthly</div>
+                            </div>
+                            <div class="plan-price">₹1490.00</div>
+                        </div>
+
+                        <div class="paywall-plan paywall-plan-recommended" onclick="selectPlan('yearly')">
+                            <input type="radio" name="plan" id="plan-yearly" checked>
+                            <div class="plan-badge">SAVE 45%</div>
+                            <div class="plan-info">
+                                <div class="plan-name">Yearly</div>
+                                <div class="plan-trial">7 days free trial, billed yearly</div>
+                            </div>
+                            <div class="plan-price-container">
+                                <div class="plan-price">₹9990.00</div>
+                                <div class="plan-price-old">₹17880.00</div>
+                            </div>
+                        </div>
+
+                        <div class="paywall-plan" onclick="selectPlan('lifetime')">
+                            <input type="radio" name="plan" id="plan-lifetime">
+                            <div class="plan-info">
+                                <div class="plan-name">Lifetime</div>
+                                <div class="plan-trial">One-time purchase</div>
+                            </div>
+                            <div class="plan-price">₹29990.00</div>
+                        </div>
+                    </div>
+
+                    <button class="paywall-btn-primary" onclick="startTrial()">
+                        Start Free Trial
+                    </button>
+                    <div class="paywall-cancel-note">Cancel Anytime</div>
+                </div>
+            </div>
+
+            <!-- Onboarding Container -->
+            <div class="onboarding-container">
+
+                <!-- Screen 0: Welcome -->
+                <div class="screen active" id="screen0">
+                    <div class="welcome-hero">
+                        <div class="welcome-icon">✨</div>
+                        <h1 class="welcome-title">Welcome to<br>Family Checklist</h1>
+
+                        <div class="welcome-steps">
+                            <div class="welcome-steps-title">3 Easy Steps to Start</div>
+                            <div class="welcome-step">
+                                <div class="welcome-step-number">1</div>
+                                <div class="welcome-step-content">
+                                    <div class="welcome-step-title">Add Family Members</div>
+                                    <div class="welcome-step-desc">Create profiles for everyone</div>
+                                </div>
+                            </div>
+                            <div class="welcome-step">
+                                <div class="welcome-step-number">2</div>
+                                <div class="welcome-step-content">
+                                    <div class="welcome-step-title">Choose Tasks</div>
+                                    <div class="welcome-step-desc">Select activities for each member</div>
+                                </div>
+                            </div>
+                            <div class="welcome-step">
+                                <div class="welcome-step-number">3</div>
+                                <div class="welcome-step-content">
+                                    <div class="welcome-step-title">Set Schedule</div>
+                                    <div class="welcome-step-desc">Pick days for each task</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-button-container">
+                        <button class="btn-primary" onclick="goToStep1()">Get Started</button>
+                    </div>
+                </div>
+
+                <!-- Screen 1: Family Members -->
+                <div class="screen" id="screen1">
+                    <div class="screen-header">
+                        <h1 class="screen-title">Family Members</h1>
+                        <p class="screen-subtitle">Add your family members to get started</p>
+                    </div>
+
+                    <div class="members-grid" id="membersGrid">
+                        <!-- Members will be added here -->
+                    </div>
+
+                    <div class="bottom-button-container">
+                        <button class="btn-primary" onclick="goToStep2()">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Task Selection -->
+                <div class="screen" id="screen2">
+                    <div class="screen-header">
+                        <h1 class="screen-title">Choose Tasks</h1>
+                        <p class="screen-subtitle" id="taskSubtitle">Choose tasks for <span id="memberIconInline">👤</span> <span id="memberNameInline">Member</span></p>
+                    </div>
+
+                    <!-- Active Tasks Panel (Always Visible) -->
+                    <div class="selected-tasks-panel active-tasks-panel">
+                        <div class="selected-tasks-header">
+                            <span class="selected-tasks-title">Active Tasks</span>
+                            <span class="selected-tasks-count" id="selectedCount">0</span>
+                        </div>
+                        <div class="selected-tasks-content" id="selectedTasksContent">
+                            <div class="empty-tasks-message" id="emptyTasksMessage">Please select tasks from list below</div>
+                            <div class="selected-tasks-icons" id="selectedTasksIcons"></div>
+                        </div>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div class="category-tabs">
+                        <button class="category-tab active" data-category="health" onclick="switchCategory('health')">
+                            <span>🏃</span>
+                            <span>Health</span>
+                        </button>
+                        <button class="category-tab" data-category="home" onclick="switchCategory('home')">
+                            <span>🏠</span>
+                            <span>Home</span>
+                        </button>
+                        <button class="category-tab" data-category="future" onclick="switchCategory('future')">
+                            <span>🎯</span>
+                            <span>Future</span>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar with Custom Task Button -->
+                    <div class="search-bar-container">
+                        <div class="search-bar">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="search-input" placeholder="Search tasks" id="searchInput">
+                        </div>
+                        <button class="custom-task-btn" onclick="createCustomTask()" id="customTaskBtn">+</button>
+                    </div>
+
+                    <!-- Tasks Container -->
+                    <div class="tasks-container" id="tasksContainer">
+                        <!-- Tasks will be rendered here -->
+                    </div>
+
+                    <div class="bottom-button-container">
+                        <button class="btn-primary" onclick="continueToNextMember()" id="continueBtn">
+                            Continue to Next
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Screen 3: Regularity Selection -->
+                <div class="screen" id="screen3">
+                    <div class="screen-header">
+                        <h1 class="screen-title">Set Schedule</h1>
+                        <p class="screen-subtitle">Choose which days to do each task</p>
+                    </div>
+
+                    <div class="regularity-container" id="regularityContainer">
+                        <!-- Member task sections will be rendered here -->
+                    </div>
+
+                    <div class="bottom-button-container">
+                        <button class="btn-primary" onclick="showPaywall()">
+                            Finish
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Screen 4: Finalization -->
+                <div class="screen" id="screen4">
+                    <div class="screen-header">
+                        <h1 class="screen-title">All Set!</h1>
+                        <p class="screen-subtitle">Your family checklist is ready</p>
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+                        <div style="font-size: 80px;">✨</div>
+                        <div style="font-size: 17px; color: #8e8e93; line-height: 1.5;" id="summaryText">
+                            <!-- Summary will be shown here -->
+                        </div>
+                    </div>
+
+                    <div class="bottom-button-container">
+                        <button class="btn-primary" onclick="completeOnboarding()">
+                            Start Using App
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Picker Modal -->
+    <div class="modal" id="avatarModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Choose Avatar</h3>
+            <div class="avatar-grid" id="avatarGrid"></div>
+            <button class="btn-primary" onclick="closeAvatarModal()" style="background: #8e8e93;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Role Picker Modal -->
+    <div class="modal" id="roleModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Select Role</h3>
+            <div class="role-picker-content">
+                <button class="role-option" onclick="selectRole('parent')">👨 Parent</button>
+                <button class="role-option" onclick="selectRole('kid')">👧 Kid</button>
+            </div>
+            <button class="btn-primary" onclick="closeRoleModal()" style="background: #8e8e93; margin-top: 8px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        let currentStep = 0; // Start from welcome screen (0 = welcome, 1-3 = actual steps, 4 = final)
+        let familyMembers = [];
+        let selectedTasksByMember = {}; // {memberId: [tasks]}
+        let taskRegularity = {}; // {memberId: {taskId: [0,1,2,3,4,5,6] for checked days}}
+        let currentCategory = 'health';
+        let currentAvatarTarget = null;
+        let currentRoleTarget = null;
+        let currentMemberId = null; // Currently selected member for task assignment
+        let currentMemberIndex = 0; // Index of current member in selection process
+
+        const avatars = ['👨', '👩', '👦', '👧', '🧑', '👶', '👴', '👵', '🧔', '👱', '👨‍🦰', '👩‍🦰', '👨‍🦱', '👩‍🦱', '👨‍🦳', '👩‍🦳', '🧒', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻'];
+
+        let tasksData = {}; // Will be loaded from JSON
+        let allTasksFromJSON = []; // All tasks loaded from JSON
+
+        // Load tasks from JSON
+        async function loadTasksFromJSON() {
+            try {
+                console.log('Loading tasks from JSON...');
+                const response = await fetch('onboarding-tasks.json');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('JSON loaded successfully, cohorts:', Object.keys(data.cohorts));
+
+                // Combine all tasks from all cohorts
+                allTasksFromJSON = [];
+                Object.values(data.cohorts).forEach(cohort => {
+                    allTasksFromJSON = allTasksFromJSON.concat(cohort.topTasks, cohort.extraTasks);
+                });
+
+                console.log('Total tasks loaded from JSON:', allTasksFromJSON.length);
+
+                // Organize by category
+                tasksData = {
+                    health: { subcategories: {} },
+                    home: { subcategories: {} },
+                    future: { subcategories: {} }
+                };
+
+                console.log('Starting to organize tasks by category...');
+
+                allTasksFromJSON.forEach(task => {
+                    // Map category names: "Health" -> "health", "Home" -> "home", "Future" -> "future"
+                    const cat = task.category.toLowerCase();
+
+                    // Map frequency to proper subcategory name
+                    let subcategory;
+                    if (task.frequency === 'daily') {
+                        subcategory = 'Daily';
+                    } else if (task.frequency === 'weekly') {
+                        subcategory = 'Weekly';
+                    } else if (task.frequency === '3x-week') {
+                        subcategory = '3x per Week';
+                    } else {
+                        // Fallback: capitalize first letter
+                        subcategory = task.frequency.charAt(0).toUpperCase() + task.frequency.slice(1);
+                    }
+
+                    // Ensure the category exists in tasksData
+                    if (!tasksData[cat]) {
+                        console.warn('Unknown category:', cat, 'from task:', task.title);
+                        return;
+                    }
+
+                    // Create subcategory if it doesn't exist
+                    if (!tasksData[cat].subcategories[subcategory]) {
+                        tasksData[cat].subcategories[subcategory] = [];
+                    }
+
+                    // Add task to the subcategory
+                    tasksData[cat].subcategories[subcategory].push({
+                        id: task.id,
+                        icon: task.emoji,
+                        name: task.title,
+                        goal: `${task.weeklyGoal}x weekly`
+                    });
+                });
+
+                // Log final result
+                console.log('Tasks organized successfully!');
+                console.log('Health subcategories:', Object.keys(tasksData.health.subcategories));
+                console.log('Home subcategories:', Object.keys(tasksData.home.subcategories));
+                console.log('Future subcategories:', Object.keys(tasksData.future.subcategories));
+
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                // Fallback to default minimal tasks
+                tasksData = {
+                    health: { subcategories: { 'Daily': [
+                        { id: 'brush-teeth', icon: '🪥', name: 'Brush Teeth', goal: '14x weekly' }
+                    ]}},
+                    home: { subcategories: { 'Daily': [
+                        { id: 'tidy-room', icon: '🧹', name: 'Tidy Room', goal: '7x weekly' }
+                    ]}},
+                    future: { subcategories: { 'Daily': [
+                        { id: 'homework', icon: '📚', name: 'Homework', goal: '5x weekly' }
+                    ]}}
+                };
+            }
+        }
+
+        // Initialize
+        async function init() {
+            updateTime();
+            setInterval(updateTime, 60000);
+            initAvatarPicker();
+            await loadTasksFromJSON(); // Load tasks from JSON
+            addMember('parent'); // Start with one parent
+            renderMembers();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+        }
+
+        // Avatar Picker
+        function initAvatarPicker() {
+            const grid = document.getElementById('avatarGrid');
+            avatars.forEach(avatar => {
+                const option = document.createElement('div');
+                option.className = 'avatar-option';
+                option.textContent = avatar;
+                option.onclick = () => selectAvatar(avatar);
+                grid.appendChild(option);
+            });
+        }
+
+        function openAvatarModal(memberId) {
+            currentAvatarTarget = memberId;
+            document.getElementById('avatarModal').classList.add('active');
+        }
+
+        function closeAvatarModal() {
+            document.getElementById('avatarModal').classList.remove('active');
+            currentAvatarTarget = null;
+        }
+
+        function selectAvatar(avatar) {
+            if (currentAvatarTarget) {
+                const member = familyMembers.find(m => m.id === currentAvatarTarget);
+                if (member) {
+                    member.avatar = avatar;
+                    renderMembers();
+                }
+            }
+            closeAvatarModal();
+        }
+
+        // Role Picker
+        function openRoleModal(memberId) {
+            currentRoleTarget = memberId;
+            document.getElementById('roleModal').classList.add('active');
+        }
+
+        function closeRoleModal() {
+            document.getElementById('roleModal').classList.remove('active');
+            currentRoleTarget = null;
+        }
+
+        function selectRole(role) {
+            if (currentRoleTarget) {
+                const member = familyMembers.find(m => m.id === currentRoleTarget);
+                if (member) {
+                    member.role = role;
+                    renderMembers();
+                }
+            }
+            closeRoleModal();
+        }
+
+        // Members Management
+        function addMember(role = 'kid') {
+            const id = 'member_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const avatar = role === 'parent' ? (familyMembers.length === 0 ? '👨' : '👩') : (familyMembers.length % 2 === 0 ? '👦' : '👧');
+            familyMembers.push({ id, name: '', role, avatar });
+            renderMembers();
+        }
+
+        function removeMember(id) {
+            familyMembers = familyMembers.filter(m => m.id !== id);
+            renderMembers();
+        }
+
+        function updateMemberName(id, name) {
+            const member = familyMembers.find(m => m.id === id);
+            if (member) member.name = name;
+        }
+
+        function renderMembers() {
+            const grid = document.getElementById('membersGrid');
+            grid.innerHTML = '';
+
+            familyMembers.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'member-card';
+                card.innerHTML = `
+                    <button class="remove-member" onclick="removeMember('${member.id}')">×</button>
+                    <div class="member-avatar" onclick="openAvatarModal('${member.id}')">${member.avatar}</div>
+                    <input type="text" class="member-name" placeholder="${member.role === 'parent' ? 'Parent name' : 'Kid name'}"
+                        value="${member.name}" onchange="updateMemberName('${member.id}', this.value)">
+                    <div class="member-role" onclick="openRoleModal('${member.id}')">${member.role === 'parent' ? '👨 Parent' : '👧 Kid'}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Add "Add Member" card
+            const addCard = document.createElement('div');
+            addCard.className = 'add-member-card';
+            addCard.onclick = () => addMember('kid');
+            addCard.innerHTML = `
+                <div class="icon">+</div>
+                <div class="text">Add Member</div>
+            `;
+            grid.appendChild(addCard);
+        }
+
+        // Navigation
+        function goToStep1() {
+            currentStep = 1;
+            updateStepIndicators();
+            document.getElementById('screen0').classList.remove('active');
+            document.getElementById('screen0').classList.add('prev');
+            document.getElementById('screen1').classList.add('active');
+        }
+
+        function goToStep2() {
+            if (familyMembers.length === 0) {
+                alert('Please add at least one family member');
+                return;
+            }
+
+            // Initialize selectedTasksByMember for all members
+            familyMembers.forEach(member => {
+                if (!selectedTasksByMember[member.id]) {
+                    selectedTasksByMember[member.id] = [];
+                }
+            });
+
+            currentStep = 2;
+            currentMemberIndex = 0;
+            currentMemberId = familyMembers[0].id;
+
+            updateStepIndicators();
+            document.getElementById('screen1').classList.remove('active');
+            document.getElementById('screen1').classList.add('prev');
+            document.getElementById('screen2').classList.add('active');
+
+            updateTaskScreenForMember();
+            renderTasks();
+        }
+
+        // Update task screen title and button for current member
+        function updateTaskScreenForMember() {
+            const currentMember = familyMembers[currentMemberIndex];
+            const memberIcon = document.getElementById('memberIconInline');
+            const memberName = document.getElementById('memberNameInline');
+            const continueBtn = document.getElementById('continueBtn');
+
+            // Update subtitle with icon and name
+            memberIcon.textContent = currentMember.avatar;
+            memberName.textContent = currentMember.name || ('Member ' + (currentMemberIndex + 1));
+
+            // Update button text
+            const tasksCount = selectedTasksByMember[currentMember.id]?.length || 0;
+            if (currentMemberIndex < familyMembers.length - 1) {
+                const nextMember = familyMembers[currentMemberIndex + 1];
+                continueBtn.textContent = `Continue to ${nextMember.name || 'Next Member'} (${tasksCount})`;
+            } else {
+                continueBtn.textContent = `Finish (${tasksCount})`;
+            }
+        }
+
+        // Continue to next member or finish
+        function continueToNextMember() {
+            const currentMember = familyMembers[currentMemberIndex];
+            const tasksCount = selectedTasksByMember[currentMember.id]?.length || 0;
+
+            if (tasksCount === 0) {
+                alert('Please select at least one task for ' + (currentMember.name || 'this member'));
+                return;
+            }
+
+            // Move to next member
+            currentMemberIndex++;
+
+            if (currentMemberIndex < familyMembers.length) {
+                // Go to next member
+                currentMemberId = familyMembers[currentMemberIndex].id;
+                updateTaskScreenForMember();
+                updateSelectedPanel();
+                renderTasks();
+            } else {
+                // All members done, go to final step
+                goToStep3();
+            }
+        }
+
+        // Not used anymore - removed member selector UI
+
+        function goToStep3() {
+            currentStep = 3;
+            updateStepIndicators();
+            document.getElementById('screen2').classList.remove('active');
+            document.getElementById('screen2').classList.add('prev');
+            document.getElementById('screen3').classList.add('active');
+            renderRegularityScreen();
+        }
+
+        function goToStep4() {
+            // Navigate to weekly board after completing onboarding
+            window.location.href = 'demo-weekly-board.html';
+        }
+
+        function updateStepIndicators() {
+            const stepIndicator = document.getElementById('stepIndicator');
+            const progressDots = document.getElementById('progressDots');
+
+            // Show/hide step indicator and dots based on current step
+            if (currentStep === 0 || currentStep === 4) {
+                // Welcome or Final screen - hide everything
+                stepIndicator.style.display = 'none';
+                progressDots.style.display = 'none';
+            } else {
+                // Steps 1-3 - show step indicator and dots
+                stepIndicator.style.display = 'block';
+                progressDots.style.display = 'flex';
+                stepIndicator.textContent = `Step ${currentStep}/3`;
+
+                // Update dots
+                ['dot1', 'dot2', 'dot3'].forEach((dotId, index) => {
+                    const dot = document.getElementById(dotId);
+                    if (index + 1 === currentStep) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Tasks
+        function switchCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.category === category) {
+                    tab.classList.add('active');
+                }
+            });
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+
+            if (!currentMemberId) return;
+
+            const categoryData = tasksData[currentCategory];
+            const memberTasks = selectedTasksByMember[currentMemberId] || [];
+
+            Object.keys(categoryData.subcategories).forEach(subcategory => {
+                const section = document.createElement('div');
+                section.className = 'task-category-section';
+
+                const title = document.createElement('div');
+                title.className = 'task-subcategory-title';
+                title.textContent = subcategory;
+                section.appendChild(title);
+
+                const taskList = document.createElement('div');
+                taskList.className = 'task-list';
+
+                categoryData.subcategories[subcategory].forEach(task => {
+                    const isSelected = memberTasks.some(t => t.id === task.id);
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item' + (isSelected ? ' selected' : '');
+                    taskItem.onclick = () => toggleTask(task);
+                    taskItem.innerHTML = `
+                        <div class="task-icon">${task.icon}</div>
+                        <div class="task-info">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-goal">${task.goal}</div>
+                        </div>
+                        <div class="add-icon">${isSelected ? '✓' : '+'}</div>
+                    `;
+                    taskList.appendChild(taskItem);
+                });
+
+                section.appendChild(taskList);
+                container.appendChild(section);
+            });
+
+            updateSelectedPanel();
+        }
+
+        function toggleTask(task) {
+            if (!currentMemberId) return;
+
+            const memberTasks = selectedTasksByMember[currentMemberId];
+            const index = memberTasks.findIndex(t => t.id === task.id);
+
+            if (index > -1) {
+                memberTasks.splice(index, 1);
+            } else {
+                memberTasks.push(task);
+            }
+
+            renderTasks();
+            updateSelectedPanel();
+            updateTaskScreenForMember(); // Update button count
+        }
+
+        function updateSelectedPanel() {
+            if (!currentMemberId) return;
+
+            const iconsContainer = document.getElementById('selectedTasksIcons');
+            const emptyMessage = document.getElementById('emptyTasksMessage');
+            const count = document.getElementById('selectedCount');
+
+            const memberTasks = selectedTasksByMember[currentMemberId] || [];
+
+            count.textContent = memberTasks.length;
+
+            if (memberTasks.length > 0) {
+                emptyMessage.style.display = 'none';
+                iconsContainer.style.display = 'flex';
+                iconsContainer.innerHTML = '';
+                memberTasks.forEach(task => {
+                    const iconEl = document.createElement('div');
+                    iconEl.className = 'selected-task-icon';
+                    iconEl.textContent = task.icon;
+                    iconEl.title = task.name; // Tooltip on hover
+                    iconsContainer.appendChild(iconEl);
+                });
+            } else {
+                emptyMessage.style.display = 'block';
+                iconsContainer.style.display = 'none';
+            }
+        }
+
+        // Regularity Screen
+        function renderRegularityScreen() {
+            const container = document.getElementById('regularityContainer');
+            container.innerHTML = '';
+
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            familyMembers.forEach(member => {
+                const memberTasks = selectedTasksByMember[member.id] || [];
+                if (memberTasks.length === 0) return;
+
+                // Initialize regularity for this member if not exists
+                if (!taskRegularity[member.id]) {
+                    taskRegularity[member.id] = {};
+                }
+
+                const section = document.createElement('div');
+                section.className = 'member-task-section';
+                section.dataset.memberId = member.id;
+
+                // Member header with collapse/expand
+                const header = document.createElement('div');
+                header.className = 'member-task-header';
+                header.onclick = () => toggleMemberSection(member.id);
+                header.innerHTML = `
+                    <div class="member-task-left">
+                        <div class="member-task-avatar">${member.avatar}</div>
+                        <div class="member-task-name">${member.name || 'Member'}</div>
+                    </div>
+                    <div class="member-task-chevron" id="chevron-${member.id}">›</div>
+                `;
+                section.appendChild(header);
+
+                // Tasks content wrapper
+                const tasksContent = document.createElement('div');
+                tasksContent.className = 'member-tasks-content';
+                tasksContent.id = `content-${member.id}`;
+
+                // Render each task with weekday checkboxes
+                memberTasks.forEach(task => {
+                    // Initialize task regularity if not exists (default: all days checked)
+                    if (!taskRegularity[member.id][task.id]) {
+                        taskRegularity[member.id][task.id] = [0, 1, 2, 3, 4, 5, 6]; // All days
+                    }
+
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-regularity-item';
+
+                    const taskHeader = document.createElement('div');
+                    taskHeader.className = 'task-regularity-header';
+                    taskHeader.innerHTML = `
+                        <div class="task-regularity-left">
+                            <div class="task-regularity-icon">${task.icon}</div>
+                            <div class="task-regularity-name">${task.name}</div>
+                        </div>
+                        <div class="task-controls">
+                            <div class="quick-select-tag" onclick="selectWeekdays('${member.id}', '${task.id}')">Weekdays</div>
+                            <div class="quick-select-tag" onclick="selectWeekend('${member.id}', '${task.id}')">Weekend</div>
+                        </div>
+                    `;
+                    taskItem.appendChild(taskHeader);
+
+                    // Weekday checkboxes
+                    const checkboxes = document.createElement('div');
+                    checkboxes.className = 'weekday-checkboxes';
+
+                    weekDays.forEach((day, dayIndex) => {
+                        const isChecked = taskRegularity[member.id][task.id].includes(dayIndex);
+                        const checkbox = document.createElement('div');
+                        checkbox.className = 'weekday-checkbox' + (isChecked ? ' checked' : '');
+                        checkbox.onclick = () => toggleWeekday(member.id, task.id, dayIndex);
+                        checkbox.innerHTML = `
+                            <div class="day-label">${day}</div>
+                            <div class="checkmark">✓</div>
+                        `;
+                        checkboxes.appendChild(checkbox);
+                    });
+
+                    taskItem.appendChild(checkboxes);
+                    tasksContent.appendChild(taskItem);
+                });
+
+                section.appendChild(tasksContent);
+                container.appendChild(section);
+            });
+        }
+
+        // Toggle member section collapse/expand
+        function toggleMemberSection(memberId) {
+            const content = document.getElementById(`content-${memberId}`);
+            const chevron = document.getElementById(`chevron-${memberId}`);
+
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                chevron.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+                chevron.classList.add('collapsed');
+            }
+        }
+
+        function toggleWeekday(memberId, taskId, dayIndex) {
+            const days = taskRegularity[memberId][taskId];
+            const index = days.indexOf(dayIndex);
+
+            if (index > -1) {
+                days.splice(index, 1);
+            } else {
+                days.push(dayIndex);
+                days.sort((a, b) => a - b); // Keep sorted
+            }
+
+            renderRegularityScreen(); // Re-render to update checkboxes
+        }
+
+        // Quick select weekdays (Mon-Fri = 1-5)
+        function selectWeekdays(memberId, taskId) {
+            taskRegularity[memberId][taskId] = [1, 2, 3, 4, 5];
+            renderRegularityScreen();
+        }
+
+        // Quick select weekend (Sun=0, Sat=6)
+        function selectWeekend(memberId, taskId) {
+            taskRegularity[memberId][taskId] = [0, 6];
+            renderRegularityScreen();
+        }
+
+        // Paywall functions
+        let selectedPlanType = 'yearly'; // Default selected plan
+
+        function showPaywall() {
+            document.getElementById('paywallModal').classList.add('active');
+        }
+
+        function closePaywall() {
+            document.getElementById('paywallModal').classList.remove('active');
+        }
+
+        function selectPlan(planType) {
+            selectedPlanType = planType;
+            // Update radio buttons
+            document.getElementById('plan-monthly').checked = (planType === 'monthly');
+            document.getElementById('plan-yearly').checked = (planType === 'yearly');
+            document.getElementById('plan-lifetime').checked = (planType === 'lifetime');
+        }
+
+        function restorePurchases() {
+            console.log('Restoring purchases...');
+            alert('Checking for previous purchases...\n\nNo purchases found.');
+        }
+
+        function startTrial() {
+            const trialDays = selectedPlanType === 'yearly' ? 7 : (selectedPlanType === 'monthly' ? 3 : 0);
+            const planNames = {
+                'monthly': 'Monthly Plan (₹1490/month)',
+                'yearly': 'Yearly Plan (₹9990/year)',
+                'lifetime': 'Lifetime Plan (₹29990)'
+            };
+
+            console.log('Starting trial for:', selectedPlanType);
+
+            if (selectedPlanType === 'lifetime') {
+                alert(`Purchasing Lifetime Plan! 🎉\n\nOne-time payment: ₹29,990\nLifetime access to all Premium features.`);
+            } else {
+                alert(`Trial started! 🎉\n\n${planNames[selectedPlanType]}\n${trialDays}-day free trial activated.\n\nYou now have access to all Premium features!`);
+            }
+
+            closePaywall();
+            goToStep4(); // Complete onboarding
+        }
+
+        // Custom Task Creation
+        function createCustomTask() {
+            const taskName = prompt('Enter task name:');
+            if (!taskName) return;
+
+            const taskIcon = prompt('Enter task icon (emoji):') || '📝';
+            const taskGoal = prompt('Enter weekly goal (e.g., "5x weekly"):') || '7x weekly';
+
+            const customTask = {
+                id: 'custom_' + Date.now(),
+                icon: taskIcon,
+                name: taskName,
+                goal: taskGoal
+            };
+
+            selectedTasks.push(customTask);
+            renderTasks();
+        }
+
+        // Search with custom task button expansion
+        let searchTimeout = null;
+        const searchInput = document.getElementById('searchInput');
+        const customTaskBtn = document.getElementById('customTaskBtn');
+
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+
+            // Filter tasks and count visible ones
+            let visibleCount = 0;
+            document.querySelectorAll('.task-item').forEach(item => {
+                const name = item.querySelector('.task-name').textContent.toLowerCase();
+                if (name.includes(query)) {
+                    item.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Clear previous timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+                // Collapse button while typing
+                customTaskBtn.classList.remove('expanded');
+                customTaskBtn.textContent = '+';
+            }
+
+            // Set new timeout to expand button after 1 second IF no tasks found
+            if (query.trim().length > 0) {
+                searchTimeout = setTimeout(() => {
+                    // Only expand if no tasks were found
+                    if (visibleCount === 0) {
+                        customTaskBtn.classList.add('expanded');
+                        customTaskBtn.textContent = '+ Create Task';
+                    }
+                }, 1000);
+            } else {
+                // If search is empty, keep button collapsed
+                customTaskBtn.classList.remove('expanded');
+                customTaskBtn.textContent = '+';
+            }
+        });
+
+        // Summary
+        function showSummary() {
+            const summary = document.getElementById('summaryText');
+            const memberCount = familyMembers.length;
+
+            // Count total tasks across all members
+            let totalTasks = 0;
+            Object.values(selectedTasksByMember).forEach(tasks => {
+                totalTasks += tasks.length;
+            });
+
+            summary.innerHTML = `
+                Created <strong>${memberCount}</strong> family member${memberCount !== 1 ? 's' : ''}<br>
+                Selected <strong>${totalTasks}</strong> task${totalTasks !== 1 ? 's' : ''}<br><br>
+                Ready to build lasting habits together!
+            `;
+        }
+
+        function completeOnboarding() {
+            const data = {
+                members: familyMembers,
+                tasksByMember: selectedTasksByMember,
+                taskRegularity: taskRegularity,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Onboarding complete!', data);
+            alert('Welcome to Family Checklist! 🎉\n\nYour family board is now ready.');
+
+            // In production: window.location.href = '/dashboard';
+        }
+
+        // Check for step parameter in URL (for edit mode from dashboard)
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const stepParam = urlParams.get('step');
+
+            if (stepParam) {
+                const targetStep = parseInt(stepParam);
+                if (targetStep >= 1 && targetStep <= 3) {
+                    // Navigate to the requested step
+                    currentStep = targetStep;
+
+                    // Hide all screens
+                    for (let i = 0; i <= 4; i++) {
+                        const screen = document.getElementById(`screen${i}`);
+                        if (screen) {
+                            screen.classList.remove('active', 'prev', 'next');
+                        }
+                    }
+
+                    // Show the requested screen
+                    document.getElementById(`screen${targetStep}`).classList.add('active');
+                    updateStepIndicators();
+
+                    // Render the appropriate content
+                    if (targetStep === 1) {
+                        renderMembers();
+                    } else if (targetStep === 2) {
+                        renderTaskSelection();
+                    } else if (targetStep === 3) {
+                        renderRegularityScreen();
+                    }
+                }
+            }
+        }
+
+        // Initialize on load
+        init();
+        checkURLParams();
+    </script>
+</body>
+</html>

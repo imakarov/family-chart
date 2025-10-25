@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO -->
+    <title>Family Checklist — Shared Family Habit Tracker for Kids & Parents</title>
+    <meta name="description" content="Family habit tracker that teaches kids responsibility through shared family checklist. Health • Home • Future routines. Parents lead by example with family routine app.">
+    <meta name="keywords" content="family checklist, family habit tracker, shared family checklist, family routine app, teach kids habits, kids responsibility, family routine">
+    <link rel="canonical" href="https://family-checklist.com/">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Family Checklist — Shared Family Habit Tracker for Kids & Parents">
+    <meta property="og:description" content="Family habit tracker that teaches kids responsibility through shared family checklist. Health • Home • Future routines. Parents lead by example.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://family-checklist.com/">
+    <meta property="og:image" content="https://family-checklist.com/og-image.jpg">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Family Checklist",
+        "description": "Family habit tracker that teaches kids responsibility through shared family checklist",
+        "applicationCategory": "FamilyApplication",
+        "operatingSystem": "iOS, Android",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150"
+        }
+    }
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23007BFF'/%3E%3Cpath d='M25 50 L40 65 L75 30' stroke='white' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: hsl(211 100% 50%);
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-white: #FFFFFF;
+            --bg-light: #F8F9FC;
+            --border-light: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 12px 0;
+        }
+        
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo::before {
+            content: "✓";
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .top-cta {
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        
+        .top-cta:hover {
+            opacity: 0.8;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 80px;
+            position: relative;
+            overflow: hidden;
+            min-height: 550px;
+            display: flex;
+            align-items: center;
+            background: var(--bg-light);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('./images/hero-family.jpg'); /* Family using shared family checklist together */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.88) 0%, 
+                rgba(255, 255, 255, 0.75) 50%,
+                rgba(245, 245, 247, 0.65) 100%);
+            z-index: 1;
+        }
+        
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            color: var(--text-primary);
+            text-shadow: none;
+        }
+        
+        .hero h1 .highlight {
+            color: var(--primary-color);
+        }
+        
+        .hero .subtitle {
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: #333333;
+            max-width: 650px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        @media (min-width: 1024px) {
+            .hero {
+                min-height: 700px;
+                padding: 100px 0 20px;
+            }
+            
+            .hero::after {
+                background: linear-gradient(to right, 
+                    rgba(255, 255, 255, 0.92) 0%, 
+                    rgba(255, 255, 255, 0.85) 40%,
+                    rgba(255, 255, 255, 0.65) 60%,
+                    rgba(245, 245, 247, 0.45) 100%);
+            }
+            
+            .hero-content {
+                margin: 0;
+                text-align: left;
+                max-width: 600px;
+            }
+            
+            .hero .subtitle {
+                margin: 0 0 40px;
+            }
+            
+            .cta-group {
+                align-items: flex-start;
+            }
+            
+            .microcopy {
+                text-align: left;
+            }
+        }
+        
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+            background: #0284C7;
+        }
+        
+        .btn-secondary {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 14px 24px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .microcopy {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+        }
+        
+        .section-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            line-height: 1.7;
+        }
+        
+        /* Why it works */
+        .why-section {
+            background: var(--bg-white);
+        }
+        
+        .why-visibility-section {
+            background: var(--bg-white);
+            position: relative;
+        }
+        
+        .research-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+            opacity: 0.6;
+        }
+        
+        .research-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .research-logos {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .research-logos a {
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .research-logo {
+            height: auto;
+            max-height: 36px;
+            opacity: 0.75;
+            transition: all 0.3s ease;
+            filter: grayscale(80%);
+            display: block;
+        }
+        
+        .research-logos a:hover .research-logo {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .research-links {
+                flex-direction: column;
+                gap: 24px;
+            }
+            
+            .research-logos {
+                gap: 32px;
+            }
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            background: var(--bg-light);
+            padding: 80px 0;
+        }
+        
+        .demo-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .demo-iframe-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto 0;
+            position: relative;
+        }
+        
+        .demo-iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+            display: block;
+            background: transparent;
+            border-radius: var(--radius);
+        }
+        
+        .demo-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: transparent;
+            border-radius: var(--radius);
+        }
+        
+        @media (max-width: 900px) {
+            .demo-iframe {
+                height: 600px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .demo-iframe {
+                height: 500px;
+            }
+            
+            .demo-iframe-container {
+                padding: 16px;
+            }
+        }
+        
+        /* Three Pillars */
+        .pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            margin-top: 60px;
+        }
+        
+        .pillar-card {
+            background: var(--bg-white);
+            padding: 48px 32px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+        
+        .pillar-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pillar-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+        }
+        
+        .pillar-icon.health {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        
+        .pillar-icon.home {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        
+        .pillar-icon.future {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+        
+        .pillar-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        
+        .pillar-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* How it works */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin-top: 60px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .step {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+        }
+        
+        .step-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .step-content p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        
+        .footnote {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 40px;
+            font-style: italic;
+        }
+        
+        /* For Parents */
+        .features-list {
+            max-width: 650px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .features-list ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .features-list li {
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        
+        .features-list li::before {
+            content: "✓";
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 24px;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: hsl(211 100% 95%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* FAQ */
+        .faq-section {
+            background: var(--bg-light);
+        }
+        
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 24px;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .faq-question:hover {
+            background: var(--bg-light);
+        }
+        
+        .faq-icon {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+        
+        .faq-answer-content {
+            padding: 0 24px 24px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        
+        /* Bottom CTA / Early Access Form */
+        .bottom-cta {
+            text-align: center;
+            padding: 100px 0;
+            background: var(--bg-white);
+        }
+        
+        .bottom-cta h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        
+        .bottom-cta .microcopy {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .early-access-form {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .early-access-form input[type="email"] {
+            flex: 1;
+            min-width: 260px;
+            padding: 14px 20px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: var(--bg-white);
+        }
+        
+        .early-access-form input[type="email"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .early-access-form button {
+            padding: 14px 32px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+        }
+        
+        .early-access-form button:hover {
+            background: #0284C7;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+        }
+        
+        .form-privacy {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+        
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            line-height: 1;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: var(--bg-white);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .checkbox-group {
+            margin-bottom: 24px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .form-required {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .form-submit {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+        }
+        
+        .form-submit:hover {
+            background: #0284C7;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+        }
+        
+        .form-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .form-submit:disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+        }
+        
+        .form-message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .form-message.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            display: block;
+        }
+        
+        .form-message.error {
+            background: #FFEBEE;
+            color: #C62828;
+            display: block;
+        }
+        
+        .honeypot {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-light);
+            padding: 60px 0 40px;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .footer-content {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        
+        .footer-logo img {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .footer-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .footer-copy {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 100px 0 60px;
+            }
+            
+            section {
+                padding: 60px 0;
+            }
+            
+            .pillars {
+                grid-template-columns: 1fr;
+            }
+            
+            .step {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        window.__ymId = 104570658;
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+        
+        ym(104570658, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104570658" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <a href="/" class="logo">Family Checklist</a>
+            <a href="#" class="top-cta" data-cta="top">Get Early Access</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero" aria-label="Family Checklist - Shared Family Habit Tracker">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Family Checklist — <span class="highlight">Shared Family Habit Tracker</span></h1>
+                <p class="subtitle">Kids learn by watching you. Our family routine app makes progress visible across Health, Home and Future. Parents lead by example with this shared family checklist.</p>
+                <div class="cta-group">
+                    <button class="btn-primary" data-cta="hero">Get Early Access</button>
+                    <a href="#" class="btn-secondary" data-contact>Contact us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why it works -->
+    <section class="why-visibility-section" aria-labelledby="why-section-title">
+        <div class="container">
+            <h2 class="section-title" id="why-section-title">Why our family habit tracker works</h2>
+            <p class="section-text">Children mirror parents. When families use our shared family checklist, routines become visible and turn into identity: "we do it here." Your example becomes their habits. Parents show the first check; kids follow and keep the streak.</p>
+            
+            <div class="research-links">
+                <span class="research-label">Research on Social Learning:</span>
+                <div class="research-logos">
+                    <!-- Nature -->
+                    <a href="https://www.nature.com/articles/s41598-021-97354-9" target="_blank" rel="noopener noreferrer" title="Children and action observation - Nature Scientific Reports">
+                        <svg class="research-logo" height="32" viewBox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="24" font-family="Georgia, serif" font-size="26" font-weight="700" font-style="italic" fill="#C41E3A">Nature</text>
+                        </svg>
+                    </a>
+                    
+                    <!-- Harvard -->
+                    <a href="https://developingchild.harvard.edu/wp-content/uploads/2024/10/wp14_reward_motivation_121118_FINAL.pdf" target="_blank" rel="noopener noreferrer" title="Reward and Motivation - Harvard Center on the Developing Child">
+                        <svg class="research-logo" height="40" viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <rect x="0" y="2" width="38" height="38" fill="#A51C30" rx="2"/>
+                                <text x="19" y="27" font-family="Georgia, serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">H</text>
+                                <text x="48" y="28" font-family="Georgia, serif" font-size="16" font-weight="600" fill="#A51C30">HARVARD</text>
+                            </g>
+                        </svg>
+                    </a>
+                    
+                    <!-- APA -->
+                    <a href="https://www.apa.org/topics/parenting/emotion-regulation" target="_blank" rel="noopener noreferrer" title="Teaching Emotion Regulation - American Psychological Association">
+                        <svg class="research-logo" height="32" viewBox="0 0 100 32" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="700" fill="#005587">APA</text>
+                        </svg>
+                    </a>
+                    
+                    <!-- Scientific American -->
+                    <a href="https://www.scientificamerican.com/article/the-neuroscience-of-true-grit/" target="_blank" rel="noopener noreferrer" title="The Neuroscience of True Grit - Scientific American">
+                        <svg class="research-logo" height="28" viewBox="0 0 200 28" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="20" font-family="Georgia, serif" font-size="16" font-weight="600" fill="#000">Scientific American</text>
+                        </svg>
+                    </a>
+                    
+                    <!-- NYT -->
+                    <a href="https://www.nytimes.com/2020/09/02/parenting/school-routines.html" target="_blank" rel="noopener noreferrer" title="The Power of School Routines - New York Times">
+                        <svg class="research-logo" height="28" viewBox="0 0 100 28" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="22" font-family="'Old English Text MT', 'Blackletter', Georgia, serif" font-size="22" font-weight="700" fill="#000">NYT</text>
+                        </svg>
+                    </a>
+                    
+                    <!-- SAGE -->
+                    <a href="https://journals.sagepub.com/doi/full/10.1177/21501319221089763" target="_blank" rel="noopener noreferrer" title="Family Routines and Child Development - SAGE Journals">
+                        <svg class="research-logo" height="26" viewBox="0 0 100 26" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="20" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="700" fill="#00704A">SAGE</text>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section class="demo-section" aria-labelledby="demo-section-title">
+        <div class="container">
+            <h2 class="section-title" id="demo-section-title">Try our family routine app</h2>
+            <p class="section-text">See how our shared family checklist works — tap any emoji below. Parents and kids share one view of their family routine with our family habit tracker.</p>
+            
+            <div class="demo-iframe-container">
+                <img src="./images/ipad-board-small.png" alt="Family Checklist app preview" class="demo-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Three Pillars -->
+    <section aria-labelledby="pillars-section-title">
+        <div class="container">
+            <h2 class="section-title" id="pillars-section-title">Shared family checklist for Health, Home and Future</h2>
+            <div class="pillars">
+                <div class="pillar-card">
+                    <span class="pillar-icon health">💚</span>
+                    <h3 class="pillar-title">Health</h3>
+                    <p class="pillar-text">Teeth, sleep, movement. Simple, daily acts kids can see and repeat.</p>
+                </div>
+                <div class="pillar-card">
+                    <span class="pillar-icon home">🏠</span>
+                    <h3 class="pillar-title">Home</h3>
+                    <p class="pillar-text">Helping the family with age-appropriate chores. Clear, consistent roles.</p>
+                </div>
+                <div class="pillar-card">
+                    <span class="pillar-icon future">🚀</span>
+                    <h3 class="pillar-title">Future</h3>
+                    <p class="pillar-text">Study, skills, sport. Weekly goals and streaks build momentum.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="why-section" aria-labelledby="how-section-title">
+        <div class="container">
+            <h2 class="section-title" id="how-section-title">How our family routine app works (today in focus)</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Shared family checklist (people × days)</h3>
+                        <p>Today is in focus; weekly goals are clear for the whole family. Our family habit tracker makes progress visible.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Quick emoji checkmarks kids understand</h3>
+                        <p>Parents can confirm tricky items. Teach kids habits through visible progress with our family routine app.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Stars & streaks reward consistency</h3>
+                        <p>Weekly summary celebrates progress in your family routine. Our shared family checklist builds lasting habits.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="footnote">Prefer paper? Print a weekly chart and scan to sync — optional.</p>
+        </div>
+    </section>
+
+    <!-- For Parents -->
+    <section aria-labelledby="parents-section-title">
+        <div class="container">
+            <h2 class="section-title" id="parents-section-title">For parents</h2>
+            <div class="features-list">
+                <ul>
+                    <li>Weekly goals per category (Health/Home/Future).</li>
+                    <li>Parent-first example badge ("Mom did it first today").</li>
+                    <li>Kiosk mode for a shared tablet in the kitchen.</li>
+                    <li>No money rewards — only stars, streaks and praise.</li>
+                    <li>Minimal data, email only for invites.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" aria-labelledby="faq-section-title">
+        <div class="container">
+            <h2 class="section-title" id="faq-section-title">Frequently Asked Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is it free?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">Early Access is free; the app will have a free plan.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What ages?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">Works best for 6–14.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Rewards?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">Stars & streaks. No money-for-chores by design.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Devices?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">iOS/Android; iPad kiosk for the kitchen.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Privacy?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">Email for invite only. No ads.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Paper lovers?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">Optional print & scan to sync the week.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="bottom-cta">
+        <div class="container">
+            <h2>Get Early Access</h2>
+            <form class="early-access-form" data-form="inline">
+                <input type="email" name="email" placeholder="your@email.com" required>
+                <button type="submit">Join Waitlist</button>
+            </form>
+            <p class="form-privacy">We respect your privacy. No spam, ever.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23007BFF'/%3E%3Cpath d='M30 50 L45 65 L70 35' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" alt="Family Checklist">
+                    <span>Family Checklist</span>
+                </div>
+                <p class="footer-description">Teaching kids habits together through our shared family checklist and family habit tracker. Build lasting family routines with our family routine app.</p>
+                <p class="footer-copy">&copy; 2025 Family Checklist. All rights reserved.</p>
+                <div style="margin-top:16px; font-weight:600;">Our products:</div>
+                <div style="margin-top:6px;">
+                    <a href="https://1clue.com" target="_blank" rel="noopener" style="color:#0EA5E9; text-decoration:none; margin-right:16px;">Word Puzzle</a>
+                    <a href="https://imakarov.us" target="_blank" rel="noopener" style="color:#0EA5E9; text-decoration:none;">Scan text with Swipe</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Subscribe Modal -->
+    <div class="modal" id="subscribeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Get Early Access</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="subscribeForm" action="#" method="POST">
+                    <!-- Email service configuration (Web3Forms) -->
+                    <input type="hidden" name="subject" value="New Early Access Signup - Family Checklist">
+                    <input type="hidden" name="from_name" value="Family Checklist Landing">
+                    <input type="hidden" name="_captcha" value="true">
+                    <input type="hidden" name="_template" value="box">
+                    <input type="hidden" name="_next" value="https://family-checklist.com/?ok=1">
+                    
+                    <!-- Hidden Fields for Tracking -->
+                    <input type="hidden" name="page" id="subscribe_page" value="">
+                    <input type="hidden" name="utm_source" id="subscribe_utm_source" value="">
+                    <input type="hidden" name="utm_medium" id="subscribe_utm_medium" value="">
+                    <input type="hidden" name="utm_campaign" id="subscribe_utm_campaign" value="">
+                    <input type="hidden" name="utm_content" id="subscribe_utm_content" value="">
+                    <input type="hidden" name="utm_term" id="subscribe_utm_term" value="">
+                    
+                    <!-- Honeypot -->
+                    <input type="text" name="_honey" class="honeypot" tabindex="-1" autocomplete="off">
+                    
+                    <div class="form-group">
+                        <label for="subscribe_email">Email *</label>
+                        <input type="email" id="subscribe_email" name="email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <p style="font-weight: 500; margin-bottom: 12px;">I'm interested in:</p>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="platform_ios" value="yes">
+                            <span>iOS</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="platform_android" value="yes">
+                            <span>Android</span>
+                        </label>
+                    </div>
+                    
+                    <p class="form-required">* Required fields</p>
+                    
+                    <button type="submit" class="form-submit">Subscribe</button>
+                    
+                    <div class="form-message" id="subscribeMessage"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Contact Us</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm" action="#" method="POST">
+                    <!-- Email service configuration (Web3Forms) -->
+                    <input type="hidden" name="subject" value="Contact — Family Checklist">
+                    <input type="hidden" name="from_name" value="Family Checklist Landing">
+                    <input type="hidden" name="_captcha" value="true">
+                    <input type="hidden" name="_template" value="box">
+                    <input type="hidden" name="_next" value="https://family-checklist.com/?contact_ok=1">
+                    
+                    <!-- Hidden Fields for Tracking -->
+                    <input type="hidden" name="page" id="contact_page" value="">
+                    <input type="hidden" name="utm_source" id="contact_utm_source" value="">
+                    <input type="hidden" name="utm_medium" id="contact_utm_medium" value="">
+                    <input type="hidden" name="utm_campaign" id="contact_utm_campaign" value="">
+                    <input type="hidden" name="utm_content" id="contact_utm_content" value="">
+                    <input type="hidden" name="utm_term" id="contact_utm_term" value="">
+                    
+                    <!-- Honeypot -->
+                    <input type="text" name="_honey" class="honeypot" tabindex="-1" autocomplete="off">
+                    
+                    <div class="form-group">
+                        <label for="contact_name">Name *</label>
+                        <input type="text" id="contact_name" name="name" required placeholder="Your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact_email">Email *</label>
+                        <input type="email" id="contact_email" name="email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required placeholder="How can we help?"></textarea>
+                    </div>
+                    
+                    <p class="form-required">* Required fields</p>
+                    
+                    <button type="submit" class="form-submit">Send Message</button>
+                    
+                    <div class="form-message" id="contactMessage"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // UTM Parameters Capture
+        function captureUTMParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {
+                utm_source: urlParams.get('utm_source') || '',
+                utm_medium: urlParams.get('utm_medium') || '',
+                utm_campaign: urlParams.get('utm_campaign') || '',
+                utm_content: urlParams.get('utm_content') || '',
+                utm_term: urlParams.get('utm_term') || ''
+            };
+            
+            // Store in localStorage
+            if (utmParams.utm_source || utmParams.utm_medium || utmParams.utm_campaign) {
+                localStorage.setItem('fc_leads', JSON.stringify(utmParams));
+            }
+            
+            return utmParams;
+        }
+
+        // Populate hidden fields
+        function populateFormFields(formPrefix) {
+            const utmParams = captureUTMParams();
+            const page = window.location.href.split('?')[0];
+            
+            document.getElementById(`${formPrefix}_page`).value = page;
+            document.getElementById(`${formPrefix}_utm_source`).value = utmParams.utm_source;
+            document.getElementById(`${formPrefix}_utm_medium`).value = utmParams.utm_medium;
+            document.getElementById(`${formPrefix}_utm_campaign`).value = utmParams.utm_campaign;
+            document.getElementById(`${formPrefix}_utm_content`).value = utmParams.utm_content;
+            document.getElementById(`${formPrefix}_utm_term`).value = utmParams.utm_term;
+        }
+
+        // Modal management
+        const subscribeModal = document.getElementById('subscribeModal');
+        const contactModal = document.getElementById('contactModal');
+        
+        function openModal(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Subscribe CTA buttons
+        document.querySelectorAll('[data-cta]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const ctaLocation = btn.getAttribute('data-cta');
+                
+                // Yandex Metrika event
+                if (window.ym) {
+                    ym(104570658, 'reachGoal', 'subscribe_click', {
+                        location: ctaLocation
+                    });
+                }
+                
+                populateFormFields('subscribe');
+                openModal(subscribeModal);
+            });
+        });
+        
+        // Contact buttons
+        document.querySelectorAll('[data-contact]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                populateFormFields('contact');
+                openModal(contactModal);
+            });
+        });
+        
+        // Close modal buttons
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(subscribeModal);
+                closeModal(contactModal);
+            });
+        });
+        
+        // Close on backdrop click
+        [subscribeModal, contactModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+        });
+        
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const wasActive = item.classList.contains('active');
+                
+                // Close all items
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                // Toggle current item
+                if (!wasActive) {
+                    item.classList.add('active');
+                    
+                    // Yandex Metrika event
+                    if (window.ym) {
+                        ym(104570658, 'reachGoal', 'faq_open', {
+                            question: btn.querySelector('span').textContent
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Scroll depth tracking
+        let scroll50Tracked = false;
+        window.addEventListener('scroll', () => {
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            
+            if (scrollPercent >= 50 && !scroll50Tracked && window.ym) {
+                ym(104570658, 'reachGoal', 'scroll_50');
+                scroll50Tracked = true;
+            }
+        });
+        
+        // Hero view tracking with IntersectionObserver
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.intersectionRatio >= 1.0 && window.ym) {
+                    ym(104570658, 'reachGoal', 'hero_view');
+                    heroObserver.disconnect();
+                }
+            });
+        }, { threshold: 1.0 });
+        
+        const heroElement = document.getElementById('hero');
+        if (heroElement) {
+            heroObserver.observe(heroElement);
+        }
+        
+        // Form submission handling (Web3Forms)
+        const subscribeForm = document.getElementById('subscribeForm');
+        const contactForm = document.getElementById('contactForm');
+        const WEB3FORMS_KEY = 'e1735eec-43d4-400d-8ce1-b2185e7a5dac';
+
+        async function submitViaWeb3Forms(form, successGoal, successMessageElId) {
+            if (!form) return;
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageEl = successMessageElId ? document.getElementById(successMessageElId) : null;
+                if (messageEl) messageEl.textContent = 'Sending...';
+
+                // Populate hidden fields
+                const prefix = form.id === 'contactForm' ? 'contact' : 'subscribe';
+                populateFormFields(prefix);
+
+                // UTM object from localStorage (if present)
+                try {
+                    const stored = localStorage.getItem('fc_leads');
+                    if (stored) {
+                        const data = JSON.parse(stored);
+                        Object.entries(data).forEach(([k,v]) => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = k;
+                            input.value = v || '';
+                            form.appendChild(input);
+                        });
+                    }
+                } catch(_){}
+
+                const formData = new FormData(form);
+                formData.append('access_key', WEB3FORMS_KEY);
+
+                try {
+                    if (window.ym) {
+                        ym(104570658, 'reachGoal', 'subscribe_click', { location: form.id });
+                    }
+                    const resp = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+                    const result = await resp.json();
+                    if (result && result.success) {
+                        if (messageEl) messageEl.textContent = 'Thanks! You\'re on the list.';
+                        if (window.ym && successGoal) { ym(104570658, 'reachGoal', successGoal); }
+                        form.reset();
+                    } else {
+                        if (messageEl) messageEl.textContent = 'Error. Please try again later.';
+                    }
+                } catch (err) {
+                    if (messageEl) messageEl.textContent = 'Network error. Please try again later.';
+                }
+            });
+        }
+
+        submitViaWeb3Forms(subscribeForm, 'subscribe_success', 'subscribeMessage');
+        submitViaWeb3Forms(contactForm, 'contact_submit', 'contactMessage');
+        
+        // Check for success messages in URL
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('ok') === '1') {
+                if (window.ym) {
+                    ym(104570658, 'reachGoal', 'subscribe_success');
+                }
+                alert('Thanks! You\'re on the list. We\'ll email you when Early Access opens.');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            if (urlParams.get('contact_ok') === '1') {
+                if (window.ym) {
+                    ym(104570658, 'reachGoal', 'contact_submit');
+                }
+                alert('Thank you for contacting us! We\'ll get back to you soon.');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+        
+        // Handle inline form submission
+        document.querySelectorAll('[data-form="inline"]').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = form.querySelector('input[type="email"]').value;
+                
+                if (!email) return;
+                
+                // Yandex Metrika event
+                if (window.ym) {
+                    ym(104570658, 'reachGoal', 'subscribe_click', {
+                        location: 'inline_form'
+                    });
+                }
+                
+                // Open modal with email prefilled
+                document.getElementById('subscribe_email').value = email;
+                populateFormFields('subscribe');
+                openModal(subscribeModal);
+            });
+        });
+        
+        // Initialize UTM capture on page load
+        captureUTMParams();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,124 @@
+{
+  "user": {
+    "id": "user_1",
+    "name": "Папа",
+    "role": "owner"
+  },
+  "checklists": [
+    {
+      "id": "checklist_1",
+      "name": "Семейный чеклист",
+      "icon": "📋",
+      "isActive": true,
+      "members": [
+        {
+          "id": "member_1",
+          "name": "Мама",
+          "avatar": "М",
+          "color": "#FF6B9D"
+        },
+        {
+          "id": "member_2",
+          "name": "Папа",
+          "avatar": "П",
+          "color": "#4A90E2"
+        },
+        {
+          "id": "member_3",
+          "name": "Дочь",
+          "avatar": "Д",
+          "subtitle": "12, учёба",
+          "color": "#FFA07A"
+        },
+        {
+          "id": "member_4",
+          "name": "Сын",
+          "avatar": "С",
+          "subtitle": "10, учёба",
+          "color": "#98D8C8"
+        }
+      ],
+      "progress": {
+        "today": {
+          "completed": 12,
+          "total": 18,
+          "percentage": 67
+        },
+        "week": {
+          "completed": 86,
+          "total": 126,
+          "percentage": 68
+        }
+      }
+    }
+  ],
+  "stats": {
+    "weeklyStars": 42,
+    "streak": 5,
+    "totalTasks": 126,
+    "completedTasks": 86
+  },
+  "memberPerformance": [
+    {
+      "memberId": "member_2",
+      "name": "Папа",
+      "avatar": "П",
+      "color": "#4A90E2",
+      "tasksCompleted": 14,
+      "tasksTotal": 15,
+      "percentage": 93,
+      "status": "success",
+      "badge": "⭐ Отлично"
+    },
+    {
+      "memberId": "member_1",
+      "name": "Мама",
+      "avatar": "М",
+      "color": "#FF6B9D",
+      "tasksCompleted": 16,
+      "tasksTotal": 17,
+      "percentage": 94,
+      "status": "success",
+      "badge": "⭐ Отлично"
+    },
+    {
+      "memberId": "member_3",
+      "name": "Дочь",
+      "avatar": "Д",
+      "color": "#FFA07A",
+      "tasksCompleted": 9,
+      "tasksTotal": 14,
+      "percentage": 64,
+      "status": "warning",
+      "badge": "💪 Старайся"
+    },
+    {
+      "memberId": "member_4",
+      "name": "Сын",
+      "avatar": "С",
+      "color": "#98D8C8",
+      "tasksCompleted": 11,
+      "tasksTotal": 12,
+      "percentage": 92,
+      "status": "success",
+      "badge": "⭐ Отлично"
+    }
+  ],
+  "insights": {
+    "improving": [
+      {
+        "memberId": "member_4",
+        "taskName": "Чтение",
+        "trend": "up"
+      }
+    ],
+    "struggling": [
+      {
+        "memberId": "member_3",
+        "taskName": "Уборка за котом",
+        "trend": "down"
+      }
+    ]
+  }
+}
+
