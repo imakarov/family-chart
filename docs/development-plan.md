@@ -154,15 +154,20 @@
 #### 3.1 Архитектура и модели данных
 
 **Задачи**:
-- [ ] Проектирование схемы локальной БД
-  - Таблица: Users (участники семьи)
-  - Таблица: Checklists (чеклисты)
-  - Таблица: Tasks (задачи)
-  - Таблица: TaskAssignments (назначения задач)
-  - Таблица: CheckItems (отметки выполнения по дням)
-- [ ] Создание Dart моделей (User, Checklist, Task, CheckItem)
-- [ ] Настройка локального хранилища (Hive/SQLite)
-- [ ] Репозитории для работы с данными (CRUD операции)
+- ✅ Проектирование схемы локальной БД ([docs/3-db-architecture.md](./3-db-architecture.md))
+  - Таблица: Users (участники семьи) — int ID autoIncrement
+  - Таблица: Checklists (чеклисты) — int ID autoIncrement
+  - Таблица: Tasks (задачи) — int ID autoIncrement
+  - Таблица: UserTasks (назначения задач) — связь Users + Tasks + Checklists
+  - Таблица: TaskCompletions (отметки выполнения по дням/неделям)
+  - Таблица: Achievements (достижения пользователей)
+  - Таблица: Settings (настройки приложения)
+- ✅ Создание Dart моделей (Users, Checklists, Tasks, UserTasks, TaskCompletions, Achievements, Settings)
+- ✅ Настройка локального хранилища (Isar — NoSQL embedded database)
+- ✅ Репозитории для работы с данными (CRUD операции для всех 7 таблиц)
+- ✅ Генерация кода через build_runner (Isar schemas + Riverpod providers)
+- ✅ Week Number (ISO 8601) для идентификации недель
+- ✅ ISO 8601 стандарт для dayOfWeek (1=Пн, 7=Вс)
 
 ---
 
