@@ -58,21 +58,20 @@ class ChecklistRepository {
     });
   }
 
-  /// Get checklist with all related data (persons, tasks)
-  Future<Checklist?> getChecklistWithRelations(String checklistId) async {
-    final checklist = await getChecklistById(checklistId);
-    if (checklist == null) return null;
+  /// Get persons for checklist
+  Future<List<Person>> getPersonsByChecklistId(String checklistId) async {
+    return await _isar.persons
+        .filter()
+        .checklistIdEqualTo(checklistId)
+        .findAll();
+  }
 
-    // Load relations
-    await checklist.persons.load();
-    await checklist.tasks.load();
-
-    // Load task assignments
-    for (final task in checklist.tasks) {
-      await task.assignedTo.load();
-    }
-
-    return checklist;
+  /// Get tasks for checklist
+  Future<List<Task>> getTasksByChecklistId(String checklistId) async {
+    return await _isar.tasks
+        .filter()
+        .checklistIdEqualTo(checklistId)
+        .findAll();
   }
 
   /// Watch checklists (stream for reactive updates)

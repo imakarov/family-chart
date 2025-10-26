@@ -24,33 +24,6 @@ class Checklist {
   late DateTime modifiedAt;
 
   String? cloudKitRecordId; // For CloudKit sync
-
-  // Relationships
-  final persons = IsarLinks<Person>();
-  final tasks = IsarLinks<Task>();
-
-  Checklist({
-    required this.checklistId,
-    required this.name,
-    required this.startDate,
-    required this.endDate,
-    this.isRepeating = true,
-    DateTime? createdAt,
-    DateTime? modifiedAt,
-    this.cloudKitRecordId,
-  }) {
-    this.createdAt = createdAt ?? DateTime.now();
-    this.modifiedAt = modifiedAt ?? DateTime.now();
-  }
-
-  Checklist.empty()
-      : checklistId = '',
-        name = '',
-        startDate = DateTime.now(),
-        endDate = DateTime.now(),
-        isRepeating = true,
-        createdAt = DateTime.now(),
-        modifiedAt = DateTime.now();
 }
 
 /// Person model - represents a family member
@@ -77,30 +50,8 @@ class Person {
 
   String? cloudKitRecordId;
 
-  @Backlink(to: 'persons')
-  final checklist = IsarLink<Checklist>();
-
-  Person({
-    required this.personId,
-    required this.name,
-    this.avatarBytes,
-    required this.colorHex,
-    this.relation,
-    this.contactId,
-    DateTime? createdAt,
-    DateTime? modifiedAt,
-    this.cloudKitRecordId,
-  }) {
-    this.createdAt = createdAt ?? DateTime.now();
-    this.modifiedAt = modifiedAt ?? DateTime.now();
-  }
-
-  Person.empty()
-      : personId = '',
-        name = '',
-        colorHex = '#007AFF',
-        createdAt = DateTime.now(),
-        modifiedAt = DateTime.now();
+  @Index()
+  late String checklistId; // Foreign key to Checklist
 }
 
 /// Task model - represents a task/chore
@@ -126,32 +77,10 @@ class Task {
 
   String? cloudKitRecordId;
 
-  @Backlink(to: 'tasks')
-  final checklist = IsarLink<Checklist>();
+  @Index()
+  late String checklistId; // Foreign key to Checklist
 
-  final assignedTo = IsarLink<Person>();
-
-  Task({
-    required this.taskId,
-    required this.title,
-    required this.iconName,
-    required this.frequency,
-    this.frequencyData,
-    DateTime? createdAt,
-    DateTime? modifiedAt,
-    this.cloudKitRecordId,
-  }) {
-    this.createdAt = createdAt ?? DateTime.now();
-    this.modifiedAt = modifiedAt ?? DateTime.now();
-  }
-
-  Task.empty()
-      : taskId = '',
-        title = '',
-        iconName = 'checkmark',
-        frequency = TaskFrequency.daily,
-        createdAt = DateTime.now(),
-        modifiedAt = DateTime.now();
+  late String personId; // Foreign key to Person
 }
 
 /// Task completion model - tracks individual task completions
@@ -180,30 +109,6 @@ class TaskCompletion {
   late DateTime modifiedAt;
 
   String? cloudKitRecordId;
-
-  TaskCompletion({
-    required this.completionId,
-    required this.taskId,
-    required this.personId,
-    required this.checklistId,
-    required this.date,
-    required this.isCompleted,
-    this.completedAt,
-    this.completedBy,
-    DateTime? modifiedAt,
-    this.cloudKitRecordId,
-  }) {
-    this.modifiedAt = modifiedAt ?? DateTime.now();
-  }
-
-  TaskCompletion.empty()
-      : completionId = '',
-        taskId = '',
-        personId = '',
-        checklistId = '',
-        date = DateTime.now(),
-        isCompleted = false,
-        modifiedAt = DateTime.now();
 }
 
 /// Task frequency enum
