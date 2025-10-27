@@ -112,6 +112,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           const SizedBox(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -132,7 +133,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     return Row(
       children: [
         // Empty cell for member names
-        SizedBox(width: 110),
+        Container(width: 110, height: 40),
         // Day cells
         ...List.generate(7, (index) {
           final dayIndex = index;
@@ -220,6 +221,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         // Member cell
         Container(
           width: 110,
+          height: 56,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFF0A7FCC),
@@ -284,6 +286,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
           return Container(
             width: dayWidth,
+            height: 56,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
               color: isCurrent ? const Color(0xFF1CB0F6) : const Color(0xFF0A7FCC),
@@ -504,27 +507,13 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
       width: dayWidth,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: isCurrent ? Colors.white : const Color(0xFFF5F5F7),
+        color: const Color(0xFFF5F5F7), // Always grey background
         border: Border(
           bottom: BorderSide(
             color: Colors.black.withOpacity(0.1),
             width: 0.5,
           ),
         ),
-        boxShadow: isCurrent
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 12,
-                  offset: const Offset(3, 0),
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 12,
-                  offset: const Offset(-3, 0),
-                ),
-              ]
-            : null,
       ),
       child: hasTask
           ? _buildTaskItem(member, task, date, isPast, isCurrent, isFuture, isCompleted)
@@ -555,55 +544,26 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         ),
       );
     } else {
-      // Current day - show emoji with background
+      // Current day - show emoji with white background box
       itemContent = Container(
         width: size,
         height: size,
-        padding: EdgeInsets.all(isCurrent ? 6 : 3),
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          gradient: isCompleted
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF58CC02), Color(0xFF4CAD02)],
-                )
-              : LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.black.withOpacity(0.06),
-                    Colors.black.withOpacity(0.03),
-                  ],
-                ),
-          boxShadow: isCompleted
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFF58CC02).withOpacity(0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                  BoxShadow(
-                    color: const Color(0xFF58CC02).withOpacity(0.25),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 4,
-                    offset: const Offset(2, 2),
-                    spreadRadius: -1,
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Center(
           child: Text(
             task.iconName,
             style: TextStyle(
-              fontSize: isCurrent ? 22 : 14,
-              color: isCompleted ? Colors.white : Colors.grey,
+              fontSize: isCurrent ? 28 : 18,
             ),
           ),
         ),
