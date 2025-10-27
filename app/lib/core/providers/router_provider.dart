@@ -28,7 +28,7 @@ GoRouter router(RouterRef ref) {
         path: '/checklist/:id',
         name: 'weekly-board',
         builder: (context, state) {
-          final checklistId = state.pathParameters['id']!;
+          final checklistId = int.parse(state.pathParameters['id']!);
           return WeeklyBoardScreen(checklistId: checklistId);
         },
       ),

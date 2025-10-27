@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import '../../../data/repositories/checklist_repository.dart';
+import '../../../data/repositories/users_repository.dart';
+import '../../../data/repositories/user_tasks_repository.dart';
+import '../../../data/repositories/task_completions_repository.dart';
+import '../../../data/repositories/tasks_repository.dart';
+import '../../../data/models/users.dart';
+import '../../../data/models/user_tasks.dart';
+import '../../../data/models/tasks.dart';
+import '../../../data/models/task_completions.dart';
+import '../../../data/models/checklists.dart';
+import '../../../core/utils/date_utils.dart' as app_date_utils;
 
-/// Weekly Board screen - main checklist table view
-class WeeklyBoardScreen extends StatelessWidget {
-  final String checklistId;
+class WeeklyBoardScreen extends ConsumerStatefulWidget {
+  final int checklistId;
 
   const WeeklyBoardScreen({
     super.key,
@@ -10,14 +22,761 @@ class WeeklyBoardScreen extends StatelessWidget {
   });
 
   @override
+  ConsumerState<WeeklyBoardScreen> createState() => _WeeklyBoardScreenState();
+}
+
+class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
+  late int currentWeekNumber;
+  late int currentWeekYear;
+  late DateTime weekStart;
+  int currentDayOfWeek = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
+  String? selectedFilter; // null = 'all', or userId
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    currentWeekNumber = app_date_utils.DateUtils.getWeekNumber(now);
+    currentWeekYear = app_date_utils.DateUtils.getWeekYear(now);
+    weekStart = app_date_utils.DateUtils.getWeekStartDate(currentWeekNumber, currentWeekYear);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Weekly Board'),
+      backgroundColor: Colors.white,
+      appBar: _buildAppBar(context),
+      body: FutureBuilder(
+        future: _loadData(),
+        builder: (context, AsyncSnapshot<_BoardData> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final data = snapshot.data!;
+          return _buildBody(data);
+        },
       ),
-      body: Center(
-        child: Text('Weekly Board for checklist: $checklistId\n\nComing Soon'),
+      bottomNavigationBar: FutureBuilder(
+        future: _loadData(),
+        builder: (context, AsyncSnapshot<_BoardData> snapshot) {
+          if (!snapshot.hasData) return const SizedBox();
+          return _buildBottomNav(snapshot.data!.users);
+        },
       ),
     );
   }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.chevron_left, size: 28, color: Color(0xFF0C7FCC)),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: const Text(
+        'Family Chart',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
+      ),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.more_horiz, size: 24, color: Color(0xFF0C7FCC)),
+          onPressed: () {},
+        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(2),
+        child: Container(
+          height: 2,
+          color: const Color(0xFFD1D1D6),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(_BoardData data) {
+    // Filter members
+    final filteredMembers = selectedFilter == null
+        ? data.users
+        : data.users.where((u) => u.userId.toString() == selectedFilter).toList();
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderRow(),
+                ...filteredMembers.expand((member) => _buildMemberSection(data, member)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 90), // Space for bottom nav
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderRow() {
+    final days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+    return Row(
+      children: [
+        // Empty cell for member names
+        SizedBox(width: 110),
+        // Day cells
+        ...List.generate(7, (index) {
+          final dayIndex = index;
+          final isCurrent = dayIndex == currentDayOfWeek - 1;
+          final date = weekStart.add(Duration(days: dayIndex));
+          final dayWidth = isCurrent ? 56.0 : 30.0;
+
+          return Container(
+            width: dayWidth,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            decoration: BoxDecoration(
+              color: isCurrent ? const Color(0xFF1CB0F6) : Colors.white,
+              borderRadius: isCurrent
+                  ? const BorderRadius.vertical(top: Radius.circular(12))
+                  : null,
+              boxShadow: isCurrent
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(3, 0),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(-3, 0),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  days[index],
+                  style: TextStyle(
+                    fontSize: isCurrent ? 13 : 11,
+                    fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                    color: isCurrent ? Colors.white : const Color(0xFF1A1A1A),
+                  ),
+                ),
+                if (isCurrent) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${date.day} ${DateFormat('MMM', 'ru').format(date)}',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  List<Widget> _buildMemberSection(_BoardData data, Users member) {
+    // Get tasks for this member
+    final memberUserTasks = data.userTasks
+        .where((ut) => ut.userId == member.userId)
+        .toList();
+
+    final widgets = <Widget>[];
+
+    // Member header row
+    widgets.add(_buildMemberHeaderRow(data, member));
+
+    // Task rows
+    for (final userTask in memberUserTasks) {
+      final task = data.tasks.firstWhere((t) => t.taskId == userTask.taskId);
+      widgets.add(_buildTaskRow(data, member, userTask, task));
+    }
+
+    return widgets;
+  }
+
+  Widget _buildMemberHeaderRow(_BoardData data, Users member) {
+    return Row(
+      children: [
+        // Member cell
+        Container(
+          width: 110,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0A7FCC),
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.black.withOpacity(0.1),
+                width: 0.5,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              // Avatar
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _parseColor(member.colorHex),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    member.name[0],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // Name
+              Expanded(
+                child: Text(
+                  member.name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    letterSpacing: -0.4,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Day cells with stars
+        ...List.generate(7, (dayIndex) {
+          final isCurrent = dayIndex == currentDayOfWeek - 1;
+          final star = _getMemberDayStar(data, member, dayIndex);
+          final dayWidth = isCurrent ? 56.0 : 30.0;
+
+          return Container(
+            width: dayWidth,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            decoration: BoxDecoration(
+              color: isCurrent ? const Color(0xFF1CB0F6) : const Color(0xFF0A7FCC),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black.withOpacity(0.1),
+                  width: 0.5,
+                ),
+              ),
+              boxShadow: isCurrent
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(3, 0),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(-3, 0),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Center(child: star),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _getMemberDayStar(_BoardData data, Users member, int dayIndex) {
+    // Don't show stars for future days
+    if (dayIndex > currentDayOfWeek - 1) {
+      return const SizedBox();
+    }
+
+    final date = weekStart.add(Duration(days: dayIndex));
+
+    // Get all tasks for this member on this day
+    final memberUserTasks = data.userTasks
+        .where((ut) => ut.userId == member.userId)
+        .toList();
+
+    final tasksForDay = memberUserTasks.where((ut) {
+      final frequencyDays = ut.frequency.split(',').map(int.parse).toList();
+      return frequencyDays.contains(dayIndex + 1); // dayIndex is 0-based, weekday is 1-based
+    }).toList();
+
+    if (tasksForDay.isEmpty) return const SizedBox();
+
+    // Check if all tasks are completed
+    final allCompleted = tasksForDay.every((ut) {
+      final completion = data.completions.firstWhere(
+        (c) =>
+            c.userId == member.userId &&
+            c.taskId == ut.taskId &&
+            c.completionDate.year == date.year &&
+            c.completionDate.month == date.month &&
+            c.completionDate.day == date.day,
+        orElse: () => TaskCompletions()
+          ..userId = 0
+          ..taskId = 0
+          ..weekNumber = 0
+          ..weekYear = 0
+          ..dayOfWeek = 0
+          ..completionDate = DateTime(1970)
+          ..isCompleted = false,
+      );
+      return completion.isCompleted;
+    });
+
+    if (allCompleted) {
+      final isCurrent = dayIndex == currentDayOfWeek - 1;
+      return Text(
+        '⭐',
+        style: TextStyle(
+          fontSize: isCurrent ? 20 : 14,
+        ),
+      );
+    }
+
+    return const SizedBox();
+  }
+
+  Widget _buildTaskRow(_BoardData data, Users member, UserTasks userTask, Tasks task) {
+    // Calculate progress
+    final frequencyDays = userTask.frequency.split(',').map(int.parse).toList();
+    final totalDays = frequencyDays.length;
+    int completedDays = 0;
+
+    for (final dayNum in frequencyDays) {
+      final dayIndex = dayNum - 1; // Convert to 0-based
+      final date = weekStart.add(Duration(days: dayIndex));
+
+      final completion = data.completions.firstWhere(
+        (c) =>
+            c.userId == member.userId &&
+            c.taskId == task.taskId &&
+            c.completionDate.year == date.year &&
+            c.completionDate.month == date.month &&
+            c.completionDate.day == date.day,
+        orElse: () => TaskCompletions()
+          ..userId = 0
+          ..taskId = 0
+          ..weekNumber = 0
+          ..weekYear = 0
+          ..dayOfWeek = 0
+          ..completionDate = DateTime(1970)
+          ..isCompleted = false,
+      );
+
+      if (completion.isCompleted) {
+        completedDays++;
+      }
+    }
+
+    final progressPercent = totalDays > 0 ? (completedDays / totalDays) : 0.0;
+
+    return Row(
+      children: [
+        // Task label cell
+        Container(
+          width: 110,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F7),
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.black.withOpacity(0.1),
+                width: 0.5,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              // Progress bar
+              Container(
+                width: 2.5,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: FractionallySizedBox(
+                    heightFactor: progressPercent,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xFF58CC02), Color(0xFF4CAD02)],
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // Task label
+              Expanded(
+                child: Text(
+                  task.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF1A1A1A),
+                    fontWeight: FontWeight.w400,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Day cells
+        ...List.generate(7, (dayIndex) {
+          return _buildTaskDayCell(data, member, userTask, task, dayIndex);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildTaskDayCell(_BoardData data, Users member, UserTasks userTask, Tasks task, int dayIndex) {
+    final isCurrent = dayIndex == currentDayOfWeek - 1;
+    final isPast = dayIndex < currentDayOfWeek - 1;
+    final isFuture = dayIndex > currentDayOfWeek - 1;
+
+    final frequencyDays = userTask.frequency.split(',').map(int.parse).toList();
+    final hasTask = frequencyDays.contains(dayIndex + 1); // dayIndex is 0-based, weekday is 1-based
+
+    final date = weekStart.add(Duration(days: dayIndex));
+    final dayWidth = isCurrent ? 56.0 : 30.0;
+
+    final completion = data.completions.firstWhere(
+      (c) =>
+          c.userId == member.userId &&
+          c.taskId == task.taskId &&
+          c.completionDate.year == date.year &&
+          c.completionDate.month == date.month &&
+          c.completionDate.day == date.day,
+      orElse: () => TaskCompletions()
+        ..userId = 0
+        ..taskId = 0
+        ..weekNumber = 0
+        ..weekYear = 0
+        ..dayOfWeek = 0
+        ..completionDate = DateTime(1970)
+        ..isCompleted = false,
+    );
+
+    final isCompleted = completion.isCompleted;
+
+    return Container(
+      width: dayWidth,
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      decoration: BoxDecoration(
+        color: isCurrent ? Colors.white : const Color(0xFFF5F5F7),
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.black.withOpacity(0.1),
+            width: 0.5,
+          ),
+        ),
+        boxShadow: isCurrent
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(3, 0),
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(-3, 0),
+                ),
+              ]
+            : null,
+      ),
+      child: hasTask
+          ? _buildTaskItem(member, task, date, isPast, isCurrent, isFuture, isCompleted)
+          : const SizedBox(),
+    );
+  }
+
+  Widget _buildTaskItem(
+    Users member,
+    Tasks task,
+    DateTime date,
+    bool isPast,
+    bool isCurrent,
+    bool isFuture,
+    bool isCompleted,
+  ) {
+    final size = isCurrent ? 42.0 : 26.0;
+
+    Widget itemContent;
+
+    if (isPast || isFuture) {
+      // Show circle dot
+      itemContent = Text(
+        '●',
+        style: TextStyle(
+          fontSize: isCurrent ? 14 : 12,
+          color: isCompleted ? const Color(0xFF58CC02) : const Color(0xFFD1D1D6),
+        ),
+      );
+    } else {
+      // Current day - show emoji with background
+      itemContent = Container(
+        width: size,
+        height: size,
+        padding: EdgeInsets.all(isCurrent ? 6 : 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: isCompleted
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF58CC02), Color(0xFF4CAD02)],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withOpacity(0.06),
+                    Colors.black.withOpacity(0.03),
+                  ],
+                ),
+          boxShadow: isCompleted
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF58CC02).withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFF58CC02).withOpacity(0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 4,
+                    offset: const Offset(2, 2),
+                    spreadRadius: -1,
+                  ),
+                ],
+        ),
+        child: Center(
+          child: Text(
+            task.iconName,
+            style: TextStyle(
+              fontSize: isCurrent ? 22 : 14,
+              color: isCompleted ? Colors.white : Colors.grey,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => _toggleCompletion(member, task, date),
+      child: Center(child: itemContent),
+    );
+  }
+
+  Future<void> _toggleCompletion(Users member, Tasks task, DateTime date) async {
+    final repo = ref.read(taskCompletionsRepositoryProvider);
+    final dayOfWeek = date.weekday; // 1 = Monday, 7 = Sunday
+    final weekNumber = app_date_utils.DateUtils.getWeekNumber(date);
+    final weekYear = app_date_utils.DateUtils.getWeekYear(date);
+
+    await repo.toggleCompletion(
+      member.userId,
+      task.taskId,
+      weekNumber,
+      weekYear,
+      dayOfWeek,
+      widget.checklistId,
+    );
+    setState(() {}); // Refresh UI
+  }
+
+  Widget _buildBottomNav(List<Users> users) {
+    return Container(
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 12),
+      decoration: const BoxDecoration(
+        color: Color(0xFF053656),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x261CB0F6),
+            blurRadius: 12,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // "All" tab
+          _buildTabItem(
+            label: 'All',
+            icon: Icons.family_restroom,
+            isActive: selectedFilter == null,
+            onTap: () => setState(() => selectedFilter = null),
+          ),
+          // Individual member tabs
+          ...users.map((user) => _buildTabItem(
+                label: user.name,
+                icon: Icons.person,
+                isActive: selectedFilter == user.userId.toString(),
+                color: _parseColor(user.colorHex),
+                onTap: () => setState(() => selectedFilter = user.userId.toString()),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabItem({
+    required String label,
+    required IconData icon,
+    required bool isActive,
+    Color? color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(35),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color ?? Colors.grey,
+                ),
+                child: Center(
+                  child: Text(
+                    label[0],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                  color: isActive
+                      ? const Color(0xFF1CB0F6)
+                      : Colors.white.withOpacity(0.8),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _parseColor(String? hexColor) {
+    if (hexColor == null || hexColor.isEmpty) {
+      return Colors.grey;
+    }
+
+    final hex = hexColor.replaceFirst('#', '');
+    return Color(int.parse('FF$hex', radix: 16));
+  }
+
+  Future<_BoardData> _loadData() async {
+    final checklist = await ref.read(checklistRepositoryProvider).getChecklistById(widget.checklistId);
+    final users = await ref.read(usersRepositoryProvider).getAllUsers();
+    final userTasks = await ref.read(userTasksRepositoryProvider).getUserTasksByChecklistId(widget.checklistId);
+    final tasks = await ref.read(tasksRepositoryProvider).getAllTasks();
+    final completions = await ref.read(taskCompletionsRepositoryProvider).getCompletionsByWeek(
+          currentWeekNumber,
+          currentWeekYear,
+          widget.checklistId,
+        );
+
+    return _BoardData(
+      checklist: checklist,
+      users: users,
+      userTasks: userTasks,
+      tasks: tasks,
+      completions: completions,
+    );
+  }
+}
+
+class _BoardData {
+  final Checklists? checklist;
+  final List<Users> users;
+  final List<UserTasks> userTasks;
+  final List<Tasks> tasks;
+  final List<TaskCompletions> completions;
+
+  _BoardData({
+    required this.checklist,
+    required this.users,
+    required this.userTasks,
+    required this.tasks,
+    required this.completions,
+  });
 }

@@ -978,7 +978,7 @@
         // Load JSON data
         async function loadData() {
             try {
-                const response = await fetch('demo-ipad-data.json');
+                const response = await fetch('data/weekly-board-data.json');
                 boardData = await response.json();
                 renderTabs();
                 renderBoard();

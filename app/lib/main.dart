@@ -1,8 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/providers/router_provider.dart';
+import 'package:isar/isar.dart';
+import 'core/providers/isar_provider.dart';
 import 'core/utils/localization_helper.dart';
+import 'core/services/seed_data_service.dart';
+import 'data/models/checklists.dart';
+import 'features/weekly_board/screens/weekly_board_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +26,75 @@ void main() async {
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider);
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
 
-    return MaterialApp.router(
+class _MyAppState extends ConsumerState<MyApp> {
+  bool _isInitialized = false;
+  int? _firstChecklistId;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      // Wait for Isar to initialize
+      final isar = await ref.read(isarProvider.future);
+
+      // Initialize seed data
+      final seedService = SeedDataService(isar);
+      await seedService.seedDemoData();
+
+      // Get first checklist ID
+      final checklists = await isar.checklists.where().findAll();
+      if (checklists.isNotEmpty) {
+        setState(() {
+          _firstChecklistId = checklists.first.checklistId;
+          _isInitialized = true;
+        });
+      } else {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      print('Error initializing app: $e');
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    if (_firstChecklistId == null) {
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Text('No checklist found. Please restart the app.'),
+          ),
+        ),
+      );
+    }
+
+    return MaterialApp(
       title: LocaleKeys.app.name.tr(),
       debugShowCheckedModeBanner: false,
 
@@ -55,8 +120,8 @@ class MyApp extends ConsumerWidget {
       ),
       themeMode: ThemeMode.system,
 
-      // Routing
-      routerConfig: router,
+      // Show Weekly Board as home screen
+      home: WeeklyBoardScreen(checklistId: _firstChecklistId!),
     );
   }
 }
