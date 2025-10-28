@@ -425,21 +425,24 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
     final progressPercent = totalDays > 0 ? (completedDays / totalDays) : 0.0;
 
-    return Row(
-      children: [
-        // Task label cell
-        Container(
-          width: 110,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F7),
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.black.withOpacity(0.1),
-                width: 0.5,
-              ),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.black.withOpacity(0.1),
+            width: 0.5,
           ),
+        ),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Task label cell
+            Container(
+              width: 110,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              color: const Color(0xFFF5F5F7),
           child: Row(
             children: [
               // Progress bar
@@ -484,11 +487,13 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
             ],
           ),
         ),
-        // Day cells
-        ...List.generate(7, (dayIndex) {
-          return _buildTaskDayCell(data, member, userTask, task, dayIndex);
-        }),
-      ],
+            // Day cells
+            ...List.generate(7, (dayIndex) {
+              return _buildTaskDayCell(data, member, userTask, task, dayIndex);
+            }),
+          ],
+        ),
+      ),
     );
   }
 
@@ -523,15 +528,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
     Widget dayCell = Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      decoration: BoxDecoration(
-        color: isCurrent ? Colors.white : const Color(0xFFF5F5F7), // White only for current day
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.black.withOpacity(0.1),
-            width: 0.5,
-          ),
-        ),
-      ),
+      color: isCurrent ? Colors.white : const Color(0xFFF5F5F7), // White only for current day
       child: hasTask
           ? _buildTaskItem(member, task, date, isPast, isCurrent, isFuture, isCompleted)
           : const SizedBox(),
@@ -605,14 +602,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFF0F0F0), // rgba(0,0,0,0.06) over white
-                Color(0xFFF7F7F7), // rgba(0,0,0,0.03) over white
-              ],
-            ),
+            color: const Color(0xFFE8E8E8), // Slightly darker base
             borderRadius: BorderRadius.circular(12),
             boxShadow: const [
               // Outer subtle shadow
@@ -623,64 +613,25 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
               ),
             ],
           ),
-          child: Stack(
-            children: [
-              // Simulate inset shadow with positioned containers
-              Positioned(
-                top: 2,
-                left: 2,
-                right: 8,
-                bottom: 8,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.black.withOpacity(0.15),
-                        Colors.transparent,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+          child: Container(
+            margin: const EdgeInsets.all(1),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFD0D0D0), // Darker top-left (simulates inset shadow)
+                  Color(0xFFF5F5F5), // Lighter bottom-right
+                ],
               ),
-              Positioned(
-                bottom: 1,
-                right: 1,
-                left: 8,
-                top: 8,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Colors.white.withOpacity(0.7),
-                        Colors.transparent,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                task.iconName,
+                style: const TextStyle(fontSize: 28),
               ),
-              // Emoji icon
-              Center(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Colors.grey.withOpacity(0.3),
-                    BlendMode.saturation,
-                  ),
-                  child: Opacity(
-                    opacity: 0.9,
-                    child: Text(
-                      task.iconName,
-                      style: const TextStyle(fontSize: 28),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       }
