@@ -47,6 +47,26 @@ class Step2ChooseTasksScreen extends StatefulWidget {
 class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
   String _currentCategory = 'health';
   final Set<String> _selectedTaskIds = {};
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void didUpdateWidget(Step2ChooseTasksScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Clear selection when switching to a different member
+    if (oldWidget.member.id != widget.member.id) {
+      _selectedTaskIds.clear();
+      _currentCategory = 'health';
+      _searchQuery = '';
+      _searchController.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   // Hardcoded tasks for now (TODO: Load from JSON)
   final List<Task> _allTasks = [
@@ -112,7 +132,16 @@ class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
   ];
 
   List<Task> get _filteredTasks {
-    return _allTasks.where((t) => t.category == _currentCategory).toList();
+    var tasks = _allTasks.where((t) => t.category == _currentCategory);
+
+    // Apply search filter
+    if (_searchQuery.isNotEmpty) {
+      tasks = tasks.where((t) =>
+        t.name.toLowerCase().contains(_searchQuery.toLowerCase())
+      );
+    }
+
+    return tasks.toList();
   }
 
   Map<String, List<Task>> get _groupedTasks {
@@ -189,10 +218,15 @@ class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
             const SizedBox(height: 16),
             // Category Tabs
             _buildCategoryTabs(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            // Search Bar
+            _buildSearchBar(),
+            const SizedBox(height: 12),
             // Tasks List
             Expanded(
-              child: _buildTasksList(),
+              child: _filteredTasks.isEmpty && _searchQuery.isNotEmpty
+                  ? _buildEmptySearchResult()
+                  : _buildTasksList(),
             ),
             const SizedBox(height: 80), // Space for button
           ],
@@ -503,4 +537,111 @@ class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
       ),
     );
   }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Search tasks...',
+          hintStyle: const TextStyle(
+            fontSize: 15,
+            color: Color(0xFFC7C7CC),
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Color(0xFF8E8E93),
+            size: 20,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+        style: const TextStyle(fontSize: 15),
+      ),
+    );
+  }
+
+  Widget _buildEmptySearchResult() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.search_off,
+              size: 64,
+              color: Color(0xFFC7C7CC),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No tasks found for "$_searchQuery"',
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF8E8E93),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            // Create Custom Task button
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  // TODO: Show create custom task dialog
+                  _showCreateTaskDialog();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0A7FCC),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'Create Custom Task',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCreateTaskDialog() {
+    // TODO: Implement custom task creation
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Custom task creation coming soon!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 }
+

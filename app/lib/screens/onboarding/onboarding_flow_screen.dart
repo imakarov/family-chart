@@ -118,7 +118,7 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
                 onContinue: _onStep1Continue,
               ),
               // Screen 2: Choose Tasks (multi-member flow)
-              _currentPage == 2 && _members.isNotEmpty
+              _currentPage == 2 && _members.isNotEmpty && _currentMemberIndex < _members.length
                   ? Step2ChooseTasksScreen(
                       member: _members[_currentMemberIndex],
                       currentIndex: _currentMemberIndex,

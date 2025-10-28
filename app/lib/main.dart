@@ -10,7 +10,7 @@ import 'screens/weekly_board_screen.dart';
 import 'screens/onboarding/onboarding_flow_screen.dart';
 
 // DEBUG: Set to true to reset database on app start
-const bool DEBUG_RESET_DATABASE = true;
+const bool DEBUG_RESET_DATABASE = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
