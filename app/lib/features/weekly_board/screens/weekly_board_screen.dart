@@ -44,7 +44,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF5F5F7), // Grey background
       appBar: _buildAppBar(context),
       body: FutureBuilder(
         future: _loadData(),
@@ -106,24 +106,23 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         ? data.users
         : data.users.where((u) => u.userId.toString() == selectedFilter).toList();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const ClampingScrollPhysics(),
+    return Column(
+      children: [
+        const SizedBox(height: 12),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeaderRow(),
                 ...filteredMembers.expand((member) => _buildMemberSection(data, member)),
+                const SizedBox(height: 90), // Space for bottom nav
               ],
             ),
           ),
-          const SizedBox(height: 90), // Space for bottom nav
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -133,17 +132,20 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     return Row(
       children: [
         // Empty cell for member names
-        Container(width: 110, height: 40),
+        Container(width: 110, height: 48),
         // Day cells
         ...List.generate(7, (index) {
           final dayIndex = index;
           final isCurrent = dayIndex == currentDayOfWeek - 1;
           final date = weekStart.add(Duration(days: dayIndex));
-          final dayWidth = isCurrent ? 56.0 : 30.0;
 
-          return Container(
-            width: dayWidth,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          Widget dayCell = Container(
+            height: isCurrent ? 48 : 34,
+            margin: isCurrent ? null : const EdgeInsets.only(top: 12),
+            alignment: isCurrent ? null : Alignment.bottomCenter,
+            padding: isCurrent
+                ? const EdgeInsets.symmetric(vertical: 6, horizontal: 4)
+                : const EdgeInsets.only(bottom: 6, left: 4, right: 4),
             decoration: BoxDecoration(
               color: isCurrent ? const Color(0xFF1CB0F6) : Colors.white,
               borderRadius: isCurrent
@@ -164,31 +166,44 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                     ]
                   : null,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  days[index],
-                  style: TextStyle(
-                    fontSize: isCurrent ? 13 : 11,
-                    fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
-                    color: isCurrent ? Colors.white : const Color(0xFF1A1A1A),
-                  ),
-                ),
-                if (isCurrent) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    '${date.day} ${DateFormat('MMM', 'ru').format(date)}',
-                    style: TextStyle(
-                      fontSize: 9,
+            child: isCurrent
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        days[index],
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${date.day} ${DateFormat('MMM', 'ru').format(date)}',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  )
+                : Text(
+                    days[index],
+                    style: const TextStyle(
+                      fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Color(0xFF1A1A1A),
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ],
-              ],
-            ),
+          );
+
+          // All days are Expanded with different flex values
+          return Expanded(
+            flex: isCurrent ? 56 : 30,
+            child: dayCell,
           );
         }),
       ],
@@ -282,10 +297,8 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         ...List.generate(7, (dayIndex) {
           final isCurrent = dayIndex == currentDayOfWeek - 1;
           final star = _getMemberDayStar(data, member, dayIndex);
-          final dayWidth = isCurrent ? 56.0 : 30.0;
 
-          return Container(
-            width: dayWidth,
+          Widget dayCell = Container(
             height: 56,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
@@ -312,6 +325,12 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                   : null,
             ),
             child: Center(child: star),
+          );
+
+          // All days are Expanded with different flex values
+          return Expanded(
+            flex: isCurrent ? 56 : 30,
+            child: dayCell,
           );
         }),
       ],
@@ -482,7 +501,6 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     final hasTask = frequencyDays.contains(dayIndex + 1); // dayIndex is 0-based, weekday is 1-based
 
     final date = weekStart.add(Duration(days: dayIndex));
-    final dayWidth = isCurrent ? 56.0 : 30.0;
 
     final completion = data.completions.firstWhere(
       (c) =>
@@ -503,11 +521,10 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
     final isCompleted = completion.isCompleted;
 
-    return Container(
-      width: dayWidth,
+    Widget dayCell = Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7), // Always grey background
+        color: isCurrent ? Colors.white : const Color(0xFFF5F5F7), // White only for current day
         border: Border(
           bottom: BorderSide(
             color: Colors.black.withOpacity(0.1),
@@ -518,6 +535,12 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
       child: hasTask
           ? _buildTaskItem(member, task, date, isPast, isCurrent, isFuture, isCompleted)
           : const SizedBox(),
+    );
+
+    // All days are Expanded with different flex values
+    return Expanded(
+      flex: isCurrent ? 56 : 30,
+      child: dayCell,
     );
   }
 
@@ -530,44 +553,137 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     bool isFuture,
     bool isCompleted,
   ) {
-    final size = isCurrent ? 42.0 : 26.0;
-
     Widget itemContent;
 
-    if (isPast || isFuture) {
-      // Show circle dot
+    if (!isCurrent) {
+      // Side days (all except current) - show only circle dot (●), NO icons!
       itemContent = Text(
         '●',
         style: TextStyle(
-          fontSize: isCurrent ? 14 : 12,
+          fontSize: 12,
           color: isCompleted ? const Color(0xFF58CC02) : const Color(0xFFD1D1D6),
         ),
       );
     } else {
-      // Current day - show emoji with white background box
-      itemContent = Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+      // Current day only - show emoji icon with inset shadow
+      // Size is always 42x42 for current day
+      if (isCompleted) {
+        // Completed - green gradient background
+        itemContent = Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF58CC02), Color(0xFF4CAD02)],
             ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            task.iconName,
-            style: TextStyle(
-              fontSize: isCurrent ? 28 : 18,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF58CC02).withOpacity(0.35),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: const Color(0xFF58CC02).withOpacity(0.25),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              task.iconName,
+              style: const TextStyle(fontSize: 28),
             ),
           ),
-        ),
-      );
+        );
+      } else {
+        // Not completed - inset shadow (pressed effect)
+        itemContent = Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFF0F0F0), // rgba(0,0,0,0.06) over white
+                Color(0xFFF7F7F7), // rgba(0,0,0,0.03) over white
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              // Outer subtle shadow
+              BoxShadow(
+                color: Color(0x0D000000), // rgba(0, 0, 0, 0.05)
+                blurRadius: 2,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              // Simulate inset shadow with positioned containers
+              Positioned(
+                top: 2,
+                left: 2,
+                right: 8,
+                bottom: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.black.withOpacity(0.15),
+                        Colors.transparent,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 1,
+                right: 1,
+                left: 8,
+                top: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Colors.white.withOpacity(0.7),
+                        Colors.transparent,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              // Emoji icon
+              Center(
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    Colors.grey.withOpacity(0.3),
+                    BlendMode.saturation,
+                  ),
+                  child: Opacity(
+                    opacity: 0.9,
+                    child: Text(
+                      task.iconName,
+                      style: const TextStyle(fontSize: 28),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     }
 
     return GestureDetector(
