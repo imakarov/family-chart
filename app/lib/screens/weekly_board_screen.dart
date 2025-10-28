@@ -12,6 +12,7 @@ import '../../../data/models/tasks.dart';
 import '../../../data/models/task_completions.dart';
 import '../../../data/models/checklists.dart';
 import '../../../core/utils/date_utils.dart' as app_date_utils;
+import '../../../core/providers/isar_provider.dart';
 
 class WeeklyBoardScreen extends ConsumerStatefulWidget {
   final int checklistId;
@@ -55,7 +56,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           ),
           TextButton(
             onPressed: () async {
-              final isar = await ref.read(checklistRepositoryProvider).isar;
+              final isar = await ref.read(isarProvider.future);
               await isar.writeTxn(() async {
                 await isar.clear();
               });

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Screen 0: Welcome screen with preview of 3 steps
+/// Screen 0: Welcome screen matching HTML prototype design
 class WelcomeScreen extends StatelessWidget {
   final VoidCallback onGetStarted;
 
@@ -19,33 +19,11 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              // Title
-              const Text(
-                'Family Checklist',
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              // Subtitle
-              const Text(
-                'Create your family routine in 3 simple steps',
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Color(0xFF8E8E93),
-                ),
-                textAlign: TextAlign.center,
-              ),
+              // Hero section with icon and title
+              _buildHeroSection(),
               const SizedBox(height: 60),
-              // Preview cards (placeholder)
-              _buildPreviewCard('1', 'Add Family Members', '👨‍👩‍👧‍👦'),
-              const SizedBox(height: 16),
-              _buildPreviewCard('2', 'Choose Tasks', '✅'),
-              const SizedBox(height: 16),
-              _buildPreviewCard('3', 'Set Schedule', '📅'),
+              // Steps card
+              _buildStepsCard(),
               const Spacer(),
               // Get Started Button
               SizedBox(
@@ -77,27 +55,92 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPreviewCard(String number, String title, String emoji) {
+  Widget _buildHeroSection() {
+    return Column(
+      children: [
+        // Icon with animation hint (we'll add animation later if needed)
+        const Text(
+          '✨',
+          style: TextStyle(fontSize: 100),
+        ),
+        const SizedBox(height: 32),
+        // Title (two lines)
+        const Text(
+          'Welcome to\nFamily Checklist',
+          style: TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w800,
+            color: Colors.black,
+            height: 1.2,
+            letterSpacing: -1,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepsCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: Column(
+        children: [
+          // Title
+          const Text(
+            '3 Easy Steps to Start',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF0A7FCC),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Steps
+          _buildStep('1', 'Add Family Members', 'Create profiles for everyone'),
+          const Divider(height: 1, color: Color(0xFFF2F2F7)),
+          _buildStep('2', 'Choose Tasks', 'Select activities for each member'),
+          const Divider(height: 1, color: Color(0xFFF2F2F7)),
+          _buildStep(
+            '3',
+            'Set Schedule',
+            'Pick days for each task',
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep(
+    String number,
+    String title,
+    String description, {
+    bool isLast = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: number == '1' ? 0 : 12,
+        bottom: isLast ? 0 : 12,
+      ),
       child: Row(
         children: [
+          // Number circle
           Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFF0A7FCC).withOpacity(0.1),
+            width: 36,
+            height: 36,
+            decoration: const BoxDecoration(
+              color: Color(0xFF0A7FCC),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -106,25 +149,35 @@ class WelcomeScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF0A7FCC),
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 16),
+          // Text content
           Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF8E8E93),
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 24),
           ),
         ],
       ),
