@@ -9,6 +9,9 @@ import 'data/models/checklists.dart';
 import 'screens/weekly_board_screen.dart';
 import 'screens/onboarding/onboarding_flow_screen.dart';
 
+// DEBUG: Set to true to reset database on app start
+const bool DEBUG_RESET_DATABASE = false;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -48,6 +51,15 @@ class _MyAppState extends ConsumerState<MyApp> {
     try {
       // Wait for Isar to initialize
       final isar = await ref.read(isarProvider.future);
+
+      // DEBUG: Clear database if flag is set
+      if (DEBUG_RESET_DATABASE) {
+        print('🔴 DEBUG: Clearing database...');
+        await isar.writeTxn(() async {
+          await isar.clear();
+        });
+        print('🔴 DEBUG: Database cleared!');
+      }
 
       // Check if onboarding is completed
       final checklists = await isar.checklists.where().findAll();

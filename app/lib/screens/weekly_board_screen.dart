@@ -41,6 +41,43 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     weekStart = app_date_utils.DateUtils.getWeekStartDate(currentWeekNumber, currentWeekYear);
   }
 
+  // DEBUG: Show reset dialog
+  void _showResetDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Database'),
+        content: const Text('Clear all data and return to onboarding?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final isar = await ref.read(checklistRepositoryProvider).isar;
+              await isar.writeTxn(() async {
+                await isar.clear();
+              });
+              if (mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Scaffold(
+                      body: Center(child: Text('Restarting...')),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,12 +112,15 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         icon: const Icon(Icons.chevron_left, size: 28, color: Color(0xFF0C7FCC)),
         onPressed: () => Navigator.pop(context),
       ),
-      title: const Text(
-        'Family Chart',
-        style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
+      title: GestureDetector(
+        onLongPress: _showResetDialog,
+        child: const Text(
+          'Family Chart',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
         ),
       ),
       centerTitle: true,
