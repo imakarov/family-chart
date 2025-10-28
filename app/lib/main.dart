@@ -7,6 +7,7 @@ import 'core/utils/localization_helper.dart';
 import 'core/services/seed_data_service.dart';
 import 'data/models/checklists.dart';
 import 'features/weekly_board/screens/weekly_board_screen.dart';
+import 'features/onboarding/screens/onboarding_flow_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,18 +49,21 @@ class _MyAppState extends ConsumerState<MyApp> {
       // Wait for Isar to initialize
       final isar = await ref.read(isarProvider.future);
 
-      // Initialize seed data
-      final seedService = SeedDataService(isar);
-      await seedService.seedDemoData();
-
-      // Get first checklist ID
+      // Check if onboarding is completed
       final checklists = await isar.checklists.where().findAll();
-      if (checklists.isNotEmpty) {
+      final hasCompletedOnboarding = checklists.isNotEmpty;
+
+      if (hasCompletedOnboarding) {
+        // Initialize seed data (for demo purposes)
+        final seedService = SeedDataService(isar);
+        await seedService.seedDemoData();
+
         setState(() {
           _firstChecklistId = checklists.first.checklistId;
           _isInitialized = true;
         });
       } else {
+        // No checklist - show onboarding
         setState(() {
           _isInitialized = true;
         });
@@ -79,16 +83,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
-    if (_firstChecklistId == null) {
-      return const MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Text('No checklist found. Please restart the app.'),
           ),
         ),
       );
@@ -120,8 +114,10 @@ class _MyAppState extends ConsumerState<MyApp> {
       ),
       themeMode: ThemeMode.system,
 
-      // Show Weekly Board as home screen
-      home: WeeklyBoardScreen(checklistId: _firstChecklistId!),
+      // Show Onboarding or Weekly Board based on checklist existence
+      home: _firstChecklistId == null
+          ? const OnboardingFlowScreen()
+          : WeeklyBoardScreen(checklistId: _firstChecklistId!),
     );
   }
 }
