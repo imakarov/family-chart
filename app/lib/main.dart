@@ -6,8 +6,8 @@ import 'core/providers/isar_provider.dart';
 import 'core/utils/localization_helper.dart';
 import 'core/services/seed_data_service.dart';
 import 'data/models/checklists.dart';
-import 'features/weekly_board/screens/weekly_board_screen.dart';
-import 'features/onboarding/screens/onboarding_flow_screen.dart';
+import 'screens/weekly_board_screen.dart';
+import 'screens/onboarding/onboarding_flow_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

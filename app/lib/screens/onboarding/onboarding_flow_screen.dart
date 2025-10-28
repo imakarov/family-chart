@@ -4,7 +4,7 @@ import 'welcome_screen.dart';
 import 'step1_family_members_screen.dart';
 import 'step2_choose_tasks_screen.dart';
 import 'step3_set_schedule_screen.dart';
-import '../../weekly_board/screens/weekly_board_screen.dart';
+import '../weekly_board_screen.dart';
 
 /// Main onboarding flow with PageView navigation
 class OnboardingFlowScreen extends ConsumerStatefulWidget {

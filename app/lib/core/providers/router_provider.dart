@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../features/dashboard/screens/dashboard_screen.dart';
-import '../../features/onboarding/screens/onboarding_screen.dart';
-import '../../features/weekly_board/screens/weekly_board_screen.dart';
-import '../../features/settings/screens/settings_screen.dart';
+import '../../screens/dashboard_screen.dart';
+import '../../screens/onboarding/onboarding_screen.dart';
+import '../../screens/weekly_board_screen.dart';
+import '../../screens/settings_screen.dart';
 
 part 'router_provider.g.dart';
 
