@@ -6,7 +6,7 @@ import 'step2_choose_tasks_screen.dart';
 import 'step3_set_schedule_screen.dart';
 import '../weekly_board_screen.dart';
 
-/// Main onboarding flow with PageView navigation
+/// Main onboarding flow with PageView navigation and shared state
 class OnboardingFlowScreen extends ConsumerStatefulWidget {
   const OnboardingFlowScreen({super.key});
 
@@ -17,6 +17,14 @@ class OnboardingFlowScreen extends ConsumerStatefulWidget {
 class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
+  // Shared onboarding data
+  List<FamilyMember> _members = [];
+  Map<String, List<Task>> _tasksByMember = {}; // memberId -> [tasks]
+  Map<String, Map<String, List<int>>> _scheduleByMember = {}; // memberId -> {taskId -> [weekdays]}
+
+  // Step 2 state
+  int _currentMemberIndex = 0;
 
   @override
   void dispose() {
@@ -33,8 +41,51 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
     }
   }
 
+  // Step 1 -> Step 2
+  void _onStep1Continue(List<FamilyMember> members) {
+    setState(() {
+      _members = members;
+      // Initialize empty task lists for each member
+      for (final member in members) {
+        _tasksByMember[member.id] = [];
+      }
+      _currentMemberIndex = 0;
+    });
+    _goToNextPage();
+  }
+
+  // Step 2 -> either next member or Step 3
+  void _onStep2Continue(String memberId, List<Task> selectedTasks) {
+    setState(() {
+      _tasksByMember[memberId] = selectedTasks;
+      _currentMemberIndex++;
+    });
+
+    // Check if we have more members
+    if (_currentMemberIndex < _members.length) {
+      // Stay on Step 2, just update state to show next member
+      setState(() {});
+    } else {
+      // All members done, go to Step 3
+      // Initialize schedule with all days selected by default
+      for (final member in _members) {
+        _scheduleByMember[member.id] = {};
+        for (final task in _tasksByMember[member.id]!) {
+          _scheduleByMember[member.id]![task.id] = [0, 1, 2, 3, 4, 5, 6]; // All days
+        }
+      }
+      _goToNextPage();
+    }
+  }
+
+  // Step 3 -> Complete
   void _completeOnboarding() {
-    // TODO: Save onboarding completion state
+    // TODO: Save data to Isar database
+    print('Onboarding complete!');
+    print('Members: ${_members.length}');
+    print('Tasks by member: ${_tasksByMember.map((k, v) => MapEntry(k, v.length))}');
+    print('Schedule: ${_scheduleByMember.length}');
+
     // Navigate to Weekly Board with first checklist
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -64,14 +115,27 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
               ),
               // Screen 1: Family Members
               Step1FamilyMembersScreen(
-                onContinue: _goToNextPage,
+                onContinue: _onStep1Continue,
               ),
-              // Screen 2: Choose Tasks
-              Step2ChooseTasksScreen(
-                onContinue: _goToNextPage,
-              ),
+              // Screen 2: Choose Tasks (multi-member flow)
+              _currentPage == 2 && _members.isNotEmpty
+                  ? Step2ChooseTasksScreen(
+                      member: _members[_currentMemberIndex],
+                      currentIndex: _currentMemberIndex,
+                      totalMembers: _members.length,
+                      onContinue: _onStep2Continue,
+                    )
+                  : const SizedBox(), // Placeholder until data is ready
               // Screen 3: Set Schedule
               Step3SetScheduleScreen(
+                members: _members,
+                tasksByMember: _tasksByMember,
+                scheduleByMember: _scheduleByMember,
+                onScheduleUpdate: (memberId, taskId, weekdays) {
+                  setState(() {
+                    _scheduleByMember[memberId]![taskId] = weekdays;
+                  });
+                },
                 onCreateChecklist: _completeOnboarding,
               ),
             ],

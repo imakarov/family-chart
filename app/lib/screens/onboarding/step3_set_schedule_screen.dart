@@ -1,19 +1,65 @@
 import 'package:flutter/material.dart';
+import 'step1_family_members_screen.dart';
+import 'step2_choose_tasks_screen.dart';
 
 /// Screen 3 (Step 3/3): Set schedule for tasks
-/// Note: This is a simplified placeholder version
-/// Full implementation needs:
-/// - List of members with their tasks
-/// - Weekday checkboxes for each task
-/// - Quick select (Weekdays/Weekend) buttons
-/// - Collapsible sections per member
-class Step3SetScheduleScreen extends StatelessWidget {
+class Step3SetScheduleScreen extends StatefulWidget {
+  final List<FamilyMember> members;
+  final Map<String, List<Task>> tasksByMember;
+  final Map<String, Map<String, List<int>>> scheduleByMember;
+  final Function(String memberId, String taskId, List<int> weekdays) onScheduleUpdate;
   final VoidCallback onCreateChecklist;
 
   const Step3SetScheduleScreen({
     super.key,
+    required this.members,
+    required this.tasksByMember,
+    required this.scheduleByMember,
+    required this.onScheduleUpdate,
     required this.onCreateChecklist,
   });
+
+  @override
+  State<Step3SetScheduleScreen> createState() => _Step3SetScheduleScreenState();
+}
+
+class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
+  final Map<String, bool> _expandedMembers = {};
+
+  final List<String> _weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  final List<String> _weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  @override
+  void initState() {
+    super.initState();
+    // Expand first member by default
+    if (widget.members.isNotEmpty) {
+      _expandedMembers[widget.members.first.id] = true;
+    }
+  }
+
+  void _toggleWeekday(String memberId, String taskId, int weekdayIndex) {
+    final currentDays = List<int>.from(widget.scheduleByMember[memberId]?[taskId] ?? []);
+
+    if (currentDays.contains(weekdayIndex)) {
+      currentDays.remove(weekdayIndex);
+    } else {
+      currentDays.add(weekdayIndex);
+      currentDays.sort();
+    }
+
+    widget.onScheduleUpdate(memberId, taskId, currentDays);
+  }
+
+  void _setQuickSelect(String memberId, String taskId, String type) {
+    List<int> weekdays;
+    if (type == 'weekdays') {
+      weekdays = [1, 2, 3, 4, 5]; // Mon-Fri
+    } else {
+      weekdays = [0, 6]; // Sun, Sat
+    }
+    widget.onScheduleUpdate(memberId, taskId, weekdays);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,41 +98,18 @@ class Step3SetScheduleScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            // Content
+            // Members list with tasks
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        '✨',
-                        style: TextStyle(fontSize: 80),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Schedule Configuration',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Full implementation coming soon!\n\nFor now, click "Create Checklist" to continue.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black.withOpacity(0.3),
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: widget.members.length,
+                itemBuilder: (context, index) {
+                  final member = widget.members[index];
+                  final tasks = widget.tasksByMember[member.id] ?? [];
+                  final isExpanded = _expandedMembers[member.id] ?? false;
+
+                  return _buildMemberSection(member, tasks, isExpanded);
+                },
               ),
             ),
             const SizedBox(height: 80), // Space for button
@@ -99,7 +122,7 @@ class Step3SetScheduleScreen extends StatelessWidget {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: onCreateChecklist,
+            onPressed: widget.onCreateChecklist,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0A7FCC),
               foregroundColor: Colors.white,
@@ -116,6 +139,201 @@ class Step3SetScheduleScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberSection(FamilyMember member, List<Task> tasks, bool isExpanded) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Member header (collapsible)
+          InkWell(
+            onTap: () {
+              setState(() {
+                _expandedMembers[member.id] = !isExpanded;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Avatar
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                      ),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Center(
+                      child: Text(
+                        member.avatar,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Name and task count
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          member.name.isEmpty ? 'Member' : member.name,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${tasks.length} ${tasks.length == 1 ? 'task' : 'tasks'}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF8E8E93),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Expand/collapse icon
+                  Icon(
+                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    color: const Color(0xFF8E8E93),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Tasks list (collapsible)
+          if (isExpanded && tasks.isNotEmpty)
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Color(0xFFF2F2F7), width: 1),
+                ),
+              ),
+              child: Column(
+                children: tasks.map((task) {
+                  final schedule = widget.scheduleByMember[member.id]?[task.id] ?? [];
+                  return _buildTaskRow(member.id, task, schedule);
+                }).toList(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskRow(String memberId, Task task, List<int> selectedDays) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFF2F2F7), width: 1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Task name with icon
+          Row(
+            children: [
+              Text(
+                task.icon,
+                style: const TextStyle(fontSize: 20),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  task.name,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Weekday checkboxes
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(7, (index) {
+              final isSelected = selectedDays.contains(index);
+              return GestureDetector(
+                onTap: () => _toggleWeekday(memberId, task.id, index),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFF0A7FCC) : const Color(0xFFF2F2F7),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _weekdayLabels[index],
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : const Color(0xFF8E8E93),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 12),
+          // Quick select buttons
+          Row(
+            children: [
+              _buildQuickSelectButton('Weekdays', () => _setQuickSelect(memberId, task.id, 'weekdays')),
+              const SizedBox(width: 8),
+              _buildQuickSelectButton('Weekend', () => _setQuickSelect(memberId, task.id, 'weekend')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickSelectButton(String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2F2F7),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF0A7FCC),
           ),
         ),
       ),

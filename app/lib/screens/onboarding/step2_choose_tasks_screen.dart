@@ -20,16 +20,22 @@ class Task {
 }
 
 /// Screen 2 (Step 2/3): Choose tasks
-/// Note: This is a simplified version. Full implementation needs:
-/// - Multi-member flow (selecting tasks for each member sequentially)
+/// Note: Simplified version - tasks are hardcoded
+/// Full implementation needs:
 /// - JSON task loading from onboarding-tasks.json
 /// - Search functionality
 /// - Custom task creation
 class Step2ChooseTasksScreen extends StatefulWidget {
-  final VoidCallback onContinue;
+  final FamilyMember member;
+  final int currentIndex;
+  final int totalMembers;
+  final Function(String memberId, List<Task> selectedTasks) onContinue;
 
   const Step2ChooseTasksScreen({
     super.key,
+    required this.member,
+    required this.currentIndex,
+    required this.totalMembers,
     required this.onContinue,
   });
 
@@ -151,14 +157,27 @@ class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // TODO: Show current member icon and name
-                  const Text(
-                    'Select tasks for your family',
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Color(0xFF8E8E93),
-                      height: 1.4,
-                    ),
+                  // Show current member info
+                  Row(
+                    children: [
+                      Text(
+                        'Select tasks for ${widget.member.avatar} ',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          color: Color(0xFF8E8E93),
+                          height: 1.4,
+                        ),
+                      ),
+                      Text(
+                        widget.member.name.isEmpty ? 'Member ${widget.currentIndex + 1}' : widget.member.name,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -184,8 +203,14 @@ class _Step2ChooseTasksScreenState extends State<Step2ChooseTasksScreen> {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed:
-                _selectedTaskIds.isEmpty ? null : widget.onContinue,
+            onPressed: _selectedTaskIds.isEmpty
+                ? null
+                : () {
+                    final selectedTasks = _allTasks
+                        .where((t) => _selectedTaskIds.contains(t.id))
+                        .toList();
+                    widget.onContinue(widget.member.id, selectedTasks);
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0A7FCC),
               foregroundColor: Colors.white,

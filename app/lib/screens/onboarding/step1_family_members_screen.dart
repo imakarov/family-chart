@@ -17,7 +17,7 @@ class FamilyMember {
 
 /// Screen 1 (Step 1/3): Add family members
 class Step1FamilyMembersScreen extends StatefulWidget {
-  final VoidCallback onContinue;
+  final Function(List<FamilyMember>) onContinue;
 
   const Step1FamilyMembersScreen({
     super.key,
@@ -290,7 +290,7 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: _members.isEmpty ? null : widget.onContinue,
+            onPressed: _members.isEmpty ? null : () => widget.onContinue(_members),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0A7FCC),
               foregroundColor: Colors.white,
