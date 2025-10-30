@@ -198,69 +198,24 @@
 
 ---
 
-#### 3.3 Onboarding и создание первого чеклиста ✅ COMPLETED
+#### 3.3 Onboarding и создание первого чеклиста ✅
 
 **Задачи**:
-- [x] Welcome screen с превью функционала
-  - Custom family icon (180x180px) с синим градиентом
-  - Lottie анимация на фоне (прозрачные звездочки)
-  - "3 Easy Steps" карточка с описанием процесса
-  - Адаптивная верстка с правильным spacing
-- [x] Форма добавления участников семьи (Step 1)
-  - Добавление/удаление членов семьи
-  - Выбор имени, роли (Member/Parent), аватара
-  - 8 предустановленных цветов для профилей
-  - Минимум 1 участник для продолжения
-- [x] Библиотека задач с иконками и категориями (Step 2)
-  - IconLibrary: 130+ эмодзи иконок (health, home, future)
-  - TaskLibrary: 95+ приоритизированных шаблонов задач
-  - CategoryDefinitions: 3 категории с описаниями
-  - Поиск задач по имени с подсветкой результатов
-  - Выбор иконок из категоризированной библиотеки
-  - Создание кастомных задач с диалогом
-  - Premium/free флаги для монетизации
-- [x] Назначение задач участникам (Step 2)
-  - Мультиселект задач для каждого члена семьи
-  - Tab navigation между участниками
-  - Индикация количества выбранных задач
-- [x] Настройка периодичности (Step 3)
-  - Weekly goal slider (1-14 раз в неделю)
-  - Weekday selector с визуальными индикаторами
-  - Умные пресеты: Daily, Weekdays, Weekends
-  - Предпросмотр расписания для каждой задачи
-- [x] Сохранение первого чеклиста в локальную БД
-  - Isar database integration
-  - Модели: Task, TaskAssignment, FamilyMember, Checklist
-  - Persistence между сессиями
-- [x] Переход на Weekly Board
-  - Завершение онбординга с сохранением данных
-  - Навигация через router provider
+- ✅ Welcome screen с превью функционала
+- ✅ Форма добавления участников семьи (имя, аватар, цвет)
+- ✅ Библиотека задач с иконками и категориями
+- ✅ Назначение задач участникам
+- ✅ Настройка периодичности (ежедневно/по дням/N раз в неделю)
+- ✅ Сохранение первого чеклиста в локальную БД
+- ✅ Переход на Weekly Board
 
-**Не реализовано (отложено на будущее)**:
-- [ ] Запрос разрешения Contacts (не критично для MVP)
-- [ ] Умное предложение членов семьи из Contacts (заменено на ручной ввод)
-- [ ] Интеграция камеры для аватаров (используются предустановленные аватары)
-
-**Файлы**:
-- `app/lib/screens/onboarding/welcome_screen.dart` - Welcome screen с анимацией
-- `app/lib/screens/onboarding/step1_family_members_screen.dart` - Добавление участников
-- `app/lib/screens/onboarding/step2_choose_tasks_screen.dart` - Выбор и создание задач
-- `app/lib/screens/onboarding/step3_set_schedule_screen.dart` - Настройка расписания
-- `app/lib/data/static/category_definitions.dart` - Категории задач
-- `app/lib/data/static/icon_library.dart` - Библиотека иконок (130+)
-- `app/lib/data/static/task_library.dart` - Библиотека задач (95+)
-- `app/lib/widgets/weekday_selector.dart` - Виджет выбора дней недели
-- `app/assets/animations/stars_points_extracted.json` - Lottie анимация
-- `app/assets/images/family_icon.png` - Кастомная иконка
-
-**Технические достижения**:
-- Multi-step onboarding flow с state management
-- Static data libraries для масштабируемости
-- Search functionality с debouncing
-- Custom dialog для создания задач
-- ShaderMask для градиента на PNG
-- Lottie animations integration
-- Responsive layout с SafeArea
+**Результат:**
+- Welcome screen с custom иконкой семьи 180x180px и Lottie анимацией
+- Библиотека задач (95+ шаблонов) и иконок (130+) в static data
+- Step 1: добавление участников с выбором аватара и цвета (8 preset colors)
+- Step 2: выбор и создание задач с поиском и категоризацией
+- Step 3: настройка расписания с weekly goal slider и weekday selector
+- Multi-step onboarding flow с сохранением в Isar database
 
 ---
 
