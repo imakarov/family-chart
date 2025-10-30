@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 /// Screen 0: Welcome screen matching HTML prototype design
 class WelcomeScreen extends StatelessWidget {
@@ -15,40 +16,42 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F7),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             children: [
-              const Spacer(),
+              const Spacer(flex: 3),
               // Hero section with icon and title
               _buildHeroSection(),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               // Steps card
               _buildStepsCard(),
-              const Spacer(),
-              // Get Started Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: onGetStarted,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A7FCC),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 12),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 34, top: 8),
+        child: SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: onGetStarted,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0A7FCC),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Get Started',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
       ),
@@ -56,25 +59,60 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   Widget _buildHeroSection() {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        // Icon with animation hint (we'll add animation later if needed)
-        const Text(
-          '✨',
-          style: TextStyle(fontSize: 100),
-        ),
-        const SizedBox(height: 32),
-        // Title (two lines)
-        const Text(
-          'Welcome to\nFamily Checklist',
-          style: TextStyle(
-            fontSize: 40,
-            fontWeight: FontWeight.w800,
-            color: Colors.black,
-            height: 1.2,
-            letterSpacing: -1,
+        // Lottie animation as background layer - larger size
+        Positioned(
+          top: -50,
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 300,
+            child: Lottie.asset(
+              'assets/animations/stars_points_extracted.json',
+              fit: BoxFit.contain,
+              repeat: true,
+            ),
           ),
-          textAlign: TextAlign.center,
+        ),
+        // Content on top
+        Column(
+          children: [
+            // Family icon on top with blue gradient
+            ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0A7FCC), // Main blue
+                    Color(0xFF0B6FBB), // Slightly darker blue
+                  ],
+                ).createShader(bounds);
+              },
+              blendMode: BlendMode.srcATop,
+              child: Image.asset(
+                'assets/images/family_icon.png',
+                width: 180,
+                height: 180,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Title (two lines)
+            const Text(
+              'Welcome to\nFamily Checklist',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                color: Colors.black,
+                height: 1.2,
+                letterSpacing: -1,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ],
     );
