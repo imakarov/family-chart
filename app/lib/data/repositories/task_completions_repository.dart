@@ -97,6 +97,7 @@ class TaskCompletionsRepository {
     int weekYear,
     int dayOfWeek,
     int checklistId,
+    DateTime completionDate,
   ) async {
     final existing = await getCompletion(
       userId,
@@ -118,7 +119,7 @@ class TaskCompletionsRepository {
         await _isar.taskCompletions.put(existing);
       });
     } else {
-      // Create new completion
+      // Create new completion - use the provided completionDate for the day being toggled
       final completion = TaskCompletions()
         ..userId = userId
         ..taskId = taskId
@@ -126,7 +127,7 @@ class TaskCompletionsRepository {
         ..weekYear = weekYear
         ..dayOfWeek = dayOfWeek
         ..checklistId = checklistId
-        ..completionDate = now
+        ..completionDate = completionDate
         ..isCompleted = true
         ..completedAt = now
         ..source = TaskCompletionSource.manual

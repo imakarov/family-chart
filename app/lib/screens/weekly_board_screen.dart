@@ -761,11 +761,16 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
     if (!isSelected) {
       // Non-selected days - show only circle dot (●), NO icons!
-      itemContent = Text(
-        '●',
-        style: TextStyle(
-          fontSize: 12,
-          color: isCompleted ? const Color(0xFF58CC02) : const Color(0xFFD1D1D6),
+      // Add padding to match the height of the selected day icons (42px)
+      itemContent = Container(
+        height: 42,
+        alignment: Alignment.center,
+        child: Text(
+          '●',
+          style: TextStyle(
+            fontSize: 12,
+            color: isCompleted ? const Color(0xFF58CC02) : const Color(0xFFD1D1D6),
+          ),
         ),
       );
     } else {
@@ -863,6 +868,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
       weekYear,
       dayOfWeek,
       widget.checklistId,
+      date, // Pass the actual date for the day being toggled
     );
     setState(() {}); // Refresh UI
   }
