@@ -70,4 +70,15 @@ class TasksRepository {
         .isCustomEqualTo(false)
         .watch(fireImmediately: true);
   }
+
+  /// Get available tasks (non-custom and active, sorted by title)
+  /// This is used for task selection in onboarding/edit flows
+  Future<List<Tasks>> getAvailableTasks() async {
+    return await _isar.tasks
+        .filter()
+        .isCustomEqualTo(false)
+        .isActiveEqualTo(true)
+        .sortByTitle()
+        .findAll();
+  }
 }

@@ -9,6 +9,8 @@ class Users {
 
   late String name;
 
+  String? avatarEmoji; // Emoji avatar (e.g., '👨', '👩', '👧', '👦')
+
   List<byte>? avatarBytes; // Photo as bytes
 
   late String colorHex; // Color in hex format (#FF5733)

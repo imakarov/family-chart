@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../data/repositories/checklist_repository.dart';
 import '../../../data/repositories/users_repository.dart';
@@ -13,6 +14,7 @@ import '../../../data/models/task_completions.dart';
 import '../../../data/models/checklists.dart';
 import '../../../core/utils/date_utils.dart' as app_date_utils;
 import '../../../core/providers/isar_provider.dart';
+import '../../../widgets/app_menu_drawer.dart';
 
 class WeeklyBoardScreen extends ConsumerStatefulWidget {
   final int checklistId;
@@ -84,6 +86,10 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F7), // Grey background
       appBar: _buildAppBar(context),
+      drawer: AppMenuDrawer(
+        checklistId: widget.checklistId,
+        showDashboardOption: true,
+      ),
       body: FutureBuilder(
         future: _loadData(),
         builder: (context, AsyncSnapshot<_BoardData> snapshot) {
@@ -109,9 +115,11 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.chevron_left, size: 28, color: Color(0xFF0C7FCC)),
-        onPressed: () => Navigator.pop(context),
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu, size: 28, color: Color(0xFF0C7FCC)),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
       ),
       title: GestureDetector(
         onLongPress: _showResetDialog,
@@ -632,7 +640,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           ),
           child: Center(
             child: Text(
-              task.iconName,
+              task.icon,
               style: const TextStyle(fontSize: 28),
             ),
           ),
@@ -669,7 +677,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
             ),
             child: Center(
               child: Text(
-                task.iconName,
+                task.icon,
                 style: const TextStyle(fontSize: 28),
               ),
             ),

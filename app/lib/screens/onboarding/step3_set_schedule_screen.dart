@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'step1_family_members_screen.dart';
 import 'step2_choose_tasks_screen.dart';
+import '../../widgets/weekday_selector.dart';
 
 /// Screen 3 (Step 3/3): Set schedule for tasks
 class Step3SetScheduleScreen extends StatefulWidget {
@@ -9,6 +10,8 @@ class Step3SetScheduleScreen extends StatefulWidget {
   final Map<String, Map<String, List<int>>> scheduleByMember;
   final Function(String memberId, String taskId, List<int> weekdays) onScheduleUpdate;
   final VoidCallback onCreateChecklist;
+  final bool isEditMode; // true = edit mode, false = create mode
+  final int? checklistId; // For edit mode
 
   const Step3SetScheduleScreen({
     super.key,
@@ -17,6 +20,8 @@ class Step3SetScheduleScreen extends StatefulWidget {
     required this.scheduleByMember,
     required this.onScheduleUpdate,
     required this.onCreateChecklist,
+    this.isEditMode = false,
+    this.checklistId,
   });
 
   @override
@@ -32,9 +37,9 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    // Expand first member by default
-    if (widget.members.isNotEmpty) {
-      _expandedMembers[widget.members.first.id] = true;
+    // Expand all members by default
+    for (final member in widget.members) {
+      _expandedMembers[member.id] = true;
     }
   }
 
@@ -69,7 +74,7 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 100), // Space for progress dots
+            const SizedBox(height: 50), // Reduced from 100
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -98,7 +103,7 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // Members list with tasks
+            // Members list with tasks (scrollable)
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -112,12 +117,12 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 80), // Space for button
+            const SizedBox(height: 12), // Reduced from 80
           ],
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 12),
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 34, top: 8),
         child: SizedBox(
           width: double.infinity,
           height: 56,
@@ -132,9 +137,9 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
               elevation: 0,
               shadowColor: const Color(0xFF0A7FCC).withOpacity(0.3),
             ),
-            child: const Text(
-              'Create Checklist',
-              style: TextStyle(
+            child: Text(
+              widget.isEditMode ? 'Save Changes' : 'Create Checklist',
+              style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
               ),
@@ -256,7 +261,7 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Task name with icon
+          // Task name with icon and quick select buttons
           Row(
             children: [
               Text(
@@ -274,45 +279,18 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Weekday checkboxes
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(7, (index) {
-              final isSelected = selectedDays.contains(index);
-              return GestureDetector(
-                onTap: () => _toggleWeekday(memberId, task.id, index),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF0A7FCC) : const Color(0xFFF2F2F7),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      _weekdayLabels[index],
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : const Color(0xFF8E8E93),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 12),
-          // Quick select buttons
-          Row(
-            children: [
-              _buildQuickSelectButton('Weekdays', () => _setQuickSelect(memberId, task.id, 'weekdays')),
               const SizedBox(width: 8),
+              // Quick select buttons on the right
+              _buildQuickSelectButton('Weekdays', () => _setQuickSelect(memberId, task.id, 'weekdays')),
+              const SizedBox(width: 6),
               _buildQuickSelectButton('Weekend', () => _setQuickSelect(memberId, task.id, 'weekend')),
             ],
+          ),
+          const SizedBox(height: 12),
+          // Weekday selector (reusable widget)
+          WeekdaySelector(
+            selectedDays: selectedDays,
+            onDayToggle: (index) => _toggleWeekday(memberId, task.id, index),
           ),
         ],
       ),
@@ -323,15 +301,15 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: const Color(0xFFF2F2F7),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           label,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
             color: Color(0xFF0A7FCC),
           ),

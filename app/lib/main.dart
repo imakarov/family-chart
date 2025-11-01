@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'core/providers/isar_provider.dart';
+import 'core/providers/router_provider.dart';
 import 'core/utils/localization_helper.dart';
-import 'core/services/seed_data_service.dart';
+import 'core/services/tasks_seeding_service.dart';
 import 'data/models/checklists.dart';
-import 'screens/weekly_board_screen.dart';
-import 'screens/onboarding/onboarding_flow_screen.dart';
 
 // DEBUG: Set to true to reset database on app start
-const bool DEBUG_RESET_DATABASE = false;
+const bool DEBUG_RESET_DATABASE = true;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +38,7 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   bool _isInitialized = false;
-  int? _firstChecklistId;
+  static bool _hasInitializedDatabase = false; // Prevent multiple initializations
 
   @override
   void initState() {
@@ -52,34 +51,37 @@ class _MyAppState extends ConsumerState<MyApp> {
       // Wait for Isar to initialize
       final isar = await ref.read(isarProvider.future);
 
-      // DEBUG: Clear database if flag is set
-      if (DEBUG_RESET_DATABASE) {
-        print('🔴 DEBUG: Clearing database...');
-        await isar.writeTxn(() async {
-          await isar.clear();
-        });
-        print('🔴 DEBUG: Database cleared!');
-      }
+      // Only run database initialization ONCE per app lifecycle
+      if (!_hasInitializedDatabase) {
+        _hasInitializedDatabase = true;
 
-      // Check if onboarding is completed
-      final checklists = await isar.checklists.where().findAll();
-      final hasCompletedOnboarding = checklists.isNotEmpty;
+        // DEBUG: Clear database if flag is set
+        if (DEBUG_RESET_DATABASE) {
+          print('🔴 DEBUG: Clearing database...');
+          await isar.writeTxn(() async {
+            await isar.clear();
+          });
+          print('🔴 DEBUG: Database cleared!');
+        }
 
-      if (hasCompletedOnboarding) {
-        // Initialize seed data (for demo purposes)
-        final seedService = SeedDataService(isar);
-        await seedService.seedDemoData();
+        // Seed Tasks from TaskLibrary on first launch
+        print('📦 [Main] Starting tasks seeding...');
+        final tasksSeedingService = TasksSeedingService(isar);
+        await tasksSeedingService.seedTasksIfNeeded();
+        print('📦 [Main] Tasks seeding completed');
 
-        setState(() {
-          _firstChecklistId = checklists.first.checklistId;
-          _isInitialized = true;
-        });
+        // Check if onboarding is completed
+        print('📦 [Main] Checking onboarding status...');
+        final checklists = await isar.checklists.where().findAll();
+        final hasCompletedOnboarding = checklists.isNotEmpty;
+        print('📦 [Main] Onboarding completed: $hasCompletedOnboarding (${checklists.length} checklists)');
       } else {
-        // No checklist - show onboarding
-        setState(() {
-          _isInitialized = true;
-        });
+        print('⏭️  [Main] Database already initialized, skipping...');
       }
+
+      setState(() {
+        _isInitialized = true;
+      });
     } catch (e) {
       print('Error initializing app: $e');
       setState(() {
@@ -100,9 +102,14 @@ class _MyAppState extends ConsumerState<MyApp> {
       );
     }
 
-    return MaterialApp(
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
       title: LocaleKeys.app.name.tr(),
       debugShowCheckedModeBanner: false,
+
+      // Router
+      routerConfig: router,
 
       // Localization
       localizationsDelegates: context.localizationDelegates,
@@ -125,11 +132,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         ),
       ),
       themeMode: ThemeMode.system,
-
-      // Show Onboarding or Weekly Board based on checklist existence
-      home: _firstChecklistId == null
-          ? const OnboardingFlowScreen()
-          : WeeklyBoardScreen(checklistId: _firstChecklistId!),
     );
   }
 }

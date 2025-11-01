@@ -228,6 +228,38 @@ class TaskLibrary {
       priority: 41,
       cohorts: ['preTeen'],
     ),
+
+    // Additional fitness tasks (priority 51-60)
+    TaskTemplate(
+      id: 'yoga',
+      name: 'Йога',
+      icon: '🧘',
+      category: 'physical',
+      frequency: '2x per Week',
+      weeklyGoal: 2,
+      priority: 51,
+      cohorts: [],
+    ),
+    TaskTemplate(
+      id: 'running',
+      name: 'Спорт',
+      icon: '🏃',
+      category: 'physical',
+      frequency: 'Daily',
+      weeklyGoal: 7,
+      priority: 52,
+      cohorts: [],
+    ),
+    TaskTemplate(
+      id: 'football',
+      name: 'Футбол',
+      icon: '⚽',
+      category: 'physical',
+      frequency: '3x per Week',
+      weeklyGoal: 3,
+      priority: 53,
+      cohorts: ['earlySchool', 'middleSchool'],
+    ),
   ];
 
   // ========== HOME TASKS (sorted by popularity) ==========
@@ -560,6 +592,28 @@ class TaskLibrary {
       priority: 64,
       cohorts: ['preTeen'],
     ),
+
+    // Additional household tasks (priority 65-75)
+    TaskTemplate(
+      id: 'cook-lunch',
+      name: 'Готовка обеда',
+      icon: '🍳',
+      category: 'household',
+      frequency: '3x per Week',
+      weeklyGoal: 3,
+      priority: 65,
+      cohorts: [],
+    ),
+    TaskTemplate(
+      id: 'care-for-cat',
+      name: 'Убирать за котом',
+      icon: '🐱',
+      category: 'household',
+      frequency: 'Daily',
+      weeklyGoal: 7,
+      priority: 66,
+      cohorts: ['earlySchool', 'middleSchool'],
+    ),
   ];
 
   // ========== FUTURE (Education & Skills) TASKS (sorted by popularity) ==========
@@ -774,6 +828,48 @@ class TaskLibrary {
       priority: 43,
       needsApproval: true,
       cohorts: ['preTeen'],
+    ),
+
+    // Additional education tasks (priority 44-54)
+    TaskTemplate(
+      id: 'reading-book',
+      name: 'Чтение',
+      icon: '📚',
+      category: 'education',
+      frequency: 'Daily',
+      weeklyGoal: 7,
+      priority: 44,
+      cohorts: [],
+    ),
+    TaskTemplate(
+      id: 'reading-book-2',
+      name: 'Чтение',
+      icon: '📖',
+      category: 'education',
+      frequency: '5x per Week',
+      weeklyGoal: 5,
+      priority: 45,
+      cohorts: ['earlySchool'],
+    ),
+    TaskTemplate(
+      id: 'logiclike',
+      name: 'LogicLike',
+      icon: '🧠',
+      category: 'education',
+      frequency: '2x per Week',
+      weeklyGoal: 2,
+      priority: 46,
+      cohorts: ['earlySchool', 'middleSchool'],
+    ),
+    TaskTemplate(
+      id: 'uceba',
+      name: 'Учёба',
+      icon: '🎓',
+      category: 'education',
+      frequency: '3x per Week',
+      weeklyGoal: 3,
+      priority: 47,
+      cohorts: ['middleSchool', 'preTeen'],
     ),
   ];
 

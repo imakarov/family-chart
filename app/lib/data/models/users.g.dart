@@ -22,43 +22,48 @@ const UsersSchema = CollectionSchema(
       name: r'avatarBytes',
       type: IsarType.byteList,
     ),
-    r'cloudKitRecordId': PropertySchema(
+    r'avatarEmoji': PropertySchema(
       id: 1,
+      name: r'avatarEmoji',
+      type: IsarType.string,
+    ),
+    r'cloudKitRecordId': PropertySchema(
+      id: 2,
       name: r'cloudKitRecordId',
       type: IsarType.string,
     ),
     r'colorHex': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'colorHex',
       type: IsarType.string,
     ),
     r'contactId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'contactId',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'modifiedAt': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'modifiedAt',
       type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'name',
       type: IsarType.string,
     ),
     r'relation': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'relation',
       type: IsarType.string,
     ),
     r'sortOrder': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'sortOrder',
       type: IsarType.long,
     )
@@ -87,6 +92,12 @@ int _usersEstimateSize(
     final value = object.avatarBytes;
     if (value != null) {
       bytesCount += 3 + value.length;
+    }
+  }
+  {
+    final value = object.avatarEmoji;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
     }
   }
   {
@@ -119,14 +130,15 @@ void _usersSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeByteList(offsets[0], object.avatarBytes);
-  writer.writeString(offsets[1], object.cloudKitRecordId);
-  writer.writeString(offsets[2], object.colorHex);
-  writer.writeString(offsets[3], object.contactId);
-  writer.writeDateTime(offsets[4], object.createdAt);
-  writer.writeDateTime(offsets[5], object.modifiedAt);
-  writer.writeString(offsets[6], object.name);
-  writer.writeString(offsets[7], object.relation);
-  writer.writeLong(offsets[8], object.sortOrder);
+  writer.writeString(offsets[1], object.avatarEmoji);
+  writer.writeString(offsets[2], object.cloudKitRecordId);
+  writer.writeString(offsets[3], object.colorHex);
+  writer.writeString(offsets[4], object.contactId);
+  writer.writeDateTime(offsets[5], object.createdAt);
+  writer.writeDateTime(offsets[6], object.modifiedAt);
+  writer.writeString(offsets[7], object.name);
+  writer.writeString(offsets[8], object.relation);
+  writer.writeLong(offsets[9], object.sortOrder);
 }
 
 Users _usersDeserialize(
@@ -137,14 +149,15 @@ Users _usersDeserialize(
 ) {
   final object = Users();
   object.avatarBytes = reader.readByteList(offsets[0]);
-  object.cloudKitRecordId = reader.readStringOrNull(offsets[1]);
-  object.colorHex = reader.readString(offsets[2]);
-  object.contactId = reader.readStringOrNull(offsets[3]);
-  object.createdAt = reader.readDateTime(offsets[4]);
-  object.modifiedAt = reader.readDateTime(offsets[5]);
-  object.name = reader.readString(offsets[6]);
-  object.relation = reader.readStringOrNull(offsets[7]);
-  object.sortOrder = reader.readLong(offsets[8]);
+  object.avatarEmoji = reader.readStringOrNull(offsets[1]);
+  object.cloudKitRecordId = reader.readStringOrNull(offsets[2]);
+  object.colorHex = reader.readString(offsets[3]);
+  object.contactId = reader.readStringOrNull(offsets[4]);
+  object.createdAt = reader.readDateTime(offsets[5]);
+  object.modifiedAt = reader.readDateTime(offsets[6]);
+  object.name = reader.readString(offsets[7]);
+  object.relation = reader.readStringOrNull(offsets[8]);
+  object.sortOrder = reader.readLong(offsets[9]);
   object.userId = id;
   return object;
 }
@@ -161,18 +174,20 @@ P _usersDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
-    case 3:
       return (reader.readStringOrNull(offset)) as P;
+    case 3:
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
       return (reader.readDateTime(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 7:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 8:
+      return (reader.readStringOrNull(offset)) as P;
+    case 9:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -419,6 +434,152 @@ extension UsersQueryFilter on QueryBuilder<Users, Users, QFilterCondition> {
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'avatarEmoji',
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'avatarEmoji',
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'avatarEmoji',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'avatarEmoji',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'avatarEmoji',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'avatarEmoji',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterFilterCondition> avatarEmojiIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'avatarEmoji',
+        value: '',
+      ));
     });
   }
 
@@ -1337,6 +1498,18 @@ extension UsersQueryObject on QueryBuilder<Users, Users, QFilterCondition> {}
 extension UsersQueryLinks on QueryBuilder<Users, Users, QFilterCondition> {}
 
 extension UsersQuerySortBy on QueryBuilder<Users, Users, QSortBy> {
+  QueryBuilder<Users, Users, QAfterSortBy> sortByAvatarEmoji() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'avatarEmoji', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterSortBy> sortByAvatarEmojiDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'avatarEmoji', Sort.desc);
+    });
+  }
+
   QueryBuilder<Users, Users, QAfterSortBy> sortByCloudKitRecordId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cloudKitRecordId', Sort.asc);
@@ -1435,6 +1608,18 @@ extension UsersQuerySortBy on QueryBuilder<Users, Users, QSortBy> {
 }
 
 extension UsersQuerySortThenBy on QueryBuilder<Users, Users, QSortThenBy> {
+  QueryBuilder<Users, Users, QAfterSortBy> thenByAvatarEmoji() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'avatarEmoji', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Users, Users, QAfterSortBy> thenByAvatarEmojiDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'avatarEmoji', Sort.desc);
+    });
+  }
+
   QueryBuilder<Users, Users, QAfterSortBy> thenByCloudKitRecordId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cloudKitRecordId', Sort.asc);
@@ -1551,6 +1736,13 @@ extension UsersQueryWhereDistinct on QueryBuilder<Users, Users, QDistinct> {
     });
   }
 
+  QueryBuilder<Users, Users, QDistinct> distinctByAvatarEmoji(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'avatarEmoji', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Users, Users, QDistinct> distinctByCloudKitRecordId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1616,6 +1808,12 @@ extension UsersQueryProperty on QueryBuilder<Users, Users, QQueryProperty> {
   QueryBuilder<Users, List<int>?, QQueryOperations> avatarBytesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'avatarBytes');
+    });
+  }
+
+  QueryBuilder<Users, String?, QQueryOperations> avatarEmojiProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'avatarEmoji');
     });
   }
 

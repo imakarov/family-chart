@@ -80,89 +80,66 @@ class SeedDataService {
       final dochId = users[2].userId;
       final synId = users[3].userId;
 
-      // 3. Create Tasks
-      final tasks = [
-        Tasks()
-          ..title = 'Спорт'
-          ..iconName = '🏃'
-          ..category = 'physical'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Чтение'
-          ..iconName = '📚'
-          ..category = 'education'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Готовка обеда'
-          ..iconName = '🍳'
-          ..category = 'household'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Йога'
-          ..iconName = '🧘'
-          ..category = 'physical'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Чтение'
-          ..iconName = '📖'
-          ..category = 'education'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Футбол'
-          ..iconName = '⚽'
-          ..category = 'physical'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Умывание и зубы'
-          ..iconName = '🪥'
-          ..category = 'hygiene'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'LogicLike'
-          ..iconName = '🧠'
-          ..category = 'education'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Убирать за котом'
-          ..iconName = '🐱'
-          ..category = 'household'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Учёба'
-          ..iconName = '🎓'
-          ..category = 'education'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
-        Tasks()
-          ..title = 'Спорт'
-          ..iconName = '🏃‍♀️'
-          ..category = 'physical'
-          ..isCustom = false
-          ..createdAt = DateTime.now()
-          ..modifiedAt = DateTime.now(),
+      // 3. Load Tasks from database (already seeded by TasksSeedingService)
+      // We find existing tasks by title and icon
+      print('[SeedData] Loading existing tasks from database...');
+      final allDbTasks = await _isar.tasks.where().findAll();
+      print('[SeedData] Found ${allDbTasks.length} tasks in database');
+
+      final tasks = <Tasks>[];
+      final tasksToCreate = <Map<String, String>>[];
+
+      // Task specs for demo data
+      final taskSpecs = [
+        {'title': 'Спорт', 'icon': '🏃'},
+        {'title': 'Чтение', 'icon': '📚'},
+        {'title': 'Готовка обеда', 'icon': '🍳'},
+        {'title': 'Йога', 'icon': '🧘'},
+        {'title': 'Чтение', 'icon': '📖'},
+        {'title': 'Футбол', 'icon': '⚽'},
+        {'title': 'Умывание и зубы', 'icon': '🪥'},
+        {'title': 'LogicLike', 'icon': '🧠'},
+        {'title': 'Убирать за котом', 'icon': '🐱'},
+        {'title': 'Учёба', 'icon': '🎓'},
+        {'title': 'Спорт', 'icon': '🏃‍♀️'},
       ];
 
-      for (var task in tasks) {
-        await _isar.tasks.put(task);
+      // Find existing tasks or mark for creation
+      for (final spec in taskSpecs) {
+        Tasks? existing;
+        try {
+          existing = allDbTasks.firstWhere(
+            (t) => t.title == spec['title'] && t.icon == spec['icon'],
+          );
+        } catch (e) {
+          existing = null;
+        }
+
+        if (existing != null) {
+          tasks.add(existing);
+          print('[SeedData] Found existing: ${spec['title']} ${spec['icon']}');
+        } else {
+          tasksToCreate.add(spec);
+          print('[SeedData] Will create: ${spec['title']} ${spec['icon']}');
+        }
+      }
+
+      // 3a. Create missing tasks INSIDE transaction
+      for (final spec in tasksToCreate) {
+        final newTask = Tasks()
+          ..title = spec['title']!
+          ..icon = spec['icon']!
+          ..category = 'other'
+          ..libraryId = null
+          ..version = 1
+          ..isActive = true
+          ..isCustom = true
+          ..createdAt = DateTime.now()
+          ..modifiedAt = DateTime.now();
+
+        await _isar.tasks.put(newTask);
+        tasks.add(newTask);
+        print('[SeedData] Created custom task: ${spec['title']} ${spec['icon']} (id: ${newTask.taskId})');
       }
 
       // 4. Create UserTasks (Assignments)
@@ -378,5 +355,41 @@ class SeedDataService {
       ..completedBy = isCompleted ? userId : null
       ..source = TaskCompletionSource.manual
       ..modifiedAt = DateTime.now();
+  }
+
+  /// Helper method to get existing task from DB or create a new custom task
+  Future<Tasks> _getOrCreateTask(String title, String icon) async {
+    // Try to find task in database by title and icon
+    final existing = await _isar.tasks
+        .filter()
+        .titleEqualTo(title)
+        .iconEqualTo(icon)
+        .findFirst();
+
+    if (existing != null) {
+      print('[SeedData] Found existing task: $title $icon (id: ${existing.taskId}, libraryId: ${existing.libraryId})');
+      return existing;
+    }
+
+    // Create new custom task if not found
+    // Important: libraryId is null for custom tasks to avoid unique index violation
+    final newTask = Tasks()
+      ..title = title
+      ..icon = icon
+      ..category = 'other'
+      ..libraryId = null  // Explicitly set to null for custom tasks
+      ..version = 1
+      ..isActive = true
+      ..isCustom = true
+      ..createdAt = DateTime.now()
+      ..modifiedAt = DateTime.now();
+
+    // Save to database
+    await _isar.writeTxn(() async {
+      await _isar.tasks.put(newTask);
+    });
+
+    print('[SeedData] Created custom task: $title $icon (id: ${newTask.taskId})');
+    return newTask;
   }
 }

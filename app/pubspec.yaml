@@ -64,6 +64,8 @@ dependencies:
   # Utilities
   uuid: ^4.3.3
   intl: ^0.18.1  # Pinned by flutter_localizations
+  url_launcher: ^6.2.5
+  in_app_review: ^2.0.9
 
   # Animations
   lottie: ^3.1.0
@@ -80,6 +82,7 @@ dev_dependencies:
   riverpod_generator: ^2.3.11
   isar_generator: ^3.1.0+1
   go_router_builder: ^2.4.1
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

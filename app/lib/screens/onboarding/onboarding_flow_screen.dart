@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'welcome_screen.dart';
 import 'step1_family_members_screen.dart';
 import 'step2_choose_tasks_screen.dart';
 import 'step3_set_schedule_screen.dart';
-import '../weekly_board_screen.dart';
+import '../../core/providers/isar_provider.dart';
+import '../../data/models/users.dart';
+import '../../data/models/checklists.dart';
+import '../../data/models/tasks.dart';
+import '../../data/models/user_tasks.dart';
 
 /// Main onboarding flow with PageView navigation and shared state
 class OnboardingFlowScreen extends ConsumerStatefulWidget {
-  const OnboardingFlowScreen({super.key});
+  final int initialStep; // 0=welcome, 1=members, 2=tasks, 3=schedule
+
+  const OnboardingFlowScreen({super.key, this.initialStep = 0});
 
   @override
   ConsumerState<OnboardingFlowScreen> createState() => _OnboardingFlowScreenState();
 }
 
 class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  late final PageController _pageController;
+  late int _currentPage;
 
   // Shared onboarding data
   List<FamilyMember> _members = [];
@@ -25,6 +32,28 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
 
   // Step 2 state
   int _currentMemberIndex = 0;
+
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPage = widget.initialStep;
+    _pageController = PageController(initialPage: widget.initialStep);
+    _loadExistingData();
+  }
+
+  Future<void> _loadExistingData() async {
+    // TODO: Load existing data from database
+    // Temporarily disabled - will be implemented in next iteration
+    print('Data loading temporarily disabled');
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -79,19 +108,148 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
   }
 
   // Step 3 -> Complete
-  void _completeOnboarding() {
-    // TODO: Save data to Isar database
-    print('Onboarding complete!');
-    print('Members: ${_members.length}');
-    print('Tasks by member: ${_tasksByMember.map((k, v) => MapEntry(k, v.length))}');
-    print('Schedule: ${_scheduleByMember.length}');
+  Future<void> _completeOnboarding() async {
+    print('Onboarding complete! Saving to database...');
 
-    // Navigate to Weekly Board with first checklist
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const WeeklyBoardScreen(checklistId: 1),
-      ),
-    );
+    try {
+      final isar = await ref.read(isarProvider.future);
+      int? checklistId;
+
+      // CRITICAL: Load all existing tasks BEFORE transaction to avoid query issues
+      print('[Onboarding] Loading existing tasks from database...');
+      final allExistingTasks = <Tasks>[];
+
+      // Get count first, then load tasks one by one
+      final count = await isar.tasks.count();
+      print('[Onboarding] Found $count tasks in database');
+
+      for (var i = 1; i <= count + 100; i++) {  // +100 buffer for auto-increment gaps
+        final task = await isar.tasks.get(i);
+        if (task != null) {
+          allExistingTasks.add(task);
+        }
+      }
+
+      print('[Onboarding] Loaded ${allExistingTasks.length} existing tasks');
+
+      await isar.writeTxn(() async {
+        // 1. Create Checklist
+        final checklist = Checklists()
+          ..name = 'Family Checklist'
+          ..isRepeating = true
+          ..isArchived = false
+          ..createdAt = DateTime.now()
+          ..modifiedAt = DateTime.now();
+
+        await isar.checklists.put(checklist);
+        checklistId = checklist.checklistId;
+
+        // 2. Create Users from onboarding data
+        final userIdMap = <String, int>{}; // onboarding memberId -> db userId
+        final availableColors = ['#9B59D0', '#7CB342', '#E57373', '#42A5F5', '#FFA726', '#26A69A'];
+
+        for (var i = 0; i < _members.length; i++) {
+          final member = _members[i];
+          final user = Users()
+            ..name = member.name.isEmpty ? 'Member ${i + 1}' : member.name
+            ..avatarEmoji = member.avatar
+            ..colorHex = availableColors[i % availableColors.length]
+            ..relation = member.role == 'parent' ? 'parent' : 'child'
+            ..sortOrder = i
+            ..createdAt = DateTime.now()
+            ..modifiedAt = DateTime.now();
+
+          await isar.users.put(user);
+          userIdMap[member.id] = user.userId!;
+        }
+
+        // 3. Create Tasks and UserTasks
+        // Track tasks we've already processed in THIS onboarding session
+        final processedTasks = <String, Tasks>{};
+
+        for (final member in _members) {
+          final tasks = _tasksByMember[member.id] ?? [];
+          final userId = userIdMap[member.id]!;
+
+          for (var taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
+            final onboardingTask = tasks[taskIndex];
+
+            // Check if we've already processed this task in this onboarding
+            Tasks? task = processedTasks[onboardingTask.id];
+
+            if (task == null) {
+              // First, try to find existing task in database by libraryId
+              task = allExistingTasks.cast<Tasks?>().firstWhere(
+                (t) => t?.libraryId == onboardingTask.id,
+                orElse: () => null,
+              );
+
+              if (task != null) {
+                print('[Onboarding] Found existing task: ${task.title} (taskId: ${task.taskId}, libraryId: ${task.libraryId})');
+              } else {
+                // Task doesn't exist, create new one
+                task = Tasks()
+                  ..title = onboardingTask.name
+                  ..icon = onboardingTask.icon
+                  ..category = onboardingTask.category
+                  ..libraryId = onboardingTask.id
+                  ..version = 1
+                  ..isActive = true
+                  ..isCustom = false
+                  ..createdAt = DateTime.now()
+                  ..modifiedAt = DateTime.now();
+
+                await isar.tasks.put(task);
+                print('[Onboarding] Created new task: ${task.title} (taskId: ${task.taskId}, libraryId: ${task.libraryId})');
+              }
+
+              processedTasks[onboardingTask.id] = task;
+            }
+
+            // Get schedule for this task
+            final weekdays = _scheduleByMember[member.id]?[onboardingTask.id] ?? [];
+
+            // Convert weekday indices (0-6: Sun-Sat) to frequency string (1-7: Mon-Sun)
+            // Onboarding: 0=Sun, 1=Mon, ..., 6=Sat
+            // Database:   1=Mon, 2=Tue, ..., 7=Sun
+            final dbWeekdays = weekdays.map((day) {
+              if (day == 0) return 7; // Sunday
+              return day; // Mon-Sat stay the same (1-6)
+            }).toList()..sort();
+
+            final frequency = dbWeekdays.join(',');
+
+            // Create UserTask assignment
+            final userTask = UserTasks()
+              ..userId = userId
+              ..taskId = task.taskId!
+              ..checklistId = checklistId!
+              ..frequency = frequency
+              ..sortOrder = taskIndex
+              ..isEnabled = true
+              ..createdAt = DateTime.now()
+              ..modifiedAt = DateTime.now();
+
+            await isar.userTasks.put(userTask);
+          }
+        }
+      });
+
+      print('Data saved successfully! Checklist ID: $checklistId');
+
+      // Navigate to Weekly Board with created checklist
+      if (mounted) {
+        context.go('/checklist/$checklistId');
+      }
+    } catch (e) {
+      print('Error saving onboarding data: $e');
+      // Show error to user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving data: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -123,7 +281,9 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
                       member: _members[_currentMemberIndex],
                       currentIndex: _currentMemberIndex,
                       totalMembers: _members.length,
+                      allMembers: _members,
                       onContinue: _onStep2Continue,
+                      initialSelectedTasks: _tasksByMember[_members[_currentMemberIndex].id],
                     )
                   : const SizedBox(), // Placeholder until data is ready
               // Screen 3: Set Schedule

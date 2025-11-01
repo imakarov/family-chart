@@ -28,6 +28,7 @@ Future<Isar> isar(IsarRef ref) async {
     ],
     directory: dir.path,
     name: 'family_chart',
+    inspector: true,
   );
 
   // Keep database open for the lifetime of the app

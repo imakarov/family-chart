@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import '../../core/providers/isar_provider.dart';
+import '../../data/models/users.dart';
+import '../../data/models/user_tasks.dart';
+import '../../data/models/task_completions.dart';
 
 /// Family member model
 class FamilyMember {
@@ -16,21 +22,26 @@ class FamilyMember {
 }
 
 /// Screen 1 (Step 1/3): Add family members
-class Step1FamilyMembersScreen extends StatefulWidget {
+class Step1FamilyMembersScreen extends ConsumerStatefulWidget {
   final Function(List<FamilyMember>) onContinue;
+  final List<FamilyMember>? initialMembers; // For edit mode
+  final int? checklistId; // For edit mode (to delete from DB)
 
   const Step1FamilyMembersScreen({
     super.key,
     required this.onContinue,
+    this.initialMembers,
+    this.checklistId,
   });
 
   @override
-  State<Step1FamilyMembersScreen> createState() =>
+  ConsumerState<Step1FamilyMembersScreen> createState() =>
       _Step1FamilyMembersScreenState();
 }
 
-class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
-  final List<FamilyMember> _members = [];
+class _Step1FamilyMembersScreenState extends ConsumerState<Step1FamilyMembersScreen> {
+  late List<FamilyMember> _members;
+  final Map<String, TextEditingController> _nameControllers = {};
 
   // Available avatars (matching HTML)
   final List<String> _avatars = [
@@ -42,8 +53,27 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
   @override
   void initState() {
     super.initState();
-    // Start with one parent (matching HTML behavior)
-    _addMember('parent');
+    // Initialize with existing members or start fresh
+    if (widget.initialMembers != null && widget.initialMembers!.isNotEmpty) {
+      _members = List.from(widget.initialMembers!);
+      // Create controllers for existing members
+      for (final member in _members) {
+        _nameControllers[member.id] = TextEditingController(text: member.name);
+      }
+    } else {
+      _members = [];
+      // Start with one parent (matching HTML behavior)
+      _addMember('parent');
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose all controllers
+    for (final controller in _nameControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   void _addMember(String role) {
@@ -52,18 +82,100 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
         ? (_members.isEmpty ? '👨' : '👩')
         : (_members.length % 2 == 0 ? '👦' : '👧');
 
+    final member = FamilyMember(
+      id: id,
+      role: role,
+      avatar: avatar,
+    );
+
     setState(() {
-      _members.add(FamilyMember(
-        id: id,
-        role: role,
-        avatar: avatar,
-      ));
+      _members.add(member);
+      // Create controller for new member
+      _nameControllers[id] = TextEditingController(text: member.name);
     });
   }
 
-  void _removeMember(String id) {
+  Future<void> _removeMember(String id) async {
+    final member = _members.firstWhere((m) => m.id == id);
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Member?'),
+        content: Text(
+          'All tasks and completion data for ${member.name.isEmpty ? "this member" : member.name} will be deleted. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // If in edit mode, delete from database
+    if (widget.checklistId != null && id.startsWith('member_')) {
+      try {
+        final userIdStr = id.substring(7); // Remove 'member_' prefix
+        final userId = int.tryParse(userIdStr);
+
+        if (userId != null) {
+          final isar = await ref.read(isarProvider.future);
+
+          await isar.writeTxn(() async {
+            // 1. Delete all UserTasks for this user in this checklist
+            final userTasks = await isar.userTasks
+                .filter()
+                .userIdEqualTo(userId)
+                .checklistIdEqualTo(widget.checklistId!)
+                .findAll();
+
+            for (final userTask in userTasks) {
+              await isar.userTasks.delete(userTask.id);
+            }
+
+            // 2. Delete all TaskCompletions for this user in this checklist
+            final completions = await isar.taskCompletions
+                .filter()
+                .userIdEqualTo(userId)
+                .checklistIdEqualTo(widget.checklistId!)
+                .findAll();
+
+            for (final completion in completions) {
+              await isar.taskCompletions.delete(completion.id);
+            }
+
+            // 3. Delete the user
+            await isar.users.delete(userId);
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting member: $e')),
+          );
+        }
+        return;
+      }
+    }
+
+    // Remove from local state
     setState(() {
       _members.removeWhere((m) => m.id == id);
+      // Dispose and remove controller
+      _nameControllers[id]?.dispose();
+      _nameControllers.remove(id);
     });
   }
 
@@ -239,7 +351,7 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 100), // Space for progress dots
+              const SizedBox(height: 50), // Reduced from 100
               // Header
               const Text(
                 'Family Members',
@@ -260,7 +372,7 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Members grid
+              // Members grid with scroll
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -279,13 +391,13 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 80), // Space for button
+              const SizedBox(height: 12), // Reduced from 80
             ],
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 12),
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 34, top: 8),
         child: SizedBox(
           width: double.infinity,
           height: 56,
@@ -365,6 +477,7 @@ class _Step1FamilyMembersScreenState extends State<Step1FamilyMembersScreen> {
               const SizedBox(height: 12),
               // Name input
               TextField(
+                controller: _nameControllers[member.id],
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText: member.role == 'parent' ? 'Parent name' : 'Kid name',
