@@ -6,12 +6,14 @@ import '../../../data/repositories/users_repository.dart';
 import '../../../data/repositories/user_tasks_repository.dart';
 import '../../../data/repositories/task_completions_repository.dart';
 import '../../../data/repositories/tasks_repository.dart';
+import '../../../data/repositories/settings_repository.dart';
 import '../../../data/models/users.dart';
 import '../../../data/models/user_tasks.dart';
 import '../../../data/models/tasks.dart';
 import '../../../data/models/task_completions.dart';
 import '../../../data/models/checklists.dart';
 import '../../../core/utils/date_utils.dart' as app_date_utils;
+import '../../../core/utils/week_day_helper.dart';
 import '../../../core/providers/isar_provider.dart';
 import '../../../widgets/app_menu_drawer.dart';
 
@@ -190,19 +192,21 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   }
 
   Widget _buildHeaderRow() {
-    final days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays;
 
     return Row(
       children: [
         // Empty cell for member names
         Container(width: 110, height: 48),
         // Day cells
-        ...List.generate(7, (index) {
-          final dayIndex = index;
-          final dayOfWeek = dayIndex + 1; // 1-7
-          final isCurrent = dayIndex == currentDayOfWeek - 1;
-          final isSelected = dayIndex == selectedDayOfWeek - 1;
-          final isPast = dayIndex < currentDayOfWeek - 1;
+        ...List.generate(7, (uiIndex) {
+          final isoDayOfWeek = orderedDays[uiIndex]; // ISO day (1-7)
+          final dayIndex = isoDayOfWeek - 1; // 0-based index for date calculation
+          final isCurrent = isoDayOfWeek == currentDayOfWeek;
+          final isSelected = isoDayOfWeek == selectedDayOfWeek;
+          final isPast = isoDayOfWeek < currentDayOfWeek;
           final isClickable = isPast || isCurrent; // Can click on past and current days
           final date = weekStart.add(Duration(days: dayIndex));
 
@@ -260,7 +264,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        days[index],
+                        helper.getShortLabel(isoDayOfWeek),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -280,7 +284,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                     ],
                   )
                 : Text(
-                    days[index],
+                    helper.getShortLabel(isoDayOfWeek),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -294,7 +298,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
             flex: showExpanded ? 56 : 30,
             child: isClickable
                 ? GestureDetector(
-                    onTap: () => _selectDay(dayOfWeek),
+                    onTap: () => _selectDay(isoDayOfWeek),
                     child: dayCell,
                   )
                 : dayCell,
@@ -325,6 +329,10 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   }
 
   Widget _buildMemberHeaderRow(_BoardData data, Users member) {
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays;
+
     return Row(
       children: [
         // Member cell
@@ -388,8 +396,10 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           ),
         ),
         // Day cells with stars
-        ...List.generate(7, (dayIndex) {
-          final isCurrent = dayIndex == currentDayOfWeek - 1;
+        ...List.generate(7, (uiIndex) {
+          final isoDayOfWeek = orderedDays[uiIndex]; // ISO day (1-7)
+          final dayIndex = isoDayOfWeek - 1; // 0-based index for date calculation
+          final isCurrent = isoDayOfWeek == currentDayOfWeek;
           final star = _getMemberDayStar(data, member, dayIndex);
 
           Widget dayCell = Container(
@@ -582,7 +592,12 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           ),
         ),
             // Day cells
-            ...List.generate(7, (dayIndex) {
+            ...List.generate(7, (uiIndex) {
+              final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+              final helper = WeekDayHelper(weekStartDaySetting);
+              final orderedDays = helper.orderedDays;
+              final isoDayOfWeek = orderedDays[uiIndex]; // ISO day (1-7)
+              final dayIndex = isoDayOfWeek - 1; // 0-based index for date calculation
               return _buildTaskDayCell(data, member, userTask, task, dayIndex);
             }),
           ],

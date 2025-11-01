@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/repositories/settings_repository.dart';
+import '../core/utils/week_day_helper.dart';
 
 /// Reusable weekday selector widget with 3-letter day names and checkmarks
-class WeekdaySelector extends StatelessWidget {
-  final List<int> selectedDays; // 0=Sun, 1=Mon, ..., 6=Sat
-  final Function(int) onDayToggle;
+class WeekdaySelector extends ConsumerWidget {
+  final List<int> selectedDays; // ISO day numbers (1-7) stored in DB
+  final Function(int) onDayToggle; // Callback receives UI index (0-6)
 
   const WeekdaySelector({
     super.key,
@@ -11,10 +14,13 @@ class WeekdaySelector extends StatelessWidget {
     required this.onDayToggle,
   });
 
-  static final List<String> _weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Get weekStartDay setting to determine day order
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays; // ISO days in UI order
+
     return LayoutBuilder(
       builder: (context, constraints) {
         // Use actual available width from parent
@@ -24,12 +30,15 @@ class WeekdaySelector extends StatelessWidget {
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: List.generate(7, (index) {
-            final isSelected = selectedDays.contains(index);
+          children: List.generate(7, (uiIndex) {
+            final isoDayOfWeek = orderedDays[uiIndex]; // Get ISO day for this UI position
+            final isSelected = selectedDays.contains(isoDayOfWeek); // Check if this ISO day is selected
+            final dayLabel = helper.getShortLabel(isoDayOfWeek); // Get short label for this ISO day
+
             return Container(
-              margin: EdgeInsets.only(right: index < 6 ? 6 : 0),
+              margin: EdgeInsets.only(right: uiIndex < 6 ? 6 : 0),
               child: GestureDetector(
-                onTap: () => onDayToggle(index),
+                onTap: () => onDayToggle(uiIndex), // Pass UI index to callback
                 child: SizedBox(
                   width: buttonSize,
                   height: buttonSize,
@@ -56,7 +65,7 @@ class WeekdaySelector extends StatelessWidget {
                         children: [
                           // Day name (always at top)
                           Text(
-                            _weekdayNames[index],
+                            dayLabel,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,

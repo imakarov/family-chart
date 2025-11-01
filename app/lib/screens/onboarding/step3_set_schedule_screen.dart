@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'step1_family_members_screen.dart';
 import 'step2_choose_tasks_screen.dart';
 import '../../widgets/weekday_selector.dart';
+import '../../data/repositories/settings_repository.dart';
+import '../../core/utils/week_day_helper.dart';
 
 /// Screen 3 (Step 3/3): Set schedule for tasks
-class Step3SetScheduleScreen extends StatefulWidget {
+class Step3SetScheduleScreen extends ConsumerStatefulWidget {
   final List<FamilyMember> members;
   final Map<String, List<Task>> tasksByMember;
   final Map<String, Map<String, List<int>>> scheduleByMember;
@@ -25,14 +28,11 @@ class Step3SetScheduleScreen extends StatefulWidget {
   });
 
   @override
-  State<Step3SetScheduleScreen> createState() => _Step3SetScheduleScreenState();
+  ConsumerState<Step3SetScheduleScreen> createState() => _Step3SetScheduleScreenState();
 }
 
-class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
+class _Step3SetScheduleScreenState extends ConsumerState<Step3SetScheduleScreen> {
   final Map<String, bool> _expandedMembers = {};
-
-  final List<String> _weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  final List<String> _weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   @override
   void initState() {
@@ -43,13 +43,21 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
     }
   }
 
-  void _toggleWeekday(String memberId, String taskId, int weekdayIndex) {
+  void _toggleWeekday(String memberId, String taskId, int uiIndex) {
+    // Get weekStartDay setting to determine conversion
+    final weekStartDaySetting = ref.read(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+
+    // Convert UI index to ISO day
+    final isoDayOfWeek = helper.getIsoDay(uiIndex);
+
+    // Get current ISO days stored in DB
     final currentDays = List<int>.from(widget.scheduleByMember[memberId]?[taskId] ?? []);
 
-    if (currentDays.contains(weekdayIndex)) {
-      currentDays.remove(weekdayIndex);
+    if (currentDays.contains(isoDayOfWeek)) {
+      currentDays.remove(isoDayOfWeek);
     } else {
-      currentDays.add(weekdayIndex);
+      currentDays.add(isoDayOfWeek);
       currentDays.sort();
     }
 
@@ -59,9 +67,9 @@ class _Step3SetScheduleScreenState extends State<Step3SetScheduleScreen> {
   void _setQuickSelect(String memberId, String taskId, String type) {
     List<int> weekdays;
     if (type == 'weekdays') {
-      weekdays = [1, 2, 3, 4, 5]; // Mon-Fri
+      weekdays = [1, 2, 3, 4, 5]; // Mon-Fri (ISO days)
     } else {
-      weekdays = [0, 6]; // Sun, Sat
+      weekdays = [6, 7]; // Sat-Sun (ISO days)
     }
     widget.onScheduleUpdate(memberId, taskId, weekdays);
   }
