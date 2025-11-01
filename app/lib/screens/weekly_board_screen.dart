@@ -176,7 +176,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   }
 
   Widget _buildHeaderRow() {
-    final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
     return Row(
       children: [
