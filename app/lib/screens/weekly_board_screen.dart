@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../data/repositories/checklist_repository.dart';
 import '../../../data/repositories/users_repository.dart';
@@ -33,6 +32,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   late int currentWeekYear;
   late DateTime weekStart;
   int currentDayOfWeek = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
+  late int selectedDayOfWeek; // Selected day for editing (1-7)
   String? selectedFilter; // null = 'all', or userId
 
   @override
@@ -42,6 +42,20 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     currentWeekNumber = app_date_utils.DateUtils.getWeekNumber(now);
     currentWeekYear = app_date_utils.DateUtils.getWeekYear(now);
     weekStart = app_date_utils.DateUtils.getWeekStartDate(currentWeekNumber, currentWeekYear);
+    selectedDayOfWeek = currentDayOfWeek; // Default to current day
+  }
+
+  @override
+  void dispose() {
+    // Reset to current day when leaving screen
+    selectedDayOfWeek = currentDayOfWeek;
+    super.dispose();
+  }
+
+  void _selectDay(int dayOfWeek) {
+    setState(() {
+      selectedDayOfWeek = dayOfWeek;
+    });
   }
 
   // DEBUG: Show reset dialog
@@ -185,22 +199,48 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         // Day cells
         ...List.generate(7, (index) {
           final dayIndex = index;
+          final dayOfWeek = dayIndex + 1; // 1-7
           final isCurrent = dayIndex == currentDayOfWeek - 1;
+          final isSelected = dayIndex == selectedDayOfWeek - 1;
+          final isPast = dayIndex < currentDayOfWeek - 1;
+          final isClickable = isPast || isCurrent; // Can click on past and current days
           final date = weekStart.add(Duration(days: dayIndex));
 
+          // Determine colors
+          Color bgColor;
+          Color textColor;
+          bool showExpanded;
+
+          if (isCurrent) {
+            // Current day always blue
+            bgColor = const Color(0xFF1CB0F6);
+            textColor = Colors.white;
+            showExpanded = true;
+          } else if (isSelected && isPast) {
+            // Selected past day - gray
+            bgColor = const Color(0xFF9E9E9E);
+            textColor = Colors.white;
+            showExpanded = true;
+          } else {
+            // Other days - white
+            bgColor = Colors.white;
+            textColor = const Color(0xFF1A1A1A);
+            showExpanded = false;
+          }
+
           Widget dayCell = Container(
-            height: isCurrent ? 48 : 34,
-            margin: isCurrent ? null : const EdgeInsets.only(top: 12),
-            alignment: isCurrent ? null : Alignment.bottomCenter,
-            padding: isCurrent
+            height: showExpanded ? 48 : 34,
+            margin: showExpanded ? null : const EdgeInsets.only(top: 12),
+            alignment: showExpanded ? null : Alignment.bottomCenter,
+            padding: showExpanded
                 ? const EdgeInsets.symmetric(vertical: 6, horizontal: 4)
                 : const EdgeInsets.only(bottom: 6, left: 4, right: 4),
             decoration: BoxDecoration(
-              color: isCurrent ? const Color(0xFF1CB0F6) : Colors.white,
-              borderRadius: isCurrent
+              color: bgColor,
+              borderRadius: showExpanded
                   ? const BorderRadius.vertical(top: Radius.circular(12))
                   : null,
-              boxShadow: isCurrent
+              boxShadow: showExpanded
                   ? [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.08),
@@ -215,16 +255,16 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                     ]
                   : null,
             ),
-            child: isCurrent
+            child: showExpanded
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         days[index],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -233,7 +273,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                         style: TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.8),
+                          color: textColor.withOpacity(0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -241,18 +281,23 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
                   )
                 : Text(
                     days[index],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF1A1A1A),
+                      color: textColor,
                     ),
                   ),
           );
 
           // All days are Expanded with different flex values
           return Expanded(
-            flex: isCurrent ? 56 : 30,
-            child: dayCell,
+            flex: showExpanded ? 56 : 30,
+            child: isClickable
+                ? GestureDetector(
+                    onTap: () => _selectDay(dayOfWeek),
+                    child: dayCell,
+                  )
+                : dayCell,
           );
         }),
       ],
@@ -548,6 +593,7 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
   Widget _buildTaskDayCell(_BoardData data, Users member, UserTasks userTask, Tasks task, int dayIndex) {
     final isCurrent = dayIndex == currentDayOfWeek - 1;
+    final isSelected = dayIndex == selectedDayOfWeek - 1;
     final isPast = dayIndex < currentDayOfWeek - 1;
     final isFuture = dayIndex > currentDayOfWeek - 1;
 

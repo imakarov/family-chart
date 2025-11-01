@@ -92,7 +92,7 @@ class AppMenuDrawer extends StatelessWidget {
                     title: 'Settings',
                     onTap: () {
                       Navigator.pop(context);
-                      _showSettingsDialog(context);
+                      context.push('/settings');
                     },
                   ),
 
