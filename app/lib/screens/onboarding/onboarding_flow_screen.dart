@@ -96,11 +96,11 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
       setState(() {});
     } else {
       // All members done, go to Step 3
-      // Initialize schedule with all days selected by default
+      // Initialize schedule with all days selected by default (ISO days: 1-7)
       for (final member in _members) {
         _scheduleByMember[member.id] = {};
         for (final task in _tasksByMember[member.id]!) {
-          _scheduleByMember[member.id]![task.id] = [0, 1, 2, 3, 4, 5, 6]; // All days
+          _scheduleByMember[member.id]![task.id] = [1, 2, 3, 4, 5, 6, 7]; // All days (ISO format)
         }
       }
       _goToNextPage();
@@ -209,13 +209,9 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
             // Get schedule for this task
             final weekdays = _scheduleByMember[member.id]?[onboardingTask.id] ?? [];
 
-            // Convert weekday indices (0-6: Sun-Sat) to frequency string (1-7: Mon-Sun)
-            // Onboarding: 0=Sun, 1=Mon, ..., 6=Sat
-            // Database:   1=Mon, 2=Tue, ..., 7=Sun
-            final dbWeekdays = weekdays.map((day) {
-              if (day == 0) return 7; // Sunday
-              return day; // Mon-Sat stay the same (1-6)
-            }).toList()..sort();
+            // weekdays already contains ISO days (1-7) from Step 3
+            // No conversion needed - just sort and join
+            final dbWeekdays = weekdays.toList()..sort();
 
             final frequency = dbWeekdays.join(',');
 
