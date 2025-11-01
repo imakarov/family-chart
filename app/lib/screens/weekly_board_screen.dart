@@ -214,21 +214,27 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
               ? weekStart.subtract(const Duration(days: 1)) // Sunday before Monday
               : weekStart.add(Duration(days: uiIndex - (weekStartDaySetting == 'sunday' ? 1 : 0)));
 
-          // Determine colors
+          // Determine colors and expanded state
           Color bgColor;
           Color textColor;
           bool showExpanded;
 
-          if (isCurrent) {
-            // Current day always blue
+          if (isSelected) {
+            // This is the selected day
+            if (isCurrent) {
+              // Current day selected - blue
+              bgColor = const Color(0xFF1CB0F6);
+            } else {
+              // Past day selected - gray
+              bgColor = const Color(0xFF9E9E9E);
+            }
+            textColor = Colors.white;
+            showExpanded = true;
+          } else if (isCurrent) {
+            // Current day but not selected - blue, narrow
             bgColor = const Color(0xFF1CB0F6);
             textColor = Colors.white;
-            showExpanded = true;
-          } else if (isSelected && isPast) {
-            // Selected past day - gray
-            bgColor = const Color(0xFF9E9E9E);
-            textColor = Colors.white;
-            showExpanded = true;
+            showExpanded = false;
           } else {
             // Other days - white
             bgColor = Colors.white;
@@ -404,20 +410,52 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
           final isoDayOfWeek = orderedDays[uiIndex]; // ISO day (1-7)
           final dayIndex = isoDayOfWeek - 1; // 0-based index for date calculation
           final isCurrent = isoDayOfWeek == currentDayOfWeek;
-          final star = _getMemberDayStar(data, member, dayIndex);
+          final isSelected = isoDayOfWeek == selectedDayOfWeek;
+          final isPast = isoDayOfWeek < currentDayOfWeek;
+          final isClickable = isPast || isCurrent;
+
+          // Determine background color and expanded state
+          Color bgColor;
+          bool showExpanded;
+          bool showShadow;
+
+          if (isSelected) {
+            // This is the selected day
+            if (isCurrent) {
+              // Current day selected - blue
+              bgColor = const Color(0xFF1CB0F6);
+            } else {
+              // Past day selected - gray
+              bgColor = const Color(0xFF9E9E9E);
+            }
+            showExpanded = true;
+            showShadow = true;
+          } else if (isCurrent) {
+            // Current day but not selected - blue, narrow
+            bgColor = const Color(0xFF1CB0F6);
+            showExpanded = false;
+            showShadow = false;
+          } else {
+            // Other days - default blue
+            bgColor = const Color(0xFF0A7FCC);
+            showExpanded = false;
+            showShadow = false;
+          }
+
+          final star = _getMemberDayStar(data, member, dayIndex, showExpanded);
 
           Widget dayCell = Container(
             height: 56,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
-              color: isCurrent ? const Color(0xFF1CB0F6) : const Color(0xFF0A7FCC),
+              color: bgColor,
               border: Border(
                 bottom: BorderSide(
                   color: Colors.black.withOpacity(0.1),
                   width: 0.5,
                 ),
               ),
-              boxShadow: isCurrent
+              boxShadow: showShadow
                   ? [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.08),
@@ -437,15 +475,20 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
           // All days are Expanded with different flex values
           return Expanded(
-            flex: isCurrent ? 56 : 30,
-            child: dayCell,
+            flex: showExpanded ? 56 : 30,
+            child: isClickable
+                ? GestureDetector(
+                    onTap: () => _selectDay(isoDayOfWeek),
+                    child: dayCell,
+                  )
+                : dayCell,
           );
         }),
       ],
     );
   }
 
-  Widget _getMemberDayStar(_BoardData data, Users member, int dayIndex) {
+  Widget _getMemberDayStar(_BoardData data, Users member, int dayIndex, bool showExpanded) {
     // Don't show stars for future days
     if (dayIndex > currentDayOfWeek - 1) {
       return const SizedBox();
@@ -498,11 +541,10 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     });
 
     if (allCompleted) {
-      final isCurrent = dayIndex == currentDayOfWeek - 1;
       return Text(
         '⭐',
         style: TextStyle(
-          fontSize: isCurrent ? 20 : 14,
+          fontSize: showExpanded ? 20 : 14,
         ),
       );
     }
@@ -634,10 +676,11 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
   }
 
   Widget _buildTaskDayCell(_BoardData data, Users member, UserTasks userTask, Tasks task, int dayIndex) {
-    final isCurrent = dayIndex == currentDayOfWeek - 1;
-    final isSelected = dayIndex == selectedDayOfWeek - 1;
-    final isPast = dayIndex < currentDayOfWeek - 1;
-    final isFuture = dayIndex > currentDayOfWeek - 1;
+    final isoDayOfWeek = dayIndex + 1; // Convert 0-based to ISO day (1-7)
+    final isCurrent = isoDayOfWeek == currentDayOfWeek;
+    final isSelected = isoDayOfWeek == selectedDayOfWeek;
+    final isPast = isoDayOfWeek < currentDayOfWeek;
+    final isFuture = isoDayOfWeek > currentDayOfWeek;
 
     final frequencyDays = userTask.frequency.split(',').map(int.parse).toList();
     final hasTask = frequencyDays.contains(dayIndex + 1); // dayIndex is 0-based, weekday is 1-based
@@ -647,7 +690,6 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     final helper = WeekDayHelper(weekStartDaySetting);
     final orderedDays = helper.orderedDays;
 
-    final isoDayOfWeek = dayIndex + 1; // Convert 0-based to ISO day (1-7)
     final uiIndex = orderedDays.indexOf(isoDayOfWeek);
 
     final date = weekStartDaySetting == 'sunday' && uiIndex == 0
@@ -673,17 +715,35 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
 
     final isCompleted = completion.isCompleted;
 
+    // Determine if this day should be expanded
+    bool showExpanded;
+    Color bgColor;
+
+    if (isSelected) {
+      // Selected day (current or past)
+      showExpanded = true;
+      bgColor = Colors.white;
+    } else if (isCurrent) {
+      // Current day but not selected - narrow
+      showExpanded = false;
+      bgColor = const Color(0xFFF5F5F7);
+    } else {
+      // Other days
+      showExpanded = false;
+      bgColor = const Color(0xFFF5F5F7);
+    }
+
     Widget dayCell = Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      color: isCurrent ? Colors.white : const Color(0xFFF5F5F7), // White only for current day
+      color: bgColor,
       child: hasTask
-          ? _buildTaskItem(member, task, date, isPast, isCurrent, isFuture, isCompleted)
+          ? _buildTaskItem(member, task, date, isPast, isSelected, isFuture, isCompleted)
           : const SizedBox(),
     );
 
     // All days are Expanded with different flex values
     return Expanded(
-      flex: isCurrent ? 56 : 30,
+      flex: showExpanded ? 56 : 30,
       child: dayCell,
     );
   }
@@ -693,14 +753,14 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     Tasks task,
     DateTime date,
     bool isPast,
-    bool isCurrent,
+    bool isSelected,
     bool isFuture,
     bool isCompleted,
   ) {
     Widget itemContent;
 
-    if (!isCurrent) {
-      // Side days (all except current) - show only circle dot (●), NO icons!
+    if (!isSelected) {
+      // Non-selected days - show only circle dot (●), NO icons!
       itemContent = Text(
         '●',
         style: TextStyle(
@@ -709,8 +769,8 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         ),
       );
     } else {
-      // Current day only - show emoji icon with inset shadow
-      // Size is always 42x42 for current day
+      // Selected day only - show emoji icon with inset shadow
+      // Size is always 42x42 for selected day
       if (isCompleted) {
         // Completed - green gradient background
         itemContent = Container(
