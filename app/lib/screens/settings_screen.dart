@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/providers/isar_provider.dart';
 import '../data/models/settings.dart';
+import '../data/repositories/settings_repository.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -87,6 +88,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() {
       _weekStartDay = value;
     });
+
+    // Invalidate provider to refresh all screens that depend on weekStartDay
+    ref.invalidate(weekStartDayProvider);
   }
 
   Future<void> _saveLanguage(String value) async {
