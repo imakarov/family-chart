@@ -306,14 +306,25 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
               top: MediaQuery.of(context).padding.top + 12,
               left: 0,
               right: 0,
-              child: _buildProgressIndicators(),
+              child: SizedBox(
+                height: 32,
+                child: Center(
+                  child: _buildProgressIndicators(),
+                ),
+              ),
             ),
           // Step indicator (only show on steps 1-3)
           if (_currentPage > 0)
             Positioned(
               top: MediaQuery.of(context).padding.top + 12,
               right: 20,
-              child: _buildStepIndicator(),
+              child: SizedBox(
+                height: 32,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: _buildStepIndicator(),
+                ),
+              ),
             ),
         ],
       ),

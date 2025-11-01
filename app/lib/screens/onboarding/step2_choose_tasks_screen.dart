@@ -581,16 +581,18 @@ class _Step2ChooseTasksScreenState extends ConsumerState<Step2ChooseTasksScreen>
                 color: isSelected ? Colors.white : const Color(0xFF0A7FCC),
                 shape: BoxShape.circle,
               ),
-              alignment: Alignment.center,
-              child: Text(
-                isSelected ? '✓' : '+',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: isSelected ? const Color(0xFF0A7FCC) : Colors.white,
-                  height: 1.0,
-                ),
-                textAlign: TextAlign.center,
+              child: Center(
+                child: isSelected
+                    ? Icon(
+                        Icons.check,
+                        size: 16,
+                        color: const Color(0xFF0A7FCC),
+                      )
+                    : Icon(
+                        Icons.add,
+                        size: 18,
+                        color: Colors.white,
+                      ),
               ),
             ),
           ],

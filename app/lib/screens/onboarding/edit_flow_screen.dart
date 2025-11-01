@@ -96,7 +96,7 @@ class _EditFlowScreenState extends ConsumerState<EditFlowScreen> {
         if (task == null) continue;
 
         final taskObj = Task(
-          id: 'task_${task.taskId}',
+          id: task.libraryId ?? 'task_${task.taskId}', // Use libraryId if available for consistency with Step 2
           icon: task.icon,
           name: task.title,
           goal: '', // Not stored in DB
@@ -477,47 +477,62 @@ class _EditFlowScreenState extends ConsumerState<EditFlowScreen> {
               ),
             ],
           ),
-          // Header row with all elements aligned
+          // Header with close button (left)
           Positioned(
             top: MediaQuery.of(context).padding.top + 12,
             left: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Close button (X) in top-left
-                GestureDetector(
-                  onTap: () {
-                    // Navigate back to weekly board without saving
-                    context.go('/checklist/${widget.checklistId}');
-                  },
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      size: 20,
-                      color: Color(0xFF8E8E93),
-                    ),
+            child: SizedBox(
+              height: 32,
+              child: GestureDetector(
+                onTap: () {
+                  // Navigate back to weekly board without saving
+                  context.go('/checklist/${widget.checklistId}');
+                },
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    size: 20,
+                    color: Color(0xFF8E8E93),
                   ),
                 ),
-                // Progress indicators (center)
-                _buildProgressIndicators(),
-                // Step indicator (right)
-                _buildStepIndicator(),
-              ],
+              ),
+            ),
+          ),
+          // Progress indicators (center of screen)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 12,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              height: 32,
+              child: Center(
+                child: _buildProgressIndicators(),
+              ),
+            ),
+          ),
+          // Step indicator (right)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 12,
+            right: 20,
+            child: SizedBox(
+              height: 32,
+              child: Align(
+                alignment: Alignment.center,
+                child: _buildStepIndicator(),
+              ),
             ),
           ),
         ],
