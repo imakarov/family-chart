@@ -203,12 +203,16 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
         // Day cells
         ...List.generate(7, (uiIndex) {
           final isoDayOfWeek = orderedDays[uiIndex]; // ISO day (1-7)
-          final dayIndex = isoDayOfWeek - 1; // 0-based index for date calculation
           final isCurrent = isoDayOfWeek == currentDayOfWeek;
           final isSelected = isoDayOfWeek == selectedDayOfWeek;
           final isPast = isoDayOfWeek < currentDayOfWeek;
           final isClickable = isPast || isCurrent; // Can click on past and current days
-          final date = weekStart.add(Duration(days: dayIndex));
+
+          // Calculate the actual date for this UI column
+          // For Sunday-first, we need to go back 1 day from Monday weekStart when uiIndex==0
+          final date = weekStartDaySetting == 'sunday' && uiIndex == 0
+              ? weekStart.subtract(const Duration(days: 1)) // Sunday before Monday
+              : weekStart.add(Duration(days: uiIndex - (weekStartDaySetting == 'sunday' ? 1 : 0)));
 
           // Determine colors
           Color bgColor;
@@ -447,7 +451,18 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
       return const SizedBox();
     }
 
-    final date = weekStart.add(Duration(days: dayIndex));
+    // Fix date calculation for Sunday-first mode
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays;
+
+    // Find uiIndex for this dayIndex
+    final isoDayOfWeek = dayIndex + 1; // Convert 0-based to ISO day (1-7)
+    final uiIndex = orderedDays.indexOf(isoDayOfWeek);
+
+    final date = weekStartDaySetting == 'sunday' && uiIndex == 0
+        ? weekStart.subtract(const Duration(days: 1)) // Sunday before Monday
+        : weekStart.add(Duration(days: uiIndex - (weekStartDaySetting == 'sunday' ? 1 : 0)));
 
     // Get all tasks for this member on this day
     final memberUserTasks = data.userTasks
@@ -501,9 +516,21 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     final totalDays = frequencyDays.length;
     int completedDays = 0;
 
+    // Get week start day setting for date calculation
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays;
+
     for (final dayNum in frequencyDays) {
       final dayIndex = dayNum - 1; // Convert to 0-based
-      final date = weekStart.add(Duration(days: dayIndex));
+
+      // Fix date calculation for Sunday-first mode
+      final isoDayOfWeek = dayIndex + 1; // Convert 0-based to ISO day (1-7)
+      final uiIndex = orderedDays.indexOf(isoDayOfWeek);
+
+      final date = weekStartDaySetting == 'sunday' && uiIndex == 0
+          ? weekStart.subtract(const Duration(days: 1)) // Sunday before Monday
+          : weekStart.add(Duration(days: uiIndex - (weekStartDaySetting == 'sunday' ? 1 : 0)));
 
       final completion = data.completions.firstWhere(
         (c) =>
@@ -615,7 +642,17 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     final frequencyDays = userTask.frequency.split(',').map(int.parse).toList();
     final hasTask = frequencyDays.contains(dayIndex + 1); // dayIndex is 0-based, weekday is 1-based
 
-    final date = weekStart.add(Duration(days: dayIndex));
+    // Fix date calculation for Sunday-first mode
+    final weekStartDaySetting = ref.watch(weekStartDayProvider).value ?? 'monday';
+    final helper = WeekDayHelper(weekStartDaySetting);
+    final orderedDays = helper.orderedDays;
+
+    final isoDayOfWeek = dayIndex + 1; // Convert 0-based to ISO day (1-7)
+    final uiIndex = orderedDays.indexOf(isoDayOfWeek);
+
+    final date = weekStartDaySetting == 'sunday' && uiIndex == 0
+        ? weekStart.subtract(const Duration(days: 1)) // Sunday before Monday
+        : weekStart.add(Duration(days: uiIndex - (weekStartDaySetting == 'sunday' ? 1 : 0)));
 
     final completion = data.completions.firstWhere(
       (c) =>
