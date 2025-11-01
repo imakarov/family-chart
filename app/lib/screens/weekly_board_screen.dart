@@ -16,6 +16,7 @@ import '../../../core/utils/date_utils.dart' as app_date_utils;
 import '../../../core/utils/week_day_helper.dart';
 import '../../../core/providers/isar_provider.dart';
 import '../../../widgets/app_menu_drawer.dart';
+import '../../../core/services/pdf_service.dart';
 
 class WeeklyBoardScreen extends ConsumerStatefulWidget {
   final int checklistId;
@@ -58,6 +59,133 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
     setState(() {
       selectedDayOfWeek = dayOfWeek;
     });
+  }
+
+  // Handle print current week from menu
+  Future<void> _handlePrintCurrentWeek() async {
+    try {
+      // Show loading message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating PDF...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Load data
+      final data = await _loadData();
+
+      // Generate PDF
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateWeeklyBoardPdf(
+        weekNumber: currentWeekNumber,
+        weekYear: currentWeekYear,
+        users: data.users,
+        tasks: data.tasks,
+        userTasks: data.userTasks,
+      );
+
+      // Show print preview
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      // Show error using ScaffoldMessenger
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
+
+  // Handle print next week from menu
+  Future<void> _handlePrintNextWeek() async {
+    try {
+      // Show loading message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating PDF...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Load data
+      final data = await _loadData();
+
+      // Generate PDF for next week
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateWeeklyBoardPdf(
+        weekNumber: currentWeekNumber + 1,
+        weekYear: currentWeekYear,
+        users: data.users,
+        tasks: data.tasks,
+        userTasks: data.userTasks,
+      );
+
+      // Show print preview
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      // Show error using ScaffoldMessenger
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
+
+  // Handle print next 3 weeks from menu
+  Future<void> _handlePrintNext3Weeks() async {
+    try {
+      // Show loading message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating 3 weeks PDF...'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
+      // Load data
+      final data = await _loadData();
+
+      // Generate PDF for 3 weeks (starting from NEXT week)
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateMultipleWeeksPdf(
+        startWeekNumber: currentWeekNumber + 1,  // Start from next week
+        startWeekYear: currentWeekYear,
+        numberOfWeeks: 3,
+        users: data.users,
+        tasks: data.tasks,
+        userTasks: data.userTasks,
+      );
+
+      // Show print preview
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      // Show error using ScaffoldMessenger
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
   }
 
   // DEBUG: Show reset dialog
@@ -105,6 +233,9 @@ class _WeeklyBoardScreenState extends ConsumerState<WeeklyBoardScreen> {
       drawer: AppMenuDrawer(
         checklistId: widget.checklistId,
         showDashboardOption: true,
+        onPrintCurrentWeek: _handlePrintCurrentWeek,
+        onPrintNextWeek: _handlePrintNextWeek,
+        onPrintNext3Weeks: _handlePrintNext3Weeks,
       ),
       body: FutureBuilder(
         future: _loadData(),

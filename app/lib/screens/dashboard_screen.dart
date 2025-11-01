@@ -8,10 +8,154 @@ import '../widgets/manage_section.dart';
 import '../widgets/app_menu_drawer.dart';
 import '../core/providers/isar_provider.dart';
 import '../data/models/checklists.dart';
+import '../data/models/users.dart';
+import '../data/models/tasks.dart';
+import '../data/models/user_tasks.dart';
+import '../data/repositories/users_repository.dart';
+import '../data/repositories/tasks_repository.dart';
+import '../data/repositories/user_tasks_repository.dart';
+import '../core/services/pdf_service.dart';
+import '../core/utils/date_utils.dart' as app_date_utils;
 
 /// Dashboard screen - main screen after onboarding
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+
+  // Handle print current week from menu
+  Future<void> _handlePrintCurrentWeek(int checklistId) async {
+    try {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating PDF...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      final now = DateTime.now();
+      final weekNumber = app_date_utils.DateUtils.getWeekNumber(now);
+      final weekYear = app_date_utils.DateUtils.getWeekYear(now);
+
+      final users = await ref.read(usersRepositoryProvider).getAllUsers();
+      final tasks = await ref.read(tasksRepositoryProvider).getAllTasks();
+      final userTasks = await ref.read(userTasksRepositoryProvider).getUserTasksByChecklistId(checklistId);
+
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateWeeklyBoardPdf(
+        weekNumber: weekNumber,
+        weekYear: weekYear,
+        users: users,
+        tasks: tasks,
+        userTasks: userTasks,
+      );
+
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
+
+  // Handle print next week from menu
+  Future<void> _handlePrintNextWeek(int checklistId) async {
+    try {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating PDF...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      final now = DateTime.now();
+      final weekNumber = app_date_utils.DateUtils.getWeekNumber(now);
+      final weekYear = app_date_utils.DateUtils.getWeekYear(now);
+
+      final users = await ref.read(usersRepositoryProvider).getAllUsers();
+      final tasks = await ref.read(tasksRepositoryProvider).getAllTasks();
+      final userTasks = await ref.read(userTasksRepositoryProvider).getUserTasksByChecklistId(checklistId);
+
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateWeeklyBoardPdf(
+        weekNumber: weekNumber + 1,
+        weekYear: weekYear,
+        users: users,
+        tasks: tasks,
+        userTasks: userTasks,
+      );
+
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
+
+  // Handle print next 3 weeks from menu
+  Future<void> _handlePrintNext3Weeks(int checklistId) async {
+    try {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generating 3 weeks PDF...'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
+      final now = DateTime.now();
+      final weekNumber = app_date_utils.DateUtils.getWeekNumber(now);
+      final weekYear = app_date_utils.DateUtils.getWeekYear(now);
+
+      final users = await ref.read(usersRepositoryProvider).getAllUsers();
+      final tasks = await ref.read(tasksRepositoryProvider).getAllTasks();
+      final userTasks = await ref.read(userTasksRepositoryProvider).getUserTasksByChecklistId(checklistId);
+
+      final pdfService = PdfService();
+      final pdfBytes = await pdfService.generateMultipleWeeksPdf(
+        startWeekNumber: weekNumber + 1,  // Start from next week
+        startWeekYear: weekYear,
+        numberOfWeeks: 3,
+        users: users,
+        tasks: tasks,
+        userTasks: userTasks,
+      );
+
+      await pdfService.printDocument(pdfBytes);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
 
   String _getWeekInfo() {
     final now = DateTime.now();
@@ -29,7 +173,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return FutureBuilder<int?>(
       future: _getActiveChecklistId(ref),
       builder: (context, snapshot) {
@@ -52,6 +196,9 @@ class DashboardScreen extends ConsumerWidget {
           drawer: AppMenuDrawer(
             checklistId: checklistId,
             showDashboardOption: false, // Hide Dashboard option when on Dashboard
+            onPrintCurrentWeek: () => _handlePrintCurrentWeek(checklistId),
+            onPrintNextWeek: () => _handlePrintNextWeek(checklistId),
+            onPrintNext3Weeks: () => _handlePrintNext3Weeks(checklistId),
           ),
           body: SafeArea(
         top: false, // AppBar already handles top safe area

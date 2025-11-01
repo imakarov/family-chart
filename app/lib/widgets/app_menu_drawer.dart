@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -8,11 +9,17 @@ import 'package:in_app_review/in_app_review.dart';
 class AppMenuDrawer extends StatelessWidget {
   final int? checklistId;
   final bool showDashboardOption;
+  final Future<void> Function()? onPrintCurrentWeek;
+  final Future<void> Function()? onPrintNextWeek;
+  final Future<void> Function()? onPrintNext3Weeks;
 
   const AppMenuDrawer({
     super.key,
     this.checklistId,
     this.showDashboardOption = true,
+    this.onPrintCurrentWeek,
+    this.onPrintNextWeek,
+    this.onPrintNext3Weeks,
   });
 
   @override
@@ -173,93 +180,156 @@ class AppMenuDrawer extends StatelessWidget {
     );
   }
 
-  // Show print options dialog
+  // Show print options dialog (iOS 17+ modal bottom sheet style)
   void _showPrintOptionsDialog(BuildContext context) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Print Checklist'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _PrintOption(
-              title: 'Current Week',
-              onTap: () {
-                Navigator.pop(context);
-                _showPrintPlaceholder(context, 'Current Week');
-              },
-            ),
-            const SizedBox(height: 8),
-            _PrintOption(
-              title: 'Next Week',
-              onTap: () {
-                Navigator.pop(context);
-                _showPrintPlaceholder(context, 'Next Week');
-              },
-            ),
-            const SizedBox(height: 8),
-            _PrintOption(
-              title: 'Multiple Weeks',
-              onTap: () {
-                Navigator.pop(context);
-                _showMultipleWeeksDialog(context);
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext context) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Main actions sheet
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF2F2F7), // iOS gray background
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    // Title
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(0xFFD1D1D6),
+                            width: 0.5,
+                          ),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Print Checklist',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF8E8E93),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Current Week
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Current Week',
+                      onTap: () async {
+                        Navigator.pop(context);
+                        if (onPrintCurrentWeek != null) {
+                          await onPrintCurrentWeek!();
+                        } else {
+                          _showPrintPlaceholder(context, 'Current Week');
+                        }
+                      },
+                      showDivider: true,
+                    ),
+                    // Next Week
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Next Week',
+                      onTap: () async {
+                        Navigator.pop(context);
+                        if (onPrintNextWeek != null) {
+                          await onPrintNextWeek!();
+                        } else {
+                          _showPrintPlaceholder(context, 'Next Week');
+                        }
+                      },
+                      showDivider: true,
+                    ),
+                    // Next 3 Weeks
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Next 3 Weeks',
+                      onTap: () async {
+                        Navigator.pop(context);
+                        if (onPrintNext3Weeks != null) {
+                          await onPrintNext3Weeks!();
+                        } else {
+                          _showPrintPlaceholder(context, 'Next 3 Weeks');
+                        }
+                      },
+                      showDivider: false,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Cancel button (separate)
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: CupertinoButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF007AFF),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  // Show multiple weeks dialog
-  void _showMultipleWeeksDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('How many weeks?'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _PrintOption(
-              title: '2 Weeks',
-              onTap: () {
-                Navigator.pop(context);
-                _showPrintPlaceholder(context, '2 Weeks');
-              },
+  // Build bottom sheet action item
+  Widget _buildBottomSheetAction({
+    required BuildContext context,
+    required String title,
+    required VoidCallback onTap,
+    required bool showDivider,
+  }) {
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF007AFF),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 8),
-            _PrintOption(
-              title: '3 Weeks',
-              onTap: () {
-                Navigator.pop(context);
-                _showPrintPlaceholder(context, '3 Weeks');
-              },
-            ),
-            const SizedBox(height: 8),
-            _PrintOption(
-              title: '4 Weeks',
-              onTap: () {
-                Navigator.pop(context);
-                _showPrintPlaceholder(context, '4 Weeks');
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
           ),
-        ],
-      ),
+        ),
+        if (showDivider)
+          const Divider(
+            height: 0.5,
+            thickness: 0.5,
+            color: Color(0xFFD1D1D6),
+          ),
+      ],
     );
   }
 
@@ -287,7 +357,7 @@ class AppMenuDrawer extends StatelessWidget {
     );
   }
 
-  // Show edit checklist submenu
+  // Show edit checklist submenu (iOS 17+ modal bottom sheet style)
   void _showEditChecklistSubmenu(BuildContext context) {
     if (checklistId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -299,65 +369,98 @@ class AppMenuDrawer extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Edit Checklist',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
+      isScrollControlled: true,
+      builder: (BuildContext context) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Main actions sheet
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF2F2F7), // iOS gray background
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    // Title
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(0xFFD1D1D6),
+                            width: 0.5,
+                          ),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Edit Checklist',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF8E8E93),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Edit Family Members
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Edit Family Members',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/edit/$checklistId/members');
+                      },
+                      showDivider: true,
+                    ),
+                    // Edit Members Tasks
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Edit Members Tasks',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/edit/$checklistId/tasks');
+                      },
+                      showDivider: true,
+                    ),
+                    // Edit Regularity
+                    _buildBottomSheetAction(
+                      context: context,
+                      title: 'Edit Regularity',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/edit/$checklistId/schedule');
+                      },
+                      showDivider: false,
+                    ),
+                  ],
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            _EditOption(
-              title: 'Edit Family Members',
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/edit/$checklistId/members');
-              },
-            ),
-            const SizedBox(height: 12),
-            _EditOption(
-              title: 'Edit Members Tasks',
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/edit/$checklistId/tasks');
-              },
-            ),
-            const SizedBox(height: 12),
-            _EditOption(
-              title: 'Edit Regularity',
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/edit/$checklistId/schedule');
-              },
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8E8E93),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              const SizedBox(height: 8),
+              // Cancel button (separate)
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: CupertinoButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF007AFF),
+                    ),
                   ),
                 ),
-                child: const Text('Cancel'),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -523,74 +626,3 @@ class _MenuDivider extends StatelessWidget {
   }
 }
 
-/// Print option button
-class _PrintOption extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const _PrintOption({
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFF5F5F7),
-          foregroundColor: const Color(0xFF0A7FCC),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Edit option button
-class _EditOption extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const _EditOption({
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFF5F5F7),
-          foregroundColor: const Color(0xFF0A7FCC),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
