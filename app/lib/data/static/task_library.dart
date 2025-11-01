@@ -232,7 +232,7 @@ class TaskLibrary {
     // Additional fitness tasks (priority 51-60)
     TaskTemplate(
       id: 'yoga',
-      name: 'Йога',
+      name: 'Yoga',
       icon: '🧘',
       category: 'physical',
       frequency: '2x per Week',
@@ -242,7 +242,7 @@ class TaskLibrary {
     ),
     TaskTemplate(
       id: 'running',
-      name: 'Спорт',
+      name: 'Running',
       icon: '🏃',
       category: 'physical',
       frequency: 'Daily',
@@ -252,7 +252,7 @@ class TaskLibrary {
     ),
     TaskTemplate(
       id: 'football',
-      name: 'Футбол',
+      name: 'Football',
       icon: '⚽',
       category: 'physical',
       frequency: '3x per Week',
@@ -596,7 +596,7 @@ class TaskLibrary {
     // Additional household tasks (priority 65-75)
     TaskTemplate(
       id: 'cook-lunch',
-      name: 'Готовка обеда',
+      name: 'Cook Lunch',
       icon: '🍳',
       category: 'household',
       frequency: '3x per Week',
@@ -606,7 +606,7 @@ class TaskLibrary {
     ),
     TaskTemplate(
       id: 'care-for-cat',
-      name: 'Убирать за котом',
+      name: 'Clean Cat Litter',
       icon: '🐱',
       category: 'household',
       frequency: 'Daily',
@@ -833,7 +833,7 @@ class TaskLibrary {
     // Additional education tasks (priority 44-54)
     TaskTemplate(
       id: 'reading-book',
-      name: 'Чтение',
+      name: 'Reading',
       icon: '📚',
       category: 'education',
       frequency: 'Daily',
@@ -843,7 +843,7 @@ class TaskLibrary {
     ),
     TaskTemplate(
       id: 'reading-book-2',
-      name: 'Чтение',
+      name: 'Reading',
       icon: '📖',
       category: 'education',
       frequency: '5x per Week',
@@ -863,7 +863,7 @@ class TaskLibrary {
     ),
     TaskTemplate(
       id: 'uceba',
-      name: 'Учёба',
+      name: 'Study',
       icon: '🎓',
       category: 'education',
       frequency: '3x per Week',

@@ -9,7 +9,7 @@ import 'core/services/tasks_seeding_service.dart';
 import 'data/models/checklists.dart';
 
 // DEBUG: Set to true to reset database on app start
-const bool DEBUG_RESET_DATABASE = true;
+const bool DEBUG_RESET_DATABASE = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
