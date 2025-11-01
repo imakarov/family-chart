@@ -116,3 +116,27 @@ class SettingsRepository {
         .map((settings) => settings.isNotEmpty ? settings.first.settingValue : null);
   }
 }
+
+/// Provider to get week start day setting
+/// Returns 'monday' or 'sunday', defaults to 'monday'
+@riverpod
+Future<String> weekStartDay(WeekStartDayRef ref) async {
+  final isar = await ref.watch(isarProvider.future);
+
+  // Load all settings using count + get pattern (compatible with Isar 3.1.0+1)
+  final allSettings = <Settings>[];
+  final count = await isar.settings.count();
+  for (var i = 1; i <= count + 100; i++) {
+    final setting = await isar.settings.get(i);
+    if (setting != null) {
+      allSettings.add(setting);
+    }
+  }
+
+  final weekStartSetting = allSettings.cast<Settings?>().firstWhere(
+    (s) => s?.settingKey == SettingKeys.weekStartDay,
+    orElse: () => null,
+  );
+
+  return weekStartSetting?.settingValue ?? 'monday';
+}

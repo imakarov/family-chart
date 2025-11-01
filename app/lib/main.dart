@@ -7,6 +7,7 @@ import 'core/providers/router_provider.dart';
 import 'core/utils/localization_helper.dart';
 import 'core/services/tasks_seeding_service.dart';
 import 'data/models/checklists.dart';
+import 'data/repositories/settings_repository.dart';
 
 // DEBUG: Set to true to reset database on app start
 const bool DEBUG_RESET_DATABASE = false;
@@ -63,6 +64,12 @@ class _MyAppState extends ConsumerState<MyApp> {
           });
           print('🔴 DEBUG: Database cleared!');
         }
+
+        // Initialize default settings
+        print('⚙️  [Main] Initializing default settings...');
+        final settingsRepository = SettingsRepository(isar);
+        await settingsRepository.initializeDefaults();
+        print('⚙️  [Main] Default settings initialized');
 
         // Seed Tasks from TaskLibrary on first launch
         print('📦 [Main] Starting tasks seeding...');

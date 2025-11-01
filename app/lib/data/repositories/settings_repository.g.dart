@@ -25,5 +25,22 @@ final settingsRepositoryProvider =
 );
 
 typedef SettingsRepositoryRef = AutoDisposeProviderRef<SettingsRepository>;
+String _$weekStartDayHash() => r'1a20a448d27989adc805ba021f34d3b5c30f463f';
+
+/// Provider to get week start day setting
+/// Returns 'monday' or 'sunday', defaults to 'monday'
+///
+/// Copied from [weekStartDay].
+@ProviderFor(weekStartDay)
+final weekStartDayProvider = AutoDisposeFutureProvider<String>.internal(
+  weekStartDay,
+  name: r'weekStartDayProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$weekStartDayHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef WeekStartDayRef = AutoDisposeFutureProviderRef<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
